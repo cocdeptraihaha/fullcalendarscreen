@@ -22,6 +22,7 @@ function ensureLocalStorage() {
 }
 
 function loadEventsFromLocalStorage(): EventInput[] {
+  ensureLocalStorage()
   const data = localStorage.getItem("appointments_v1")
   if (!data) return []
 
