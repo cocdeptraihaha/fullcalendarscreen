@@ -1,22 +1,21 @@
 import { useRef, useEffect } from 'react'
+import { EventInput } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import listPlugin from '@fullcalendar/list';
-import { INITIAL_EVENTS, createEventId } from '../calendar/event-utils'
 import { CalendarContainer, EventBox } from '../calendar/Calendar.style'
 import { useSelector } from "react-redux";
 import { RootState } from '../../store/store'
 import Form from '../form/Form'
+import { useAppointments } from '../../hooks/useAppointments';
 
 export default function Calendar() {
+  const { data: appointments, isLoading, error } = useAppointments();
   const calendarRef = useRef<FullCalendar | null>(null);
-
   // Lấy view từ redux
   const view = useSelector((state: RootState) => state.calendar.view);
-
-  // Khi view thay đổi → gọi API của FullCalendar
   useEffect(() => {
     if (calendarRef.current) {
       const api = calendarRef.current.getApi();
@@ -24,27 +23,41 @@ export default function Calendar() {
     }
   }, [view]);
 
-  function handleDateSelect(selectInfo: any) {
-    let title = prompt('Please enter a new title for your event')
-    let calendarApi = selectInfo.view.calendar
-    calendarApi.unselect() // clear date selection
 
-    if (title) {
-      calendarApi.addEvent({
-        id: createEventId(),
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      })
-    }
+// Transform data cho FullCalendar format
+const events = appointments?.map((apt: { id: string; contact: string; service: string; start: string; end: string; color: string; type: string; staff: string; }) => ({
+  id: apt.id,
+  title: `${apt.type} - Appointment`,
+  start: apt.start,
+  end: apt.end,
+  backgroundColor: apt.color,
+  extendedProps: {
+    contact:apt.contact,
+    type: apt.type,
+    staff: apt.staff,
+    service: apt.service
+  }
+}));
+  if (isLoading) return <div>Loading...</div>;
+  
+  if (error) return <div>Error loading appointments</div>;
+
+
+
+const INITIAL_EVENTS: EventInput[] = events;
+
+
+  function handleDateSelect(selectInfo: any) {
+    
+    // add new appointment
+    
   }
 
   function handleEventClick(clickInfo: any) {
-    if (confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
-    }
+   //update event
   }
+
+
   return (
     <CalendarContainer>
       <FullCalendar
@@ -94,10 +107,9 @@ export default function Calendar() {
             meridiem: true
           }
         }
+        dayMaxEventRows={3}
         editable={true}
         selectable={true}
-        selectMirror={true}
-        dayMaxEvents={true}
         allDaySlot={false}
         initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
         select={handleDateSelect}
@@ -116,17 +128,15 @@ export default function Calendar() {
 }
 
 function renderEventContent(eventInfo: any) {
-  const { title, type, contact, staff, service, color, } = eventInfo.event.extendedProps
+  const { contact, staff, service } = eventInfo.event.extendedProps
   return (
-    <EventBox color={color}>
+    <EventBox color={eventInfo.event.backgroundColor}>
       <div className="event-header">
         <span>
-          <div>{title}</div>
-          {type}
+          <div>{eventInfo.event.title}</div>
         </span>
         <span className="time">{eventInfo.timeText}</span>
         <br></br>
-
       </div>
       <div>{contact}</div>
       <div>{staff}</div>

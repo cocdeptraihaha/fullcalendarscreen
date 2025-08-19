@@ -7,6 +7,7 @@ left:0;
 width:65px;
 height:100%;
 font-family: Roboto;
+top:45px;
 border-right: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 1000;
 `
@@ -31,8 +32,7 @@ export const SidebarItem = styled.div<ItemProps>`
   gap: 6px;
   justify-content: center;
   color: #184561;
-  background-color: ${({ $active }) =>
-    $active ? "rgba(0, 0, 0, 0.1)" : "transparent"};
+  background-color: ${({ $active }) =>$active ? "rgba(0, 0, 0, 0.1)" : "transparent"};
   height: 60px;
   width: 60px;
   border-radius: 8px;

@@ -1,12 +1,8 @@
-import { FormContainer,TitleInput } from './Form.styled';
+import React from 'react'
 
 function Form() {
-    console.log('This is form');
   return (
-    <FormContainer>
-        <TitleInput type='text' placeholder='Add title'></TitleInput>
-
-    </FormContainer>
+    <div>Form</div>
   )
 }
 

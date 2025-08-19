@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const CalendarContainer=styled.div`
+export const CalendarContainer = styled.div`
 margin: 50px 0 0 70px;
 font-size:14px;
  --fc-button-bg-color: #fff;
@@ -9,6 +9,8 @@ font-size:14px;
 --fc-button-active-bg-color: #f5f5f5db;
 --fc-button-active-border-color: #f5f5f5db;
 --fc-today-bg-color: #d3eafa;
+--fc-event-bg-color: none;
+--fc-event-border-color:none;
 .fc .fc-daygrid-day-number {
 width: 30px;
   height: 30px;
@@ -42,6 +44,9 @@ font-size:12px;
   {
   color: rgba(255, 255, 255, 0.85) ;
   background-color: #184662ff;
+  border-radius:8px;
+  margin-right:8px;
+  width:150px;
   }
   .fc-linkbutton-button
   {
@@ -53,7 +58,7 @@ font-size:12px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
-
+  border: 0px;
   }
   .fc-settingbutton-button
   {
@@ -65,6 +70,7 @@ font-size:12px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
+  border: 0px;
   }
   .fc-calendarbutton-button
   {
@@ -76,6 +82,7 @@ font-size:12px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
+   border: 0px;
   }
 `
 export const EventBox = styled.div<{ color?: string }>`

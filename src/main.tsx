@@ -4,6 +4,7 @@ import App from './App.tsx'
 import { Provider } from "react-redux";
 import { store } from "./store/store.tsx";
 import { createGlobalStyle } from "styled-components";
+import { QueryProvider } from './providers/QueryProviders.tsx';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -16,8 +17,10 @@ const GlobalStyle = createGlobalStyle`
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-    <GlobalStyle/>
-    <App/>
+    <QueryProvider>
+        <GlobalStyle/>
+        <App/>
+      </QueryProvider>
     </Provider>
   </StrictMode>,
 )
