@@ -44,11 +44,3 @@ export const SidebarItem = styled.div<ItemProps>`
     background-color: rgba(0, 0, 0, 0.1);
   }
 `;
-
-export const CalendarIcon = styled.img.attrs({
-  src: calendarIcon,
-  alt: "calendar"
-})`
-width:15px;
-height:15px;
-`

@@ -98,7 +98,7 @@ export const SearchInput = styled.input`
 `;
 export const AddButton= styled.div`
 background-color:#fff;
-  background-image: url("src/assets/plus.svg"); /* file svg trong public/icons */
+  background-image: url("src/assets/plus.svg"); /* svg icon from local assets */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 17px;

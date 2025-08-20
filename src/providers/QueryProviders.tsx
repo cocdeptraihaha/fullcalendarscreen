@@ -4,15 +4,17 @@ import { ReactNode } from 'react';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Cache data trong 5 phút
+      // Cache data for 5 minutes
       staleTime: 5 * 60 * 1000,
-      // Giữ cache trong 10 phút khi component unmount
+      // Keep cache in memory for 10 minutes after unmount
       gcTime: 10 * 60 * 1000,
+      // Retry failed queries up to 3 times
       retry: 3,
+      // Do not refetch automatically when window regains focus
       refetchOnWindowFocus: false,
     },
     mutations: {
-      // Retry mutation 1 lần nếu fail
+      // Retry mutations once if they fail
       retry: 1,
     },
   },

@@ -6,6 +6,8 @@ import { menuItems } from './HeaderConstants';
 
 export default function Header() {
   const [active, setActive] = useState("Calendar");
+  const handleClick = (item:string) =>
+  {setActive(item)}
   return (
     <S.Container>
       <S.NavbarContainer>
@@ -13,7 +15,7 @@ export default function Header() {
           <S.NavItem
             key={item}
             active={active === item}
-            onClick={() => setActive(item)}
+            onClick={() => handleClick(item)}
           >
             {item}
             {item === "Inbox" && <S.Badge>0</S.Badge>}

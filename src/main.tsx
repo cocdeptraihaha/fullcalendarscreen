@@ -1,3 +1,5 @@
+// App entry: mounts React with Redux and React Query providers,
+// and injects a minimal global style baseline.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
@@ -16,6 +18,7 @@ const GlobalStyle = createGlobalStyle`
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    {/* Provider order: Redux (global state) → React Query (server state) → App */}
     <Provider store={store}>
     <QueryProvider>
         <GlobalStyle/>

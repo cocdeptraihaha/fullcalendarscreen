@@ -3,6 +3,8 @@ import styled from "styled-components";
 export const CalendarContainer = styled.div`
 margin: 50px 0 0 70px;
 font-size:14px;
+ /* FullCalendar theming via CSS variables. Adjust button colors,
+    today highlight, and default event look-and-feel here. */
  --fc-button-bg-color: #fff;
  --fc-button-text-color: #184561;
 --fc-button-hover-bg-color: #f5f5f5;
@@ -51,7 +53,7 @@ font-size:12px;
   .fc-linkbutton-button
   {
   background-color: #ddd;
-  background-image: url("src/assets/link-2.svg"); /* file svg trong public/icons */
+  background-image: url("src/assets/link-2.svg"); /* svg icon from local assets */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 17px;
@@ -63,7 +65,7 @@ font-size:12px;
   .fc-settingbutton-button
   {
   background-color: #ddd;
-  background-image: url("src/assets/settings.svg"); /* file svg trong public/icons */
+  background-image: url("src/assets/settings.svg"); /* svg icon from local assets */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 17px;
@@ -75,7 +77,7 @@ font-size:12px;
   .fc-calendarbutton-button
   {
   background-color: #ddd;
-  background-image: url("src/assets/calendar.svg"); /* file svg trong public/icons */
+  background-image: url("src/assets/calendar.svg"); /* svg icon from local assets */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 17px;
@@ -88,12 +90,20 @@ font-size:12px;
 export const EventBox = styled.div<{ color?: string }>`
     
   background-color: ${({ color }) => color || "#f5f5f5"};
+    white-space: normal;  
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
   display: flex;
   flex-direction: column;
   gap: 3px;
   padding:5px;
+  span {
+  word-wrap: break-word;  
+  white-space: normal; 
+  };
   .event-header {
     display: flex;
     font-weight: bold;
-  }
+    width:70%;
+  };
   `

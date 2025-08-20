@@ -1,3 +1,5 @@
+// FullCalendar wrapper component: syncs view with Redux, renders events from API,
+// and exposes hooks for date selection and event clicks.
 import { useRef, useEffect } from 'react'
 import { EventInput } from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/react'
@@ -14,20 +16,20 @@ import { useAppointments } from '../../hooks/useAppointments';
 export default function Calendar() {
   const { data: appointments, isLoading, error } = useAppointments();
   const calendarRef = useRef<FullCalendar | null>(null);
-  // Lấy view từ redux
+  // Get current view from Redux store
   const view = useSelector((state: RootState) => state.calendar.view);
   useEffect(() => {
     if (calendarRef.current) {
       const api = calendarRef.current.getApi();
+      // Keep FullCalendar's visible view in sync with Redux state
       api.changeView(view);
     }
   }, [view]);
 
-
-// Transform data cho FullCalendar format
+// Transform server appointments into FullCalendar EventInput format
 const events = appointments?.map((apt: { id: string; contact: string; service: string; start: string; end: string; color: string; type: string; staff: string; }) => ({
   id: apt.id,
-  title: `${apt.type} - Appointment`,
+  title: `${apt.type} Appointment`,
   start: apt.start,
   end: apt.end,
   backgroundColor: apt.color,
@@ -48,13 +50,11 @@ const INITIAL_EVENTS: EventInput[] = events;
 
 
   function handleDateSelect(selectInfo: any) {
-    
-    // add new appointment
-    
+    // TODO: trigger create-appointment modal prefilled with selected time range
   }
 
   function handleEventClick(clickInfo: any) {
-   //update event
+   // TODO: open/edit event details for the clicked event
   }
 
 
@@ -64,7 +64,7 @@ const INITIAL_EVENTS: EventInput[] = events;
         ref={calendarRef}
         height="auto"
         expandRows={true}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]} // FullCalendar core plugins
         customButtons={{
           newappointment: {
             text: 'New Appointment',
@@ -111,9 +111,9 @@ const INITIAL_EVENTS: EventInput[] = events;
         editable={true}
         selectable={true}
         allDaySlot={false}
-        initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+        initialEvents={INITIAL_EVENTS} // Seed initial events; alternatively use the `events` prop for dynamic fetching
         select={handleDateSelect}
-        eventContent={renderEventContent} // custom render function
+        eventContent={renderEventContent} // Custom renderer: show contact, staff, service
         eventClick={handleEventClick}
 
       // called after events are initialized/added/changed/removed

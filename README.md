@@ -16,8 +16,23 @@ Form:Mới tạo chưa biết nên làm gì\
 Thắc mắc:
 + Truyền dữ liệu từ form thế nào?(Redux hay là cách nào khác?)
 + Tự tạo droplist hay add thư viện để tạo ?
+![alt text]({2D3CCC06-2E8F-4BAF-A678-78CF839F194A}.png)\
 
-![alt text]({2D3CCC06-2E8F-4BAF-A678-78CF839F194A}.png)
+**19/8/2025**
+đổi từ localStorage sang json-server
+
+**20/8/2025**
+Sidebar: import icon từ react-feather thay vì từ asset\
+Form: Sử dụng data được fetch từ json-server\
+Dùng giao diện Material UI chưa custom được nhiều\
+chưa xử lí form Service\
+chưa CRUD được
+
+
+![alt text](image.png)
+
+
 \
 `npm install`\
-`npm run dev`
+`npm run dev`\
+`npm run server` 

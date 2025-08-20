@@ -5,7 +5,7 @@ interface CalendarState {
 }
 
 const initialState: CalendarState = {
-  view: "dayGridMonth", // mặc định
+  view: "dayGridMonth", // default calendar view
 };
 
 const calendarSlice = createSlice({
@@ -13,6 +13,7 @@ const calendarSlice = createSlice({
   initialState,
   reducers: {
     setView: (state, action: PayloadAction<string>) => {
+      // Update the current FullCalendar view (e.g., dayGridMonth, timeGridWeek)
       state.view = action.payload;
     },
   },
