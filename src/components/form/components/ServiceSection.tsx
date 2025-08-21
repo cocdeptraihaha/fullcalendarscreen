@@ -1,13 +1,12 @@
-import React from 'react'
-import { InputContainer, InputLabel, ServiceInput } from './styled'
+import { InputContainer, InputLabel, ServiceFormToggle } from "./styled";
 
-const StaffSection = () => {
+const ServiceSection = () => {
   return (
     <InputContainer>
-            <InputLabel>Service</InputLabel>
-            <ServiceInput/>
-            </InputContainer>
-  )
-}
+      <InputLabel>Service</InputLabel>
+      <ServiceFormToggle />
+    </InputContainer>
+  );
+};
 
-export default StaffSection
+export default ServiceSection;

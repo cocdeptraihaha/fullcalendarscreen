@@ -6,7 +6,6 @@ import App from './App.tsx'
 import { Provider } from "react-redux";
 import { store } from "./store/store.tsx";
 import { createGlobalStyle } from "styled-components";
-import { QueryProvider } from './providers/QueryProviders.tsx';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -20,10 +19,8 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* Provider order: Redux (global state) → React Query (server state) → App */}
     <Provider store={store}>
-    <QueryProvider>
         <GlobalStyle/>
         <App/>
-      </QueryProvider>
     </Provider>
   </StrictMode>,
 )

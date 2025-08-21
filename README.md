@@ -26,7 +26,10 @@ Sidebar: import icon từ react-feather thay vì từ asset\
 Form: Sử dụng data được fetch từ json-server\
 Dùng giao diện Material UI chưa custom được nhiều\
 chưa xử lí form Service\
-chưa CRUD được
+chưa CRUD được\
+
+em cần nguồn học máy cái này 1 cách liền mạch 
+
 
 
 ![alt text](image.png)
