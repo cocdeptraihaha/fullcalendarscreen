@@ -1,12 +1,10 @@
-import { InputContainer, InputLabel, ServiceFormToggle } from "./styled";
+import { useFormContext } from "react-hook-form";
+import ServiceFormComponent from "../../ui/ServiceForm";
 
 const ServiceSection = () => {
-  return (
-    <InputContainer>
-      <InputLabel>Service</InputLabel>
-      <ServiceFormToggle />
-    </InputContainer>
-  );
+  const { control } = useFormContext(); // Get form control from context
+
+  return <ServiceFormComponent control={control} />;
 };
 
 export default ServiceSection;

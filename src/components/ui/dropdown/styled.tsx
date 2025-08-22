@@ -5,6 +5,7 @@ export const StyledDropdownWrapper = styled.div`
   position: relative;
   width: 100%;
   font-size: 14px;
+  color: #184561;
 `;
 export const StyledDropdownToggle = styled.div`
   display: flex;
@@ -12,6 +13,7 @@ export const StyledDropdownToggle = styled.div`
   width: 100%;
   background: #fff;
   border-radius: 4px;
+  gap: 5px;
   border: 1px solid #dedede;
   padding-left: 4px;
 `;
@@ -72,6 +74,7 @@ export const StyledDropdownIcon = styled.div`
 `;
 export const StyledSearchDropdownItem = styled.input`
   width: 100%;
+  display:flex;
   box-sizing: border-box;
   padding: 8px 12px;
   border: none;

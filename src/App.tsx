@@ -1,17 +1,15 @@
-import  Header from './components/header'
-import Sidebar from './components/sidebar'
-import Calendar from './components/calendar'
-import Form from './components/form/Form'
+import Header from "./components/header";
+import Sidebar from "./components/sidebar";
+import Calendar from "./components/calendar";
+
 function App() {
   return (
     <>
-         <Form/>
-     <Header></Header>
-     <Sidebar/>
-    <Calendar/>
-  
+      <Header></Header>
+      <Sidebar />
+      <Calendar />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

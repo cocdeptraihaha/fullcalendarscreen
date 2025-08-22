@@ -8,20 +8,19 @@ export const FormContainer = styled.div`
   width: 100vw;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 export const FormModal = styled.div`
   position: relative;
-  height:500px;
-  width:550px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 500px;
+  width: 550px;
   background-color: #fff;
   border-radius: 12px;
   padding: 24px;
-  overflow-y: auto;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
-  }
 `;
 export const ModalHeader = styled.div`
   display: flex;
@@ -49,12 +48,10 @@ export const TitleInput = styled.input`
   }
 `;
 
-export const CloseBtn = styled.button`
-  background-color: #fff;
-  background-image: url("src/assets/x.svg"); /* file svg trong public/icons */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 24px;
+export const CloseBtn = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: none;
   height: 44px;
   width: 44px;
@@ -69,12 +66,11 @@ export const CloseBtn = styled.button`
   }
 `;
 export const ModalBody = styled.div`
-    height:400px;
+  height: 400px;
   display: grid;
-  grid-template-rows: repeat(5, 1fr); /* 4 dòng bằng nhau */
+  grid-template-rows: repeat(5, 1fr);
   gap: 8px;
-  }
-  `;
+`;
 export const VideoButton = styled.button`
   position: relative;
   display: flex;
@@ -90,25 +86,49 @@ export const VideoButton = styled.button`
 export const FormFotter = styled.div`
   position: absolute;
   display: flex;
-  width: 200px;
   height: 50px;
   bottom: 15px;
   right: 20px;
-  gap: 20px;
+  gap: 10px;
   justify-content: center;
   align-items: center;
   button {
     border-radius: 6px;
     background-color: #184561;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
   }
 `;
 export const CancelButton = styled.button`
   height: 40px;
   width: 80px;
   color: rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+`;
+export const DeleteButton = styled.button`
+  height: 40px;
+  width: 80px;
+  background: #ff0000ff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 `;
 export const AddButton = styled.button`
   height: 40px;
-  width: 80px;
+  width: 100px;
   color: rgba(255, 255, 255, 1);
 `;

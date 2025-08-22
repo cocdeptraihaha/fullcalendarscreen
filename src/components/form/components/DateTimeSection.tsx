@@ -1,23 +1,21 @@
-import React from 'react'
-import { DateTimeContainer, InputContainer, InputLabel } from './styled'
-import CustomDatePicker from './CustomDatePicker'
-import TimeRangePicker from './CustomTimePicker'
+import { DateTimeContainer, InputContainer, InputLabel } from "./styled";
+import DatePicker from "../../ui/DatePicker";
+import TimePicker from "../../ui/TimePicker";
 
 const DateTimeSection = () => {
   return (
     <DateTimeContainer>
+      <InputContainer>
+        <InputLabel>Date</InputLabel>
+        <DatePicker name="start" placeholder="Select Date" />
+      </InputContainer>
 
+      <InputContainer>
+        <InputLabel>Time</InputLabel>
+        <TimePicker />
+      </InputContainer>
+    </DateTimeContainer>
+  );
+};
 
-            <InputContainer>
-            <InputLabel>Date and Time</InputLabel>
-            <CustomDatePicker/>
-            </InputContainer>
-            <InputContainer>
-            <InputLabel> </InputLabel>
-            <TimeRangePicker/>
-            </InputContainer>
-        </DateTimeContainer>
-  )
-}
-
-export default DateTimeSection
+export default DateTimeSection;

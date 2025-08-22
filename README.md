@@ -1,41 +1,63 @@
-**Note**:\
+**Development Notes**:\
 **15/8/2025**:\
-Header và Sidebar : Header chưa có chức năng,Sidebar chưa changeView \
-Calendar: Copy từ fullcalendar-examples/react18-typescript, chưa custom \
+Header and Sidebar: Header has no functionality yet, Sidebar doesn't have changeView \
+Calendar: Copied from fullcalendar-examples/react18-typescript, not customized yet \
 **18/8/2025**:\
-Header: Done(HTML/CSS)\
-Sidebar: Done(HTML/CSS và chức năng changeView dùng Redux)\
-Em không biết đổi màu icon nên em edit màu trong file svg luôn :))\
+Header: Done (HTML/CSS)\
+Sidebar: Done (HTML/CSS and changeView functionality using Redux)\
+ I edited the colors directly in the SVG files <-fixed \
 
-Calendar: xong CSS, hiển thị nút, load dữ liệu từ localStorage \
-+ Em chưa hiểu cách đánh màu nên để thêm thuộc tính color trong localStorage
-+ Em không biết title của event là gì nên nhìn hình rồi gen ra
-+ chưa sửa Delete,làm xong form mới làm Create Update
+Calendar: CSS completed, buttons displayed, data loaded from localStorage \
 
-Form:Mới tạo chưa biết nên làm gì\
-Thắc mắc:
-+ Truyền dữ liệu từ form thế nào?(Redux hay là cách nào khác?)
-+ Tự tạo droplist hay add thư viện để tạo ?
-![alt text]({2D3CCC06-2E8F-4BAF-A678-78CF839F194A}.png)\
+- Don't understand coloring method yet so added color property in localStorage
+- Don't know what event title should be so generated based on the image
+- Haven't fixed Delete yet, will do Create/Update after completing the form
+
+Form: Just created, don't know what to do next\
+Questions:
+
+- How to pass data from form? (Redux or other methods?)
+- Create custom droplist or add library?
+  ![alt text]({2D3CCC06-2E8F-4BAF-A678-78CF839F194A}.png)\
 
 **19/8/2025**
-đổi từ localStorage sang json-server
+Changed from localStorage to json-server
 
 **20/8/2025**
-Sidebar: import icon từ react-feather thay vì từ asset\
-Form: Sử dụng data được fetch từ json-server\
-Dùng giao diện Material UI chưa custom được nhiều\
-chưa xử lí form Service\
-chưa CRUD được\
+Sidebar: Import icons from react-feather instead of assets\
+Form: Using data fetched from json-server\
+Using Material UI interface but haven't customized much\
+Haven't handled Service form yet\
+CRUD not implemented yet\
 
-em cần nguồn học máy cái này 1 cách liền mạch 
+**22/8/2025**
+CRUD appointment completed but still has many bugs
+Timezone bugs, CRUD failure bugs due to failed fetch
 
+**Current Status**
 
+- Header: Complete with styling
+- Sidebar: Complete with view switching functionality
+- Calendar: Complete with event display and basic interactions
+- Form: Complete with validation and CRUD operations
+- Service Selection: Complete with tag management
+- Known Issues: Timezone handling, occasional fetch failures
+- Recent Fix: Service tags now clear properly when switching from update to create mode
 
-![alt text](image.png)
+## Installation & Setup
 
+```bash
+npm install
+npm run dev
+npm run server
+```
 
-\
-`npm install`\
-`npm run dev`\
-`npm run server` 
+## Tech Stack
+
+- React 18 + TypeScript
+- FullCalendar
+- Redux Toolkit
+- React Hook Form
+- Material UI
+- JSON Server
+- React Feather Icons

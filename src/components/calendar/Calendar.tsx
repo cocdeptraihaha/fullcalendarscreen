@@ -1,7 +1,6 @@
 // FullCalendar wrapper component: syncs view with Redux, renders events from API,
 // and exposes hooks for date selection and event clicks.
 import { useRef, useEffect, useState } from "react";
-import { EventInput } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -11,12 +10,14 @@ import { CalendarContainer, EventBox } from "../calendar/Calendar.style";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { fetchAppointments } from "../../services/api";
-import { openForm } from "../../store/formSlice";
+import { openForm, clearEventData } from "../../store/formSlice";
+import Form from "../form/Form";
 
 interface Appointment {
   id: string;
+  title: string;
   contact: string;
-  service: string;
+  services: string[];
   start: string;
   end: string;
   color: string;
@@ -25,9 +26,9 @@ interface Appointment {
 }
 
 export default function Calendar() {
-  const open = useSelector((state: RootState) => state.form.open);
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const formOpen = useSelector((state: RootState) => state.form.open);
 
   // Add useEffect hook to fetch appointments when component mounts
   useEffect(() => {
@@ -42,6 +43,31 @@ export default function Calendar() {
 
     getAppointments();
   }, []);
+
+  // Refresh appointments after form operations
+  const refreshAppointments = async () => {
+    try {
+      const data = await fetchAppointments();
+      setAppointments(data);
+    } catch (error) {
+      console.error("Error refreshing appointments:", error);
+    }
+  };
+
+  // Refresh data when form closes (after CRUD operations)
+  const [wasFormOpen, setWasFormOpen] = useState(false);
+
+  useEffect(() => {
+    if (formOpen) {
+      setWasFormOpen(true);
+    } else if (wasFormOpen) {
+      // Only refresh when form was open and now closed (after CRUD operation)
+      refreshAppointments();
+      // Clear event data after refresh
+      setTimeout(() => dispatch(clearEventData()), 100);
+      setWasFormOpen(false);
+    }
+  }, [formOpen, wasFormOpen]);
 
   const calendarRef = useRef<FullCalendar | null>(null); // Direct reference to FullCalendar instance
   // Get current view from Redux store (controlled by Sidebar)
@@ -60,28 +86,27 @@ export default function Calendar() {
     (apt: {
       id: string;
       contact: string;
-      service: string;
+      services: string[];
       start: string;
       end: string;
       color: string;
       type: string;
       staff: string;
     }) => ({
-      id: apt.id,
+      id: String(apt.id),
       title: `${apt.type} Appointment`, // Display title on calendar
       start: apt.start, // ISO date string for start time
       end: apt.end, // ISO date string for end time
       backgroundColor: apt.color, // Visual color coding
-      extendedProps: { // Custom data accessible in event handlers
+      extendedProps: {
+        // Custom data accessible in event handlers
         contact: apt.contact,
         type: apt.type,
         staff: apt.staff,
-        service: apt.service,
+        service: apt.services,
       },
     })
   );
-
-  const INITIAL_EVENTS: EventInput[] = events;
 
   function handleDateSelect() {
     dispatch(openForm({}));
@@ -94,23 +119,23 @@ export default function Calendar() {
     // This populates the form with existing appointment data
     dispatch(
       openForm({
+        id: event.id, // Include ID for edit mode
         title: event.title,
         type: event.extendedProps.type, // Custom data from extendedProps
         contact: event.extendedProps.contact,
         staff: event.extendedProps.staff,
-        service: event.extendedProps.service,
+        services: event.extendedProps.service,
         start: event.startStr, // ISO string format
         end: event.endStr,
         color: event.backgroundColor,
       })
     );
   }
-  console.log(INITIAL_EVENTS);
 
   return (
     <CalendarContainer>
+      <Form />
       <FullCalendar
-        key={appointments.length} // Force re-render when appointments change
         ref={calendarRef} // Reference for imperative API access
         height="auto"
         expandRows={true}
@@ -157,10 +182,9 @@ export default function Calendar() {
           meridiem: true,
         }}
         dayMaxEventRows={3}
-        editable={true}
         selectable={true}
         allDaySlot={false}
-        initialEvents={INITIAL_EVENTS} // Seed initial events; alternatively use the `events` prop for dynamic fetching
+        events={events} // Dynamic events that auto-update when appointments change
         select={handleDateSelect}
         eventContent={renderEventContent} // Custom renderer: show contact, staff, service
         eventClick={handleEventClick}
@@ -189,7 +213,9 @@ function renderEventContent(eventInfo: any) {
       </div>
       <div>{contact}</div>
       <div>{staff}</div>
-      <div>{service}</div>
+      {service.map((s: string) => (
+        <div>{s} </div>
+      ))}
     </EventBox>
   );
 }

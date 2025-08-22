@@ -25,6 +25,7 @@ const Dropdown: FC<DropdownProps> = ({
   renderTitle,
   Items = [],
   onChange,
+  value,
 }) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -106,7 +107,7 @@ const Dropdown: FC<DropdownProps> = ({
                 {item.color /* color indicator for appointment types */ && (
                   <span style={{ color: item.color, fontSize: "30px" }}>•</span>
                 )}
-                {item.avatar && <StyledDropdownAvatar src={item.avatar} />}{" "}
+                {item.avatar && <StyledDropdownAvatar src={item.avatar} />}
                 {/* avatar for contacts/staff */}
                 {item.name || item.label} {/* display name or label */}
               </StyledDropdownItem>

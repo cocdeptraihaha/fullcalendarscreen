@@ -1,215 +1,286 @@
 {
   "appointments": [
     {
-      "id": 1,
-      "title": "Virtual",
-      "type": "Procedure",
-      "contact": "Julie at PilotPractice",
-      "staff": "Dr. Pat Pazmiño",
-      "service": "Tummy Tuck",
-      "start": "2025-08-15T14:00:00",
-      "end": "2025-08-15T14:30:00",
-      "color": "#3788d8"
-    },
-    {
-      "id": 2,
-      "title": "In-Person",
+      "id": "4",
+      "title": "Consultation Appointment",
       "type": "Consultation",
       "contact": "Yari Maldonado",
-      "staff": "Dr. Sarah Johnson",
-      "service": "Breast Augmentation",
-      "start": "2025-08-18T09:00:00",
-      "end": "2025-08-18T10:00:00",
-      "color": "#f39c12"
-    },
-    {
-      "id": 3,
-      "title": "Virtual",
-      "type": "Follow-up",
-      "contact": "IL Rockford",
-      "staff": "Dr. Michael Chen",
-      "service": "Rhinoplasty",
-      "start": "2025-08-20T11:30:00",
-      "end": "2025-08-20T12:00:00",
-      "color": "#e74c3c"
-    },
-    {
-      "id": 4,
-      "title": "In-Person",
-      "type": "Procedure",
-      "contact": "Unknown",
       "staff": "Dr. Pat Pazmiño",
-      "service": "Liposuction",
-      "start": "2025-08-22T15:00:00",
-      "end": "2025-08-22T16:00:00",
-      "color": "#9b59b6"
+      "services": [
+        "Endoscopic Sleeve Gastroplasty (ESG)"
+      ],
+      "start": "2025-08-21T16:50:00+07:00",
+      "end": "2025-08-22T08:05:00",
+      "color": "#2ecc71"
     },
     {
-      "id": 5,
-      "title": "Virtual",
+      "id": "5",
+      "title": "Consultation Appointment",
       "type": "Consultation",
       "contact": "Reza Keshavarzi",
       "staff": "Dr. Lisa Anderson",
-      "service": "Facelift",
+      "services": [
+        "Gastric Bypass Revision",
+        "I am Not Sure"
+      ],
       "start": "2025-08-25T10:00:00",
       "end": "2025-08-25T11:00:00",
-      "color": "#1abc9c"
+      "color": "#2ecc71"
     },
     {
-      "id": 6,
-      "title": "In-Person",
+      "id": "6",
+      "title": "NEW Weight Loss Consultation Appointment",
       "type": "NEW Weight Loss Consultation",
       "contact": "Unknown",
       "staff": "Dr. Sarah Johnson",
-      "service": "Brazilian Butt Lift",
+      "services": [
+        "Weight Loss Injections",
+        "Teen Gastric Sleeve"
+      ],
       "start": "2025-08-28T13:30:00",
       "end": "2025-08-28T14:30:00",
-      "color": "#f1c40f"
+      "color": "#1abc9c"
     },
     {
-      "id": 7,
-      "title": "Virtual",
+      "id": "7",
+      "title": "Follow-up Appointment",
       "type": "Follow-up",
       "contact": "Julie at PilotPractice",
       "staff": "Dr. Michael Chen",
-      "service": "Tummy Tuck",
+      "services": [
+        "Low BMI Gastric Sleeve"
+      ],
       "start": "2025-08-30T16:00:00",
       "end": "2025-08-30T16:30:00",
-      "color": "#34495e"
+      "color": "#f39c12"
     },
     {
-      "id": 8,
-      "title": "In-Person",
-      "type": "Consultation",
-      "contact": "Yari Maldonado",
-      "staff": "Dr. Pat Pazmiño",
-      "service": "Mommy Makeover",
-      "start": "2025-08-12T08:30:00",
-      "end": "2025-08-12T09:30:00",
-      "color": "#e67e22"
-    },
-    {
-      "id": 9,
-      "title": "Virtual",
-      "type": "Follow-Up Weight Loss Consultation",
-      "contact": "IL Rockford",
-      "staff": "Dr. Lisa Anderson",
-      "service": "Gynecomastia Surgery",
-      "start": "2025-08-16T12:00:00",
-      "end": "2025-08-16T13:00:00",
-      "color": "#95a5a6"
-    },
-    {
-      "id": 10,
-      "title": "In-Person",
+      "id": "10",
+      "title": "Follow-up Appointment",
       "type": "Follow-up",
       "contact": "Reza Keshavarzi",
       "staff": "Dr. Sarah Johnson",
-      "service": "Breast Reduction",
+      "services": [
+        "Teen Gastric Sleeve",
+        "Gastric Bypass Revision"
+      ],
       "start": "2025-08-24T14:30:00",
       "end": "2025-08-24T15:00:00",
+      "color": "#f39c12"
+    },
+    {
+      "id": "11",
+      "title": "Consultation Appointment",
+      "type": "Consultation",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve",
+        "Gastric Balloon"
+      ],
+      "start": "2025-08-23T16:15:00",
+      "end": "2025-08-23T16:45:00",
       "color": "#2ecc71"
+    },
+    {
+      "id": "13",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Julie at PilotPractice",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve"
+      ],
+      "start": "2025-08-26T16:30:00",
+      "end": "2025-08-26T17:00:00",
+      "color": "#f39c12"
+    },
+    {
+      "id": 14,
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve",
+        "Gastric Balloon"
+      ],
+      "start": "2025-08-31T16:45:00",
+      "end": "2025-08-31T17:15:00",
+      "color": "#f39c12"
+    },
+    {
+      "id": 15,
+      "title": "Procedure Appointment",
+      "type": "Procedure",
+      "contact": "Yari Maldonado",
+      "staff": "Pilotpractice Support",
+      "services": [
+        "Gastric Balloon",
+        "Weight Loss Injections",
+        "Expedited Gastric Sleeve"
+      ],
+      "start": "2025-08-22T16:50:00",
+      "end": "2025-08-22T12:00:00",
+      "color": "#e91e63"
+    },
+    {
+      "id": 16,
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve",
+        "Gastric Balloon"
+      ],
+      "start": "2025-08-23T16:55:00",
+      "end": "2025-08-23T07:35:00",
+      "color": "#f39c12"
     }
   ],
   "appointment_types": [
-    { "id": 1, "label": "Consultation", "color": "#2ecc71" },
-    { "id": 2, "label": "Follow-up", "color": "#f39c12" },
-    { "id": 3, "label": "Procedure", "color": "#e91e63" },
-    { "id": 4, "label": "NEW Weight Loss Consultation", "color": "#1abc9c" },
     {
-      "id": 5,
+      "id": "1",
+      "label": "Consultation",
+      "color": "#2ecc71"
+    },
+    {
+      "id": "2",
+      "label": "Follow-up",
+      "color": "#f39c12"
+    },
+    {
+      "id": "3",
+      "label": "Procedure",
+      "color": "#e91e63"
+    },
+    {
+      "id": "4",
+      "label": "NEW Weight Loss Consultation",
+      "color": "#1abc9c"
+    },
+    {
+      "id": "5",
       "label": "Follow-Up Weight Loss Consultation",
       "color": "#95a5a6"
     }
   ],
   "contacts": [
     {
-      "id": 1,
+      "id": "1",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Julie at PilotPractice"
     },
     {
-      "id": 2,
+      "id": "2",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Yari Maldonado"
     },
     {
-      "id": 3,
+      "id": "3",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "IL Rockford"
     },
     {
-      "id": 4,
+      "id": "4",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Unknown"
     },
     {
-      "id": 5,
+      "id": "5",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Reza Keshavarzi"
     },
     {
-      "id": 6,
+      "id": "6",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Unknown"
     }
   ],
   "staff": [
     {
-      "id": 1,
+      "id": "1",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Pilotpractice Support"
     },
     {
-      "id": 2,
+      "id": "2",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Reza Keshavarzi"
     },
     {
-      "id": 3,
+      "id": "3",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Lucia Teran"
     },
     {
-      "id": 4,
+      "id": "4",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Rose Huber"
     },
     {
-      "id": 5,
+      "id": "5",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Lily Colas"
     },
     {
-      "id": 6,
+      "id": "6",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Pat Pazmiño"
     },
     {
-      "id": 7,
+      "id": "7",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Sarah Johnson"
     },
     {
-      "id": 8,
+      "id": "8",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Michael Chen"
     },
     {
-      "id": 9,
+      "id": "9",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Lisa Anderson"
     }
   ],
   "services": [
-    { "id": 1, "name": "Expedited Gastric Sleeve" },
-    { "id": 2, "name": "Teen Gastric Sleeve" },
-    { "id": 3, "name": "Gastric Balloon" },
-    { "id": 4, "name": "Endoscopic Sleeve Gastroplasty (ESG)" },
-    { "id": 5, "name": "Gastric Bypass Revision" },
-    { "id": 6, "name": "Gastric Bypass Revision" },
-    { "id": 7, "name": "Weight Loss Injections" },
-    { "id": 8, "name": "Low BMI Gastric Sleeve" },
-    { "id": 9, "name": "I am Not Sure" }
+    {
+      "id": "1",
+      "name": "Expedited Gastric Sleeve"
+    },
+    {
+      "id": "2",
+      "name": "Teen Gastric Sleeve"
+    },
+    {
+      "id": "3",
+      "name": "Gastric Balloon"
+    },
+    {
+      "id": "4",
+      "name": "Endoscopic Sleeve Gastroplasty (ESG)"
+    },
+    {
+      "id": "5",
+      "name": "Gastric Bypass Revision"
+    },
+    {
+      "id": "6",
+      "name": "Weight Loss Injections"
+    },
+    {
+      "id": "7",
+      "name": "Low BMI Gastric Sleeve"
+    },
+    {
+      "id": "8",
+      "name": "I am Not Sure"
+    }
   ]
 }

@@ -20,10 +20,13 @@ const formSlice = createSlice({
     },
     closeForm: (state) => {
       state.open = false;
-      state.eventData = null; // Clear event data when closing
+      // Don't clear eventData immediately to allow form to finish processing
+    },
+    clearEventData: (state) => {
+      state.eventData = null;
     },
   },
 });
 
-export const { openForm, closeForm } = formSlice.actions;
+export const { openForm, closeForm, clearEventData } = formSlice.actions;
 export default formSlice.reducer;
