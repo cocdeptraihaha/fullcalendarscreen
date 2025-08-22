@@ -108,7 +108,20 @@ export default function Calendar() {
     })
   );
 
-  function handleDateSelect() {
+  function handleDateSelect(selectInfo: any) {
+    console.log("Date selected:", selectInfo);
+    // Convert to local timezone format
+    const startDate = new Date(selectInfo.start);
+    const endDate = new Date(selectInfo.end);
+
+    const formatLocalDateTime = (date: Date, hour = 9) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hourStr = String(hour).padStart(2, "0");
+      return `${year}-${month}-${day}T${hourStr}:00:00`;
+    };
+
     dispatch(openForm({}));
   }
 
@@ -138,13 +151,27 @@ export default function Calendar() {
       <FullCalendar
         ref={calendarRef} // Reference for imperative API access
         height="auto"
+        timeZone="local"
         expandRows={true}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]} // FullCalendar core plugins
         customButtons={{
           newappointment: {
             text: "New Appointment",
             click: function () {
-              dispatch(openForm({}));
+              const now = new Date();
+              const formatCurrentDateTime = () => {
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, "0");
+                const day = String(now.getDate()).padStart(2, "0");
+                return `${year}-${month}-${day}T09:00:00`;
+              };
+
+              dispatch(
+                openForm({
+                  start: formatCurrentDateTime(),
+                  end: formatCurrentDateTime().replace("09:00:00", "09:30:00"),
+                })
+              );
             },
           },
           linkbutton: {
@@ -182,7 +209,9 @@ export default function Calendar() {
           meridiem: true,
         }}
         dayMaxEventRows={3}
+        editable={false}
         selectable={true}
+        selectMirror={true}
         allDaySlot={false}
         events={events} // Dynamic events that auto-update when appointments change
         select={handleDateSelect}

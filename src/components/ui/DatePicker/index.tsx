@@ -23,7 +23,7 @@ interface DatePickerProps {
   placeholder?: string;
 }
 
-export default function DatePicker() {
+export default function DatePicker({ name }: DatePickerProps) {
   const { control, setValue, watch } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
