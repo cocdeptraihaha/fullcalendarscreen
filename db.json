@@ -171,6 +171,19 @@
       "start": "2025-08-21T14:30:00.436+07:00",
       "end": "2025-08-21T15:00:00.436+07:00",
       "color": "#2ecc71"
+    },
+    {
+      "id": "25",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Teen Gastric Sleeve"
+      ],
+      "start": "2025-08-25T14:40:00.916+07:00",
+      "end": "2025-08-25T15:10:00.916+07:00",
+      "color": "#f39c12"
     }
   ],
   "appointment_types": [
