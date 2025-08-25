@@ -1,5 +1,7 @@
 import styled from "styled-components";
-
+import Link from "../../assets/link-2.svg";
+import Setting from "../../assets/settings.svg";
+import Calendar from "../../assets/calendar.svg";
 export const CalendarContainer = styled.div`
   margin: 50px 0 0 70px;
   font-size: 14px;
@@ -51,7 +53,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-linkbutton-button {
     background-color: #ddd;
-    background-image: url("public/icons/link-2.svg"); /* svg icon from local assets */
+    background-image: url("${Link}"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -62,7 +64,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-settingbutton-button {
     background-color: #ddd;
-    background-image: url("public/icons/settings.svg"); /* svg icon from local assets */
+    background-image: url("${Setting}"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -73,7 +75,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-calendarbutton-button {
     background-color: #ddd;
-    background-image: url("public/icons/calendar.svg"); /* svg icon from local assets */
+    background-image: url("${Calendar}"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
