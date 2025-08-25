@@ -1,5 +1,5 @@
 // JSON Server base URL (see db.json). Run with: `npm run server` (port 4000)
-const BASE_URL = "http://localhost:4000";
+const BASE_URL = "https://json-server-io3p.onrender.com/";
 
 // Data fetching helpers for json-server endpoints.
 // Keep API calls centralized to avoid scattering fetch logic across components.
