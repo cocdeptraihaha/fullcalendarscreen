@@ -51,7 +51,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-linkbutton-button {
     background-color: #ddd;
-    background-image: url("public/link-2.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/link-2.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -62,7 +62,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-settingbutton-button {
     background-color: #ddd;
-    background-image: url("public/settings.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/settings.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -73,7 +73,7 @@ export const CalendarContainer = styled.div`
   }
   .fc-calendarbutton-button {
     background-color: #ddd;
-    background-image: url("public/calendar.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/calendar.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
