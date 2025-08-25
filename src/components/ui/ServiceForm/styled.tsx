@@ -218,3 +218,16 @@ export const SearchInput = styled.input`
   min-width: 100px;
   font-size: 16px;
 `;
+
+export const ServiceSectionTitle = styled.div`
+  font-weight: bold;
+  font-size: 16px;
+  color: #184561;
+  margin-top: 15px;
+`;
+
+export const ServiceSectionSubtitle = styled.div`
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+`;

@@ -7,7 +7,7 @@ import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 
 // Define Staff's datatype
 interface Staff {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
 }

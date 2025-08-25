@@ -32,6 +32,7 @@
     "bootstrap-icons": "^1.13.1",
     "dayjs": "^1.11.13",
     "feather-icons-react": "^0.9.0",
+    "luxon": "^3.7.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-feather": "^2.0.10",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/luxon": "^3.7.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",

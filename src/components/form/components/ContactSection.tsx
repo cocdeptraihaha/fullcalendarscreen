@@ -7,10 +7,10 @@ import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 
 export default function ContactSection() {
   const [contacts, setContacts] = useState<
-    { id: number; name: string; avatar: string }[]
+    { id: string; name: string; avatar: string }[]
   >([]);
   const [appointmentTypes, setAppointmentTypes] = useState<
-    { id: number; label: string; color: string }[]
+    { id: string; label: string; color: string }[]
   >([]);
 
   const { control, setValue } = useFormContext(); // get context from FormProvider

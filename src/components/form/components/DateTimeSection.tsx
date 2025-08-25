@@ -6,12 +6,12 @@ const DateTimeSection = () => {
   return (
     <DateTimeContainer>
       <InputContainer>
-        <InputLabel>Date</InputLabel>
+        <InputLabel>Date and time</InputLabel>
         <DatePicker name="start" placeholder="Select Date" />
       </InputContainer>
 
       <InputContainer>
-        <InputLabel>Time</InputLabel>
+        <InputLabel></InputLabel>
         <TimePicker />
       </InputContainer>
     </DateTimeContainer>

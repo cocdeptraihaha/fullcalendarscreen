@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { FC } from "react";
 import {
   AddButton,
   CancelButton,
@@ -12,133 +12,81 @@ import {
   ServiceList,
   Service,
   Checkbox,
-  TagsContainer,
   ServiceTag,
   TagRemoveBtn,
   StaffContainer,
   SearchContainer,
   SearchInput,
+  ServiceSectionTitle,
+  ServiceSectionSubtitle,
 } from "./styled";
 import { X } from "react-feather";
 import StaffSection from "../../form/components/StaffSection";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { InputContainer, InputLabel } from "../../form/components/styled";
-import { fetchServices } from "../../../services/api";
+import { FormProvider } from "react-hook-form";
 
 interface ServiceItem {
-  id: number;
+  id: string;
   name: string;
 }
 
-interface ServiceSectionProps {
-  control?: any; // Form control passed from parent
+interface ServiceFormProps {
+  open: boolean;
+  services: ServiceItem[];
+  selectedServices: string[];
+  searchTerm: string;
+  staffMethods: any;
+  onToggle: () => void;
+  onClose: (e?: React.MouseEvent) => void;
+  onAdd: (e?: React.MouseEvent) => void;
+  onServiceToggle: (serviceId: string) => void;
+  onSearchChange: (value: string) => void;
+  renderToggleContent: () => React.ReactNode;
 }
 
-const ServiceSection = ({ control }: ServiceSectionProps) => {
-  const [open, setOpen] = useState(false);
-  const [services, setServices] = useState<ServiceItem[]>([]);
-  const [selectedServices, setSelectedServices] = useState<number[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  // Get current staff and services values from main form context
-  const mainForm = useFormContext();
-  const currentStaff = mainForm?.watch("staff") || "";
-  const currentServices = mainForm?.watch("services") || [];
-
-  // Fetch services and sync selected services with form values
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const data = await fetchServices();
-        setServices(data);
-
-        // Always sync selectedServices with currentServices from form
-        if (currentServices.length > 0) {
-          const selectedIds = data
-            .filter((service) => currentServices.includes(service.name))
-            .map((service) => service.id);
-          setSelectedServices(selectedIds);
-        } else {
-          // Clear selectedServices when form is reset
-          setSelectedServices([]);
-        }
-      } catch (error) {
-        console.error("Error loading services:", error);
-      }
-    };
-    loadServices();
-  }, [currentServices]);
-
-  // Filter services based on search term
+const ServiceForm: FC<ServiceFormProps> = ({
+  open,
+  services,
+  selectedServices,
+  searchTerm,
+  staffMethods,
+  onToggle,
+  onClose,
+  onAdd,
+  onServiceToggle,
+  onSearchChange,
+  renderToggleContent,
+}) => {
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Create a temporary form context for StaffSection with current staff value
-  const methods = useForm({
-    defaultValues: {
-      staff: currentStaff, // Initialize with current staff from main form
-    },
-  });
-  const { watch } = methods;
-  const selectedStaff = watch("staff"); // Watch for staff selection
-
-  const handleServiceToggle = (serviceId: number) => {
-    setSelectedServices((prev) =>
-      prev.includes(serviceId)
-        ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId]
-    );
-    setSearchTerm("");
-  };
-
-  const handleClose = (e?: React.MouseEvent) => {
-    e?.stopPropagation(); // Prevent event bubbling
-    setOpen(false);
-  };
-
-  const handleAdd = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    
-    // Transfer selected staff to main form
-    if (mainForm && selectedStaff) {
-      mainForm.setValue("staff", selectedStaff);
-    }
-    
-    // Transfer selected services to main form
-    const selectedServiceNames = selectedServices
-      .map((id) => {
-        const service = services.find((s) => s.id === id);
-        return service?.name;
-      })
-      .filter(Boolean);
-    
-    if (mainForm) {
-      console.log("Setting services:", selectedServiceNames);
-      mainForm.setValue("services", selectedServiceNames);
-      // Trigger form validation/update
-      mainForm.trigger("services");
-      console.log("Form values after setting services:", mainForm.getValues());
-    }
-    
-    setOpen(false);
-  };
-
   return (
-    <InputContainer>
-      <InputLabel>Service</InputLabel>
+    <>
+      <ServiceModalToggle onClick={onToggle}>
+        {renderToggleContent()}
+      </ServiceModalToggle>
 
-      <ServiceModalToggle
-        onClick={() => {
-          // Reset form with current staff value when opening modal
-          const staffValue = mainForm?.getValues("staff") || "";
-          methods.reset({ staff: staffValue });
-          setOpen(true);
-        }}
-      >
-        {/* Display selected services as tags inside toggle */}
-        {selectedServices.length > 0 ? (
-          <TagsContainer>
+      {open && (
+        <ServiceModal onClick={(e) => e.stopPropagation()}>
+          <ServiceModalHeader>
+            <ServiceModalTitle>Choose Services</ServiceModalTitle>
+            <CloseBtn onClick={onClose}>
+              <X color="#184561" />
+            </CloseBtn>
+          </ServiceModalHeader>
+
+          <StaffContainer>
+            <FormProvider {...staffMethods}>
+              <StaffSection />
+            </FormProvider>
+          </StaffContainer>
+
+          <ServiceSectionTitle>Services interested in</ServiceSectionTitle>
+          <ServiceSectionSubtitle>
+            Choose the service that the user is interested in
+          </ServiceSectionSubtitle>
+
+          <SearchContainer>
             {selectedServices.map((serviceId) => {
               const service = services.find((s) => s.id === serviceId);
               return service ? (
@@ -147,7 +95,7 @@ const ServiceSection = ({ control }: ServiceSectionProps) => {
                   <TagRemoveBtn
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleServiceToggle(serviceId);
+                      onServiceToggle(serviceId);
                     }}
                   >
                     ×
@@ -155,94 +103,40 @@ const ServiceSection = ({ control }: ServiceSectionProps) => {
                 </ServiceTag>
               ) : null;
             })}
-          </TagsContainer>
-        ) : (
-          <span style={{ color: "#999", padding: "10px" }}>
-            Select services...
-          </span>
-        )}
-        {open && (
-          <ServiceModal onClick={(e) => e.stopPropagation()}>
-            <ServiceModalHeader>
-              <ServiceModalTitle>Choose Services</ServiceModalTitle>
-              <CloseBtn onClick={(e) => handleClose(e)}>
-                <X color="#184561" />
-              </CloseBtn>
-            </ServiceModalHeader>
-            <StaffContainer>
-              <FormProvider {...methods}>
-                <StaffSection />
-              </FormProvider>
-            </StaffContainer>
+            <SearchInput
+              type="text"
+              placeholder="Search services..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+          </SearchContainer>
 
-            <div
-              style={{
-                fontWeight: "bold",
-                fontSize: "16px",
-                color: "#184561",
-                marginTop: "15px",
-              }}
-            >
-              Services interested in
-            </div>
-            <div
-              style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}
-            >
-              Choose the service that the user is interested in
-            </div>
+          <ServiceMenu>
+            <ServiceList>
+              {filteredServices.map((service) => (
+                <Service
+                  key={service.id}
+                  onClick={() => onServiceToggle(service.id)}
+                >
+                  <Checkbox
+                    type="checkbox"
+                    checked={selectedServices.includes(service.id)}
+                    readOnly
+                  />
+                  {service.name}
+                </Service>
+              ))}
+            </ServiceList>
+          </ServiceMenu>
 
-            <SearchContainer>
-              {selectedServices.map((serviceId) => {
-                const service = services.find((s) => s.id === serviceId);
-                return service ? (
-                  <ServiceTag key={serviceId}>
-                    {service.name}
-                    <TagRemoveBtn
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleServiceToggle(serviceId);
-                      }}
-                    >
-                      ×
-                    </TagRemoveBtn>
-                  </ServiceTag>
-                ) : null;
-              })}
-              <SearchInput
-                type="text"
-                placeholder="Search services..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </SearchContainer>
-
-            <ServiceMenu>
-              <ServiceList>
-                {filteredServices.map((service) => (
-                  <Service
-                    key={service.id}
-                    onClick={() => handleServiceToggle(service.id)}
-                  >
-                    <Checkbox
-                      type="checkbox"
-                      checked={selectedServices.includes(service.id)}
-                      onChange={(e) => e.stopPropagation()} // Prevent double toggle
-                    />
-                    {service.name}
-                  </Service>
-                ))}
-              </ServiceList>
-            </ServiceMenu>
-            <ServiceFormFotter>
-              <CancelButton onClick={(e) => handleClose(e)}>
-                Cancel
-              </CancelButton>
-              <AddButton onClick={(e) => handleAdd(e)}>Add Services</AddButton>
-            </ServiceFormFotter>
-          </ServiceModal>
-        )}
-      </ServiceModalToggle>
-    </InputContainer>
+          <ServiceFormFotter>
+            <CancelButton onClick={onClose}>Cancel</CancelButton>
+            <AddButton onClick={onAdd}>Add Services</AddButton>
+          </ServiceFormFotter>
+        </ServiceModal>
+      )}
+    </>
   );
 };
-export default ServiceSection;
+
+export default ServiceForm;

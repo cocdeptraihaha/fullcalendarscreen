@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import { Minus } from "react-feather";
 import {
@@ -9,10 +9,9 @@ import {
   TimeOption,
 } from "./styled";
 
-interface TimePickerComponentProps {
-  name: string;
-  placeholder?: string;
-}
+// Utils
+const formatTime = (hour: number, minute: number) =>
+  `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
 
 const formatTimeDisplay = (hour: number, minute: number) => {
   const period = hour >= 12 ? "PM" : "AM";
@@ -22,90 +21,68 @@ const formatTimeDisplay = (hour: number, minute: number) => {
     .padStart(2, "0")} ${period}`;
 };
 
-const getDefaultStartTime = () => {
-  const now = new Date();
-  const minutes = now.getMinutes();
-  const roundedMinutes = Math.ceil(minutes / 5) * 5;
-  const hour = roundedMinutes >= 60 ? now.getHours() + 1 : now.getHours();
-  const finalMinutes = roundedMinutes >= 60 ? 0 : roundedMinutes;
-  return `${hour.toString().padStart(2, "0")}:${finalMinutes
-    .toString()
-    .padStart(2, "0")}`;
+const addMinutes = (timeStr: string, minutes: number) => {
+  const [hour, minute] = timeStr.split(":").map(Number);
+  const totalMinutes = hour * 60 + minute + minutes;
+  const newHour = Math.floor(totalMinutes / 60) % 24;
+  const newMinute = totalMinutes % 60;
+  return formatTime(newHour, newMinute);
 };
 
-const getDefaultEndTime = (startTime: string) => {
-  const [hour, minute] = startTime.split(":").map(Number);
-  const totalMinutes = hour * 60 + minute + 30;
-  const endHour = Math.floor(totalMinutes / 60) % 24;
-  const endMinute = totalMinutes % 60;
-  return `${endHour.toString().padStart(2, "0")}:${endMinute
-    .toString()
-    .padStart(2, "0")}`;
+const getToday = () => new Date().toISOString().split("T")[0];
+
+const parseDateTime = (dateTime: string) => {
+  if (!dateTime?.includes("T")) return { date: getToday(), time: "" };
+  const [date, timeWithSeconds] = dateTime.split("T");
+  const time = timeWithSeconds?.substring(0, 5) || "";
+  return { date, time };
 };
 
-const generateTimeOptions = () => {
-  const options = [];
-  for (let hour = 8; hour < 20; hour++) {
-    for (let minute = 0; minute < 60; minute += 5) {
-      const timeStr = `${hour.toString().padStart(2, "0")}:${minute
-        .toString()
-        .padStart(2, "0")}`;
-      const displayTime = formatTimeDisplay(hour, minute);
-      options.push({ value: timeStr, display: displayTime });
-    }
-  }
-  return options;
-};
+interface TimePickerComponentProps {
+  name: "start" | "end";
+}
 
 function TimePickerComponent({ name }: TimePickerComponentProps) {
-  const { control, watch, setValue } = useFormContext();
+  const { control, setValue } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const startValue = watch("start");
-
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    if (name === "start" && !startValue) {
-      const defaultStart = getDefaultStartTime();
-      setValue("start", `${today}T${defaultStart}:00`);
-    } else if (name === "end" && startValue && !watch("end")) {
-      const startTime = startValue.split("T")[1]?.substring(0, 5);
-      if (startTime) {
-        const defaultEnd = getDefaultEndTime(startTime);
-        setValue("end", `${today}T${defaultEnd}:00`);
+  // Generate time options (8AM - 8PM, 5min intervals)
+  const timeOptions = useMemo(() => {
+    const options = [];
+    for (let hour = 8; hour < 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 5) {
+        const timeStr = formatTime(hour, minute);
+        const display = formatTimeDisplay(hour, minute);
+        options.push({ value: timeStr, display });
       }
     }
-  }, [name, startValue, setValue, watch]);
+    return options;
+  }, []);
 
+  // Close dropdown on outside click
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRef.current &&
         !wrapperRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
-    }
-
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const timeOptions = generateTimeOptions();
 
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => {
-        const dateTime = field.value || "";
-        const timeValue = dateTime.includes("T")
-          ? dateTime.split("T")[1]?.substring(0, 5)
-          : "";
-        const displayTime = timeValue
+        const { date, time } = parseDateTime(field.value);
+        const displayTime = time
           ? (() => {
-              const [hour, minute] = timeValue.split(":").map(Number);
+              const [hour, minute] = time.split(":").map(Number);
               return formatTimeDisplay(hour, minute);
             })()
           : "";
@@ -114,13 +91,12 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
           value: string;
           display: string;
         }) => {
-          const date =
-            dateTime.split("T")[0] || new Date().toISOString().split("T")[0];
           field.onChange(`${date}T${timeObj.value}:00`);
 
+          // Auto-update end time when start time changes
           if (name === "start") {
-            const defaultEnd = getDefaultEndTime(timeObj.value);
-            setValue("end", `${date}T${defaultEnd}:00`);
+            const newEndTime = addMinutes(timeObj.value, 30);
+            setValue("end", `${date}T${newEndTime}:00`);
           }
 
           setIsOpen(false);
@@ -129,14 +105,14 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
         return (
           <TimePickerWrapper ref={wrapperRef}>
             <TimeInput onClick={() => setIsOpen(!isOpen)}>
-              {displayTime}
+              {displayTime || "Select time"}
             </TimeInput>
             {isOpen && (
               <TimeDropdown>
                 {timeOptions.map((timeObj) => (
                   <TimeOption
                     key={timeObj.value}
-                    isSelected={timeObj.value === timeValue}
+                    isSelected={timeObj.value === time}
                     onClick={() => handleTimeSelect(timeObj)}
                   >
                     {timeObj.display}

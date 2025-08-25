@@ -49,8 +49,8 @@ export const updateAppointment = async (
   id: string,
   appointment: any
 ): Promise<any> => {
-  // Ensure appointment has the correct ID
-  const appointmentWithId = { ...appointment, id: Number(id) };
+  // Keep ID as string to match database format
+  const appointmentWithId = { ...appointment, id };
   const res = await fetch(`${BASE_URL}/appointments/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

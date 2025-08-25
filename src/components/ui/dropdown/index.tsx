@@ -25,7 +25,6 @@ const Dropdown: FC<DropdownProps> = ({
   renderTitle,
   Items = [],
   onChange,
-  value,
 }) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

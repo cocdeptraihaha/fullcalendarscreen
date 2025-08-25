@@ -2,6 +2,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { appointmentSchema } from "../../utils/validationSchema";
 import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
 import {
   FormContainer,
   FormModal,
@@ -22,7 +23,7 @@ import DateTimeSection from "./components/DateTimeSection";
 import { Video, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { closeForm } from "../../store/formSlice";
+import { clearEventData, closeForm } from "../../store/formSlice";
 import ServiceSection from "./components/ServiceSection";
 import {
   createAppointment,
@@ -43,64 +44,87 @@ type FormFields = {
   color: string;
 };
 
+// Default time utils
+const getCurrentDateTime = () => {
+  const dt = DateTime.now();
+  const minutes = dt.minute;
+  let rounded = Math.ceil(minutes / 5) * 5;
+  if (rounded === 60) {
+    return dt.plus({ hours: 1 }).set({ minute: 0, second: 0 }).toISO();
+  }
+
+  return dt.set({ minute: rounded, second: 0 }).toISO();
+};
+
+const addMinutesToDateTime = (dateTime: string, minutes: number) => {
+  // Parse ISO string with offset, then add minutes
+  return DateTime.fromISO(dateTime).plus({ minutes }).toISO() || "";
+};
+
 function Form() {
+  const currentDateTime = getCurrentDateTime();
+  const defaultVal: FormFields = {
+    id: "",
+    title: "",
+    type: "",
+    contact: "",
+    staff: "",
+    services: [],
+    start: currentDateTime,
+    end: addMinutesToDateTime(currentDateTime, 30),
+    color: "",
+  };
   const [loading, setLoading] = useState(false);
   const { open, eventData } = useSelector((state: RootState) => state.form);
   const dispatch = useDispatch();
 
   const handleClose = () => {
+    dispatch(clearEventData());
     dispatch(closeForm());
   };
 
   // Initialize react-hook-form with validation
   const methods = useForm<FormFields>({
     resolver: yupResolver(appointmentSchema),
-    defaultValues: {
-      id: "",
-      title: "",
-      type: "",
-      contact: "",
-      staff: "",
-      services: [],
-      start: "",
-      end: "",
-      color: "",
-    },
+    defaultValues: { ...defaultVal },
   });
-  const { register, reset, handleSubmit, watch, formState: { errors } } = methods;
-  
+  const {
+    register,
+    reset,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = methods;
+
   // Watch the ID field to determine edit mode dynamically
   const currentId = watch("id");
   const isEditMode = Boolean(currentId);
 
   useEffect(() => {
     if (open) {
-      if (eventData && Object.keys(eventData).length > 0) {
-        console.log("Setting form data:", eventData);
-        reset(eventData); // populate form with eventData when available
-      } else {
+      if (eventData && eventData.id) {
+        // Check có ID = edit mode
+        reset(eventData);
+        console.log(eventData);
+      } else if (eventData && eventData.start && !eventData.id) {
         reset({
-          id: "",
-          title: "",
-          type: "",
-          contact: "",
-          staff: "",
-          services: [],
-          start: "",
-          end: "",
-          color: "",
-        }); // reset to default values for new appointment
+          ...defaultVal,
+          start: eventData.start,
+          end: eventData.end,
+        });
+        console.log(eventData);
+      } else {
+        reset({ ...defaultVal }); // Always reset for new appointment
+        console.log(defaultVal);
       }
     }
-  }, [open, eventData, reset]);
+  }, [open, eventData]);
 
   const onSubmit = handleSubmit(async (data: FormFields) => {
     setLoading(true);
-    console.log("Form data being submitted:", data);
     try {
-      console.log("isEditMode:", isEditMode, "data.id:", data.id);
-      if (data.id && data.id !== "") {
-        await updateAppointment(String(data.id), data);
+      if (eventData?.id) {
+        await updateAppointment(eventData.id, data);
         alert("Appointment updated successfully!");
       } else {
         const newId = await generateAppointmentId();
@@ -108,10 +132,9 @@ function Form() {
         await createAppointment(newAppointment);
         alert("Appointment created successfully!");
       }
-      reset();
+      reset({ ...defaultVal });
       dispatch(closeForm());
     } catch (error) {
-      console.error("Error saving appointment:", error);
       alert("Error saving appointment");
     } finally {
       setLoading(false);
@@ -124,11 +147,10 @@ function Form() {
     if (confirm("Are you sure you want to delete this appointment?")) {
       setLoading(true);
       try {
-        await deleteAppointment(String(eventData.id));
+        await deleteAppointment(eventData.id);
         alert("Appointment deleted successfully!");
         dispatch(closeForm());
       } catch (error) {
-        console.error("Error deleting appointment:", error);
         alert("Error deleting appointment");
       } finally {
         setLoading(false);
@@ -149,11 +171,17 @@ function Form() {
                   type="text"
                   placeholder="Add Title"
                   style={{
-                    borderColor: errors.title ? "#e74c3c" : "#ddd"
+                    borderColor: errors.title ? "#e74c3c" : "#ddd",
                   }}
                 />
                 {errors.title && (
-                  <div style={{ color: "#e74c3c", fontSize: "12px", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      color: "#e74c3c",
+                      fontSize: "12px",
+                      marginTop: "4px",
+                    }}
+                  >
                     {errors.title.message}
                   </div>
                 )}

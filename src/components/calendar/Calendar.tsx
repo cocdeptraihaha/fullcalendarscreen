@@ -82,47 +82,29 @@ export default function Calendar() {
 
   // Transform server appointments into FullCalendar EventInput format
   // FullCalendar expects specific properties, so we map our data structure
-  const events = appointments?.map(
-    (apt: {
-      id: string;
-      contact: string;
-      services: string[];
-      start: string;
-      end: string;
-      color: string;
-      type: string;
-      staff: string;
-    }) => ({
-      id: String(apt.id),
-      title: `${apt.type} Appointment`, // Display title on calendar
-      start: apt.start, // ISO date string for start time
-      end: apt.end, // ISO date string for end time
-      backgroundColor: apt.color, // Visual color coding
-      extendedProps: {
-        // Custom data accessible in event handlers
-        contact: apt.contact,
-        type: apt.type,
-        staff: apt.staff,
-        service: apt.services,
-      },
-    })
-  );
+  const events = appointments?.map((apt: Appointment) => ({
+    id: apt.id,
+    title: `${apt.type} Appointment`, // Display title on calendar
+    start: apt.start, // ISO date string for start time
+    end: apt.end, // ISO date string for end time
+    backgroundColor: apt.color, // Visual color coding
+    extendedProps: {
+      // Custom data accessible in event handlers
+      contact: apt.contact,
+      type: apt.type,
+      staff: apt.staff,
+      service: apt.services,
+    },
+  }));
 
   function handleDateSelect(selectInfo: any) {
-    console.log("Date selected:", selectInfo);
-    // Convert to local timezone format
-    const startDate = new Date(selectInfo.start);
-    const endDate = new Date(selectInfo.end);
-
-    const formatLocalDateTime = (date: Date, hour = 9) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const hourStr = String(hour).padStart(2, "0");
-      return `${year}-${month}-${day}T${hourStr}:00:00`;
-    };
-
-    dispatch(openForm({}));
+    dispatch(clearEventData());
+    dispatch(
+      openForm({
+        start: `${selectInfo.startStr}T09:00:00`,
+        end: `${selectInfo.endStr}T09:30:00`,
+      })
+    );
   }
 
   function handleEventClick(clickInfo: any) {
@@ -132,7 +114,7 @@ export default function Calendar() {
     // This populates the form with existing appointment data
     dispatch(
       openForm({
-        id: event.id, // Include ID for edit mode
+        id: event.id, // Keep as string
         title: event.title,
         type: event.extendedProps.type, // Custom data from extendedProps
         contact: event.extendedProps.contact,
@@ -158,20 +140,7 @@ export default function Calendar() {
           newappointment: {
             text: "New Appointment",
             click: function () {
-              const now = new Date();
-              const formatCurrentDateTime = () => {
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, "0");
-                const day = String(now.getDate()).padStart(2, "0");
-                return `${year}-${month}-${day}T09:00:00`;
-              };
-
-              dispatch(
-                openForm({
-                  start: formatCurrentDateTime(),
-                  end: formatCurrentDateTime().replace("09:00:00", "09:30:00"),
-                })
-              );
+              dispatch(openForm({}));
             },
           },
           linkbutton: {
