@@ -129,7 +129,7 @@ Error generating stack: `+a.message+`
   }
 `,CR=ee.div`
   background-color: #fff;
-  background-image: url("public/plus.svg"); /* svg icon from local assets */
+  background-image: url("public/icons/plus.svg"); /* svg icon from local assets */
   background-repeat: no-repeat;
   background-position: center;
   background-size: 17px;
@@ -237,7 +237,7 @@ Error generating stack: `+a.message+`
   }
   .fc-linkbutton-button {
     background-color: #ddd;
-    background-image: url("public/link-2.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/link-2.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -248,7 +248,7 @@ Error generating stack: `+a.message+`
   }
   .fc-settingbutton-button {
     background-color: #ddd;
-    background-image: url("public/settings.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/settings.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
@@ -259,7 +259,7 @@ Error generating stack: `+a.message+`
   }
   .fc-calendarbutton-button {
     background-color: #ddd;
-    background-image: url("public/calendar.svg"); /* svg icon from local assets */
+    background-image: url("public/icons/calendar.svg"); /* svg icon from local assets */
     background-repeat: no-repeat;
     background-position: center;
     background-size: 17px;
