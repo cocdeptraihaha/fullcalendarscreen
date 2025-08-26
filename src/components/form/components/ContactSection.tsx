@@ -1,29 +1,48 @@
-import { useEffect, useState } from "react";
 import Dropdown from "../../ui/dropdown";
-import { fetchContacts, fetchAppointmentTypes } from "../../../services/api";
 import { InputContainer, InputLabel, ContactContainer } from "./styled";
+import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
+import { useContacts, useAppointmentTypes } from "../../../hooks/useFormData";
+import { useCallback } from "react";
 
 export default function ContactSection() {
-  const [contacts, setContacts] = useState<
-    { id: string; name: string; avatar: string }[]
-  >([]);
-  const [appointmentTypes, setAppointmentTypes] = useState<
-    { id: string; label: string; color: string }[]
-  >([]);
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
+  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
+  const { data: appointmentTypes = [], isLoading: typesLoading } =
+    useAppointmentTypes();
 
-  const { control, setValue } = useFormContext(); // get context from FormProvider
+  // Memoize contact change handler
+  const handleContactChange = useCallback(
+    (val: any, field: any) => {
+      const selectedContact = contacts.find((c) => c.id === val);
+      field.onChange(selectedContact?.name);
+    },
+    [contacts]
+  );
 
-  useEffect(() => {
-    fetchContacts().then(setContacts).catch(console.error);
-    fetchAppointmentTypes().then(setAppointmentTypes).catch(console.error);
-  }, []);
+  // Memoize appointment type change handler
+  const handleTypeChange = useCallback(
+    (val: any, field: any) => {
+      const selectedType = appointmentTypes.find((t) => t.id === val);
+      field.onChange(selectedType?.label);
+      setValue("color", selectedType?.color);
+      setValue("title", `${selectedType?.label} Appointment`);
+    },
+    [appointmentTypes, setValue]
+  );
 
   return (
     <ContactContainer>
       <InputContainer>
-        <InputLabel>Search Contact</InputLabel>
+        {(!errors.contact && <InputLabel>Search Contact</InputLabel>) ||
+          (errors.contact && (
+            <ErrorMessage>{(errors.contact as any)?.message}</ErrorMessage>
+          ))}
         <Controller
           control={control}
           name="contact"
@@ -32,14 +51,12 @@ export default function ContactSection() {
               hasSearch={1}
               Items={contacts}
               value={field.value}
-              onChange={(val: any) => {
-                // Find selected contact by ID and update form with contact name
-                const selectedContact = contacts.find((c) => c.id === val);
-                field.onChange(selectedContact?.name); // Store name, not ID
-              }}
+              onChange={(val: any) => handleContactChange(val, field)}
               renderTitle={() => (
                 <>
-                  {field.value ? (
+                  {contactsLoading ? (
+                    "Loading contacts..."
+                  ) : field.value ? (
                     <>
                       <StyledDropdownAvatar
                         src={
@@ -60,23 +77,34 @@ export default function ContactSection() {
       </InputContainer>
 
       <InputContainer>
-        <InputLabel>Appointment Type</InputLabel>
+        {(!errors.type && <InputLabel>Appointment Type</InputLabel>) ||
+          (errors.type && (
+            <ErrorMessage>{(errors.type as any)?.message}</ErrorMessage>
+          ))}
+
         <Controller
           control={control}
           name="type"
-          render={({ field }) => (
-            <Dropdown
-              Items={appointmentTypes}
-              value={field.value}
-              onChange={(val: any) => {
-                const selectedType = appointmentTypes.find((t) => t.id === val);
-                field.onChange(selectedType?.label); // Update type field
-                setValue("color", selectedType?.color); // Auto-set color based on type
-                setValue("title", `${selectedType?.label} Appointment`); // Auto-generate title
-              }}
-              renderTitle={() => <>{field.value || "Appointment Type"}</>}
-            />
-          )}
+          render={({ field }) => {
+            // Find current type by label to get ID for dropdown value
+            const currentType = appointmentTypes.find(
+              (t) => t.label === field.value
+            );
+            return (
+              <Dropdown
+                Items={appointmentTypes}
+                value={currentType?.id || ""}
+                onChange={(val: any) => handleTypeChange(val, field)}
+                renderTitle={() => (
+                  <>
+                    {typesLoading
+                      ? "Loading types..."
+                      : field.value || "Appointment Type"}
+                  </>
+                )}
+              />
+            );
+          }}
         />
       </InputContainer>
     </ContactContainer>

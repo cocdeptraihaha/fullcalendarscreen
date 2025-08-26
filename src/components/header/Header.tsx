@@ -1,13 +1,12 @@
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import { useState } from "react";
-import * as S from './Header.styled';
-import { menuItems } from './HeaderConstants';
-
+import { useState, useCallback } from "react";
+import * as S from "./Header.styled";
+import { menuItems } from "./HeaderConstants";
 
 export default function Header() {
   const [active, setActive] = useState("Calendar");
-  const handleClick = (item:string) =>
-  {setActive(item)}
+  const handleClick = useCallback((item: string) => {
+    setActive(item);
+  }, []);
   return (
     <S.Container>
       <S.NavbarContainer>
@@ -24,14 +23,13 @@ export default function Header() {
       </S.NavbarContainer>
 
       <S.RightContainer>
-        <S.AddButton/>
+        <S.AddButton />
         <S.SearchBox>
           <S.SearchIcon className="fa fa-search" />
           <S.SearchInput type="text" placeholder="Search Contact" />
         </S.SearchBox>
         <S.AvatarContainer></S.AvatarContainer>
       </S.RightContainer>
-
     </S.Container>
-  )
+  );
 }

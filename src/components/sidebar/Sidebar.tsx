@@ -4,15 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { setView } from "../../store/calendarSlice";
 import { RootState } from '../../store/store';
 import { Calendar } from 'react-feather';
+import { useCallback } from 'react';
 
 export default function Sidebar() {
   const dispatch = useDispatch();
   const active = useSelector((state: RootState) => state.calendar.view)
   // When a view item is clicked, dispatch the new view to Redux.
   // The Calendar component listens to this and updates FullCalendar via ref.
-  const handleClick = (value: string) => {
+  const handleClick = useCallback((value: string) => {
     dispatch(setView(value));
-  };
+  }, [dispatch]);
   return (
     <S.SidebarContainer>
       <S.ContentContainer>

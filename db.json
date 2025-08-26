@@ -9,8 +9,8 @@
       "services": [
         "Low BMI Gastric Sleeve"
       ],
-      "start": "2025-08-30T16:00:00",
-      "end": "2025-08-30T16:30:00",
+      "start": 1756641600000,
+      "end": 1756643400000,
       "color": "#f39c12"
     },
     {
@@ -23,8 +23,8 @@
         "Teen Gastric Sleeve",
         "Gastric Bypass Revision"
       ],
-      "start": "2025-08-24T14:30:00",
-      "end": "2025-08-24T15:00:00",
+      "start": 1756123800000,
+      "end": 1756125600000,
       "color": "#f39c12"
     },
     {
@@ -37,8 +37,8 @@
         "Expedited Gastric Sleeve",
         "Teen Gastric Sleeve"
       ],
-      "start": "2025-08-26T16:30:00",
-      "end": "2025-08-26T17:00:00",
+      "start": 1756296600000,
+      "end": 1756298400000,
       "color": "#f39c12"
     },
     {
@@ -52,39 +52,9 @@
         "Teen Gastric Sleeve",
         "Gastric Balloon"
       ],
-      "start": "2025-08-31T16:45:00",
-      "end": "2025-08-31T17:15:00",
+      "start": 1756728900000,
+      "end": 1756730700000,
       "color": "#f39c12"
-    },
-    {
-      "id": "16",
-      "title": "Follow-up Appointment",
-      "type": "Follow-up",
-      "contact": "Yari Maldonado",
-      "staff": "Dr. Reza Keshavarzi",
-      "services": [
-        "Expedited Gastric Sleeve",
-        "Teen Gastric Sleeve",
-        "Gastric Balloon"
-      ],
-      "start": "2025-08-23T09:00:00",
-      "end": "2025-08-23T10:55:00",
-      "color": "#f39c12"
-    },
-    {
-      "id": "17",
-      "title": "Procedure Appointment",
-      "type": "Procedure",
-      "contact": "Yari Maldonado",
-      "staff": "Dr. Reza Keshavarzi",
-      "services": [
-        "Expedited Gastric Sleeve",
-        "Teen Gastric Sleeve",
-        "I am Not Sure"
-      ],
-      "start": "2025-08-27T08:40:00+07:00",
-      "end": "2025-08-27T20:15:00+07:00",
-      "color": "#e91e63"
     },
     {
       "id": "20",
@@ -94,39 +64,13 @@
       "staff": "Dr. Sarah Johnson",
       "services": [
         "Expedited Gastric Sleeve",
-        "Low BMI Gastric Sleeve"
-      ],
-      "start": "2025-08-14T10:55:00+07:00",
-      "end": "2025-08-14T11:25:00",
-      "color": "#e91e63"
-    },
-    {
-      "id": "21",
-      "title": "NEW Weight Loss Consultation Appointment",
-      "type": "NEW Weight Loss Consultation",
-      "contact": "Yari Maldonado",
-      "staff": "Dr. Reza Keshavarzi",
-      "services": [
-        "Expedited Gastric Sleeve",
+        "Low BMI Gastric Sleeve",
         "Teen Gastric Sleeve",
-        "Gastric Balloon"
+        "Gastric Bypass Revision"
       ],
-      "start": "2025-08-25T08:15:00",
-      "end": "2025-08-25T09:30:00",
-      "color": "#1abc9c"
-    },
-    {
-      "id": "22",
-      "title": "NEW Weight Loss Consultation Appointment",
-      "type": "NEW Weight Loss Consultation",
-      "contact": "Yari Maldonado",
-      "staff": "Pilotpractice Support",
-      "services": [
-        "Expedited Gastric Sleeve"
-      ],
-      "start": "2025-08-13T11:30:00+07:00",
-      "end": "2025-08-13T12:00:00+07:00",
-      "color": "#1abc9c"
+      "start": 1755178500000,
+      "end": 1755180300000,
+      "color": "#e91e63"
     },
     {
       "id": "23",
@@ -139,24 +83,135 @@
         "Teen Gastric Sleeve",
         "Weight Loss Injections"
       ],
-      "start": "2025-08-26T11:30:00",
-      "end": "2025-08-26T12:00:00",
+      "start": 1756278600000,
+      "end": 1756280400000,
       "color": "#f39c12"
     },
     {
-      "id": "24",
-      "title": "Consultation Appointment",
-      "type": "Consultation",
-      "contact": "Julie at PilotPractice",
+      "id": "25",
+      "title": "NEW Weight Loss Consultation Appointment",
+      "type": "NEW Weight Loss Consultation",
+      "contact": "IL Rockford",
       "staff": "Dr. Reza Keshavarzi",
       "services": [
         "Expedited Gastric Sleeve",
         "Teen Gastric Sleeve",
         "Gastric Balloon"
       ],
-      "start": "2025-08-21T14:30:00.436+07:00",
-      "end": "2025-08-21T15:00:00.436+07:00",
-      "color": "#2ecc71"
+      "start": 1756183800000,
+      "end": 1756185600000,
+      "color": "#1abc9c"
+    },
+    {
+      "id": "26",
+      "title": "Procedure Appointment",
+      "type": "Procedure",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve"
+      ],
+      "start": 1755752400000,
+      "end": 1755754200000,
+      "color": "#e91e63"
+    },
+    {
+      "id": "27",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Gastric Balloon",
+        "Teen Gastric Sleeve"
+      ],
+      "start": 1755147900000,
+      "end": 1755149700000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "28",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve"
+      ],
+      "start": 1755234300000,
+      "end": 1755236100000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "29",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Teen Gastric Sleeve",
+        "Expedited Gastric Sleeve"
+      ],
+      "start": 1755324300000,
+      "end": 1755326100000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "30",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Gastric Balloon"
+      ],
+      "start": 1756188900000,
+      "end": 1756190700000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "31",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Reza Keshavarzi",
+      "services": [
+        "Teen Gastric Sleeve"
+      ],
+      "start": 1754461500000,
+      "end": 1754463300000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "32",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Lucia Teran",
+      "services": [
+        "Expedited Gastric Sleeve",
+        "Teen Gastric Sleeve",
+        "Gastric Balloon"
+      ],
+      "start": 1754729100000,
+      "end": 1754730900000,
+      "color": "#f39c12"
+    },
+    {
+      "id": "33",
+      "title": "Follow-up Appointment",
+      "type": "Follow-up",
+      "contact": "Yari Maldonado",
+      "staff": "Dr. Michael Chen",
+      "services": [
+        "Gastric Bypass Revision"
+      ],
+      "start": 1756457400000,
+      "end": 1756459200000,
+      "color": "#f39c12"
     }
   ],
   "appointment_types": [
@@ -297,6 +352,128 @@
     {
       "id": "8",
       "name": "I am Not Sure"
+    }
+  ],
+  "staff_services": [
+    {
+      "id": "1",
+      "staff_id": "1",
+      "service_id": "8"
+    },
+    {
+      "id": "2",
+      "staff_id": "2",
+      "service_id": "1"
+    },
+    {
+      "id": "3",
+      "staff_id": "2",
+      "service_id": "2"
+    },
+    {
+      "id": "4",
+      "staff_id": "2",
+      "service_id": "3"
+    },
+    {
+      "id": "5",
+      "staff_id": "3",
+      "service_id": "1"
+    },
+    {
+      "id": "6",
+      "staff_id": "3",
+      "service_id": "2"
+    },
+    {
+      "id": "7",
+      "staff_id": "3",
+      "service_id": "3"
+    },
+    {
+      "id": "8",
+      "staff_id": "7",
+      "service_id": "2"
+    },
+    {
+      "id": "9",
+      "staff_id": "7",
+      "service_id": "5"
+    },
+    {
+      "id": "10",
+      "staff_id": "7",
+      "service_id": "7"
+    },
+    {
+      "id": "11",
+      "staff_id": "8",
+      "service_id": "7"
+    },
+    {
+      "id": "12",
+      "staff_id": "6",
+      "service_id": "4"
+    },
+    {
+      "id": "13",
+      "staff_id": "6",
+      "service_id": "5"
+    },
+    {
+      "id": "14",
+      "staff_id": "9",
+      "service_id": "6"
+    },
+    {
+      "id": "15",
+      "staff_id": "4",
+      "service_id": "1"
+    },
+    {
+      "id": "16",
+      "staff_id": "4",
+      "service_id": "6"
+    },
+    {
+      "id": "17",
+      "staff_id": "5",
+      "service_id": "2"
+    },
+    {
+      "id": "18",
+      "staff_id": "5",
+      "service_id": "3"
+    },
+    {
+      "id": "19",
+      "staff_id": "8",
+      "service_id": "5"
+    },
+    {
+      "id": "20",
+      "staff_id": "9",
+      "service_id": "4"
+    },
+    {
+      "id": "21",
+      "staff_id": "6",
+      "service_id": "1"
+    },
+    {
+      "id": "22",
+      "staff_id": "3",
+      "service_id": "6"
+    },
+    {
+      "id": "23",
+      "staff_id": "7",
+      "service_id": "1"
+    },
+    {
+      "id": "24",
+      "staff_id": "2",
+      "service_id": "8"
     }
   ]
 }

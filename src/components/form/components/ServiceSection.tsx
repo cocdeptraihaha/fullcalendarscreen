@@ -1,22 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { InputContainer, InputLabel } from "./styled";
-import { fetchServices } from "../../../services/api";
+import { ErrorMessage } from "../Form.styled";
 import { useForm, useFormContext } from "react-hook-form";
+import {
+  useStaff,
+  useServicesByStaff,
+  useServices,
+} from "../../../hooks/useFormData";
 import ServiceForm from "../../ui/ServiceForm";
-import { TagsContainer, ServiceTag, TagRemoveBtn } from "../../ui/ServiceForm/styled";
-
-interface ServiceItem {
-  id: string;
-  name: string;
-}
+import {
+  TagsContainer,
+  ServiceTag,
+  TagRemoveBtn,
+} from "../../ui/ServiceForm/styled";
 
 const ServiceSection = () => {
   const [open, setOpen] = useState(false);
-  const [services, setServices] = useState<ServiceItem[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const mainForm = useFormContext();
+  const {
+    formState: { errors },
+  } = mainForm;
   const currentStaff = mainForm?.watch("staff") || "";
   const currentServices = mainForm?.watch("services") || [];
 
@@ -26,18 +32,19 @@ const ServiceSection = () => {
   });
   const selectedStaff = staffMethods.watch("staff");
 
-  // Fetch services once
-  useEffect(() => {
-    const loadServices = async () => {
-      try {
-        const data = await fetchServices();
-        setServices(data);
-      } catch (error) {
-        // Handle error silently
-      }
-    };
-    loadServices();
-  }, []);
+  // TanStack Query hooks
+  const { data: allStaff = [], isLoading: staffLoading } = useStaff();
+  const { data: allServices = [], isLoading: servicesLoading } = useServices();
+
+  // Find staff ID by name
+  const staff = allStaff.find((s: any) => s.name === selectedStaff);
+  const { data: staffServices = [] } = useServicesByStaff(staff?.id || "");
+
+  // Use staff services if staff selected, otherwise all services
+  const services = useMemo(
+    () => (selectedStaff ? staffServices : allServices),
+    [selectedStaff, staffServices, allServices]
+  );
 
   // Sync selected services with form values
   useEffect(() => {
@@ -53,46 +60,56 @@ const ServiceSection = () => {
     }
   }, [currentServices, services]);
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     const staffValue = mainForm?.getValues("staff") || "";
     staffMethods.reset({ staff: staffValue });
     setOpen(true);
-  };
+  }, [mainForm, staffMethods]);
 
-  const handleClose = (e?: React.MouseEvent) => {
+  const handleClose = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation();
     setOpen(false);
-  };
+  }, []);
 
-  const handleAdd = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleAdd = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
 
-    if (mainForm && selectedStaff) {
-      mainForm.setValue("staff", selectedStaff);
-    }
+      if (mainForm && selectedStaff) {
+        mainForm.setValue("staff", selectedStaff);
+      }
 
-    const selectedServiceNames = selectedServices
-      .map((id) => services.find((s) => s.id === id)?.name)
-      .filter(Boolean);
+      const selectedServiceNames = selectedServices
+        .map((id) => services.find((s) => s.id === id)?.name)
+        .filter(Boolean);
 
-    if (mainForm) {
-      mainForm.setValue("services", selectedServiceNames);
-      mainForm.trigger("services");
-    }
+      if (mainForm) {
+        mainForm.setValue("services", selectedServiceNames);
+        mainForm.trigger("services");
+      }
 
-    setOpen(false);
-  };
+      setOpen(false);
+    },
+    [mainForm, selectedStaff, selectedServices, services]
+  );
 
-  const handleServiceToggle = (serviceId: string) => {
+  const handleServiceToggle = useCallback((serviceId: string) => {
     setSelectedServices((prev) =>
       prev.includes(serviceId)
         ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId]
     );
     setSearchTerm("");
-  };
+  }, []);
 
-  const renderToggleContent = () => {
+  const renderToggleContent = useCallback(() => {
+    if (staffLoading || servicesLoading) {
+      return (
+        <span style={{ color: "#999", padding: "10px" }}>
+          Loading services...
+        </span>
+      );
+    }
     if (selectedServices.length > 0) {
       return (
         <TagsContainer>
@@ -116,15 +133,22 @@ const ServiceSection = () => {
       );
     }
     return (
-      <span style={{ color: "#999", padding: "10px" }}>
-        Select services...
-      </span>
+      <span style={{ color: "#999", padding: "10px" }}>Select services...</span>
     );
-  };
+  }, [
+    selectedServices,
+    services,
+    handleServiceToggle,
+    staffLoading,
+    servicesLoading,
+  ]);
 
   return (
     <InputContainer>
-      <InputLabel>Service</InputLabel>
+      {(!errors.services && <InputLabel>Service</InputLabel>) ||
+        (errors.services && (
+          <ErrorMessage>{(errors.services as any)?.message}</ErrorMessage>
+        ))}
       <ServiceForm
         open={open}
         services={services}

@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, useMemo, useCallback } from "react";
 import {
   StyledDropdownIcon,
   StyledSearchDropdownItem,
@@ -30,9 +30,15 @@ const Dropdown: FC<DropdownProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null); // ref to detect clicks outside dropdown
 
-  const handleToggle = () => {
+  const handleToggle = useCallback(() => {
     setOpen(!open);
-  };
+  }, [open]);
+
+  const handleItemClick = useCallback((itemId: any) => {
+    onChange?.(itemId);
+    setOpen(false);
+    setSearchTerm("");
+  }, [onChange]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -50,10 +56,12 @@ const Dropdown: FC<DropdownProps> = ({
   }, []);
 
   // filter items based on searchTerm - supports both name and label properties
-  const filteredItems = Items.filter((item) =>
-    (item.name || item.label || "")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filteredItems = useMemo(() => 
+    Items.filter((item) =>
+      (item.name || item.label || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    ), [Items, searchTerm]
   );
 
   return (
@@ -97,11 +105,7 @@ const Dropdown: FC<DropdownProps> = ({
             {filteredItems.map((item) => (
               <StyledDropdownItem
                 key={item.id}
-                onClick={() => {
-                  onChange?.(item.id); // notify parent component of selection
-                  setOpen(false);
-                  setSearchTerm(""); // reset search after selection
-                }}
+                onClick={() => handleItemClick(item.id)}
               >
                 {item.color /* color indicator for appointment types */ && (
                   <span style={{ color: item.color, fontSize: "30px" }}>•</span>

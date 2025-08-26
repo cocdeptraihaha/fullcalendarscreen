@@ -1,8 +1,9 @@
 import { useForm, FormProvider } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { appointmentSchema } from "../../utils/validationSchema";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { DateTime } from "luxon";
+import { toast } from "react-toastify";
 import {
   FormContainer,
   FormModal,
@@ -10,27 +11,26 @@ import {
   TitleInput,
   CloseBtn,
   ModalBody,
-  VideoButton,
   FormFotter,
   AddButton,
   CancelButton,
   DeleteButton,
+  ErrorMessage,
 } from "./Form.styled";
-import { X } from "react-feather";
 import ContactSection from "./components/ContactSection";
 import StaffSection from "./components/StaffSection";
 import DateTimeSection from "./components/DateTimeSection";
-import { Video, Trash2 } from "react-feather";
+import { X, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { clearEventData, closeForm } from "../../store/formSlice";
 import ServiceSection from "./components/ServiceSection";
-import {
-  createAppointment,
-  updateAppointment,
-  deleteAppointment,
-} from "../../services/api";
 import { generateAppointmentId } from "../../utils/idGenerator";
+import {
+  useCreateAppointment,
+  useUpdateAppointment,
+  useDeleteAppointment,
+} from "../../hooks/useAppointments";
 
 type FormFields = {
   id: string;
@@ -44,44 +44,64 @@ type FormFields = {
   color: string;
 };
 
-// Default time utils
-const getCurrentDateTime = () => {
-  const dt = DateTime.now();
-  const minutes = dt.minute;
-  let rounded = Math.ceil(minutes / 5) * 5;
-  if (rounded === 60) {
-    return dt.plus({ hours: 1 }).set({ minute: 0, second: 0 }).toISO();
-  }
+// Default time utils - Luxon implementation
+const roundToNearest5Minutes = (dateTime: DateTime) => {
+  const minutes = dateTime.minute;
+  const roundedMinutes = Math.round(minutes / 5) * 5;
+  return dateTime.set({ minute: roundedMinutes, second: 0, millisecond: 0 });
+};
 
-  return dt.set({ minute: rounded, second: 0 }).toISO();
+const getCurrentDateTime = () => {
+  const now = DateTime.local();
+  return (
+    roundToNearest5Minutes(now).toISO({ suppressMilliseconds: true }) || ""
+  );
 };
 
 const addMinutesToDateTime = (dateTime: string, minutes: number) => {
-  // Parse ISO string with offset, then add minutes
-  return DateTime.fromISO(dateTime).plus({ minutes }).toISO() || "";
+  return (
+    DateTime.fromISO(dateTime)
+      .plus({ minutes })
+      .toISO({ suppressMilliseconds: true }) || ""
+  );
 };
 
 function Form() {
-  const currentDateTime = getCurrentDateTime();
-  const defaultVal: FormFields = {
-    id: "",
-    title: "",
-    type: "",
-    contact: "",
-    staff: "",
-    services: [],
-    start: currentDateTime,
-    end: addMinutesToDateTime(currentDateTime, 30),
-    color: "",
-  };
+  // Memoize default values để tránh tạo object mới mỗi render
+  const defaultVal: FormFields = useMemo(() => {
+    const currentDateTime = getCurrentDateTime();
+    console.log(currentDateTime);
+    console.log(addMinutesToDateTime(currentDateTime, 30));
+
+    return {
+      id: "",
+      title: "",
+      type: "",
+      contact: "",
+      staff: "",
+      services: [],
+      start: currentDateTime,
+      end: addMinutesToDateTime(currentDateTime, 30),
+      color: "",
+    };
+  }, []);
   const [loading, setLoading] = useState(false);
   const { open, eventData } = useSelector((state: RootState) => state.form);
   const dispatch = useDispatch();
 
-  const handleClose = () => {
+  const createMutation = useCreateAppointment();
+  const updateMutation = useUpdateAppointment();
+  const deleteMutation = useDeleteAppointment();
+
+  const isMutating =
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    deleteMutation.isPending;
+
+  const handleClose = useCallback(() => {
     dispatch(clearEventData());
     dispatch(closeForm());
-  };
+  }, [dispatch]);
 
   // Initialize react-hook-form with validation
   const methods = useForm<FormFields>({
@@ -103,19 +123,15 @@ function Form() {
   useEffect(() => {
     if (open) {
       if (eventData && eventData.id) {
-        // Check có ID = edit mode
         reset(eventData);
-        console.log(eventData);
       } else if (eventData && eventData.start && !eventData.id) {
         reset({
           ...defaultVal,
           start: eventData.start,
           end: eventData.end,
         });
-        console.log(eventData);
       } else {
-        reset({ ...defaultVal }); // Always reset for new appointment
-        console.log(defaultVal);
+        reset({ ...defaultVal });
       }
     }
   }, [open, eventData]);
@@ -123,40 +139,89 @@ function Form() {
   const onSubmit = handleSubmit(async (data: FormFields) => {
     setLoading(true);
     try {
+      // Convert datetime strings to Unix timestamps
+      const appointmentData = {
+        ...data,
+        start: new Date(data.start).getTime(),
+        end: new Date(data.end).getTime(),
+      };
+
       if (eventData?.id) {
-        await updateAppointment(eventData.id, data);
-        alert("Appointment updated successfully!");
+        await updateMutation.mutateAsync({
+          id: eventData.id,
+          data: appointmentData,
+        });
+        toast.success("Appointment updated successfully!");
       } else {
         const newId = await generateAppointmentId();
-        const newAppointment = { ...data, id: newId };
-        await createAppointment(newAppointment);
-        alert("Appointment created successfully!");
+        const newAppointment = { ...appointmentData, id: newId };
+        await createMutation.mutateAsync(newAppointment);
+        toast.success("Appointment created successfully!");
       }
       reset({ ...defaultVal });
       dispatch(closeForm());
     } catch (error) {
-      alert("Error saving appointment");
+      toast.error("Error saving appointment");
     } finally {
       setLoading(false);
     }
   });
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!eventData?.id) return;
 
-    if (confirm("Are you sure you want to delete this appointment?")) {
-      setLoading(true);
-      try {
-        await deleteAppointment(eventData.id);
-        alert("Appointment deleted successfully!");
-        dispatch(closeForm());
-      } catch (error) {
-        alert("Error deleting appointment");
-      } finally {
-        setLoading(false);
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Are you sure you want to delete this appointment?</p>
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <button
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  await deleteMutation.mutateAsync(eventData.id);
+                  toast.success("Appointment deleted successfully!");
+                  dispatch(closeForm());
+                } catch (error) {
+                  toast.error("Error deleting appointment");
+                } finally {
+                  setLoading(false);
+                }
+                closeToast?.();
+              }}
+              style={{
+                padding: "5px 10px",
+                backgroundColor: "#dc3545",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+              }}
+            >
+              Delete
+            </button>
+            <button
+              onClick={closeToast}
+              style={{
+                padding: "5px 10px",
+                backgroundColor: "#6c757d",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
       }
-    }
-  };
+    );
+  }, [eventData?.id, deleteMutation, dispatch]);
 
   return (
     // FormProvider makes form methods available to all child components
@@ -175,15 +240,7 @@ function Form() {
                   }}
                 />
                 {errors.title && (
-                  <div
-                    style={{
-                      color: "#e74c3c",
-                      fontSize: "12px",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {errors.title.message}
-                  </div>
+                  <ErrorMessage>{errors.title.message}</ErrorMessage>
                 )}
                 <CloseBtn onClick={() => handleClose()}>
                   <X color="#184561" />
@@ -194,10 +251,6 @@ function Form() {
                 <StaffSection />
                 <ServiceSection />
                 <DateTimeSection />
-                <VideoButton type="button">
-                  <Video />
-                  Add telehealth video conference
-                </VideoButton>
               </ModalBody>
               <FormFotter>
                 {isEditMode && (
@@ -216,8 +269,12 @@ function Form() {
                 >
                   Cancel
                 </CancelButton>
-                <AddButton type="submit" disabled={loading}>
-                  {loading ? "Saving..." : isEditMode ? "Update" : "Create"}
+                <AddButton type="submit" disabled={loading || isMutating}>
+                  {loading || isMutating
+                    ? "Saving..."
+                    : isEditMode
+                    ? "Update"
+                    : "Create"}
                 </AddButton>
               </FormFotter>
             </form>

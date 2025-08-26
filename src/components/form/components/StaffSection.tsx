@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { InputContainer, InputLabel } from "./styled";
-import { fetchStaff } from "../../../services/api";
+import { ErrorMessage } from "../Form.styled";
 import Dropdown from "../../ui/dropdown";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
+import { useStaff } from "../../../hooks/useFormData";
 
 // Define Staff's datatype
 interface Staff {
@@ -13,31 +14,15 @@ interface Staff {
 }
 
 const StaffSection: React.FC = () => {
-  const { control } = useFormContext();
-  const [staffList, setStaffList] = useState<Staff[]>([]);
-
-  // Load staff data from API when component mounts
-  useEffect(() => {
-    const loadStaff = async () => {
-      try {
-        const data: Staff[] = await fetchStaff();
-        setStaffList(data);
-      } catch (err: unknown) {
-        // Type-safe error handling for unknown error types
-        if (err instanceof Error) {
-          console.log(err.message);
-        } else {
-          console.log("Unknown error");
-        }
-      }
-    };
-
-    loadStaff();
-  }, []);
+  const { control, formState: { errors } } = useFormContext();
+  const { data: staffList = [] } = useStaff();
 
   return (
     <InputContainer>
-      <InputLabel>Staff</InputLabel>
+      {(!errors.staff && <InputLabel>Staff</InputLabel>) ||
+        (errors.staff && (
+          <ErrorMessage>{(errors.staff as any)?.message}</ErrorMessage>
+        ))}
       <Controller
         control={control}
         name="staff"

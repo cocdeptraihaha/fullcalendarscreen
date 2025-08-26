@@ -1,6 +1,6 @@
 // FullCalendar wrapper component: syncs view with Redux, renders events from API,
 // and exposes hooks for date selection and event clicks.
-import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { useRef, useEffect, useMemo, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -9,17 +9,18 @@ import listPlugin from "@fullcalendar/list";
 import { CalendarContainer, EventBox } from "../calendar/Calendar.style";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { fetchAppointments } from "../../services/api";
 import { openForm, clearEventData } from "../../store/formSlice";
+import { useAppointments } from "../../hooks/useAppointments";
 import Form from "../form/Form";
+import { toast } from "react-toastify";
 
 interface Appointment {
   id: string;
   title: string;
   contact: string;
   services: string[];
-  start: string;
-  end: string;
+  start: string | number;
+  end: string | number;
   color: string;
   type: string;
   staff: string;
@@ -27,31 +28,20 @@ interface Appointment {
 
 export default function Calendar() {
   const dispatch = useDispatch();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const formOpen = useSelector((state: RootState) => state.form.open);
-  const getAppointments = useCallback(async () => {
-    try {
-      const data = await fetchAppointments();
-      setAppointments(data);
-    } catch (error) {
-      console.error("Error fetching appointments:", error);
-    }
-  }, []);
-  useEffect(() => {
-    getAppointments();
-  }, []);
-
-  const [wasFormOpen, setWasFormOpen] = useState(false);
+  const { data: appointments = [], isLoading, error } = useAppointments();
 
   useEffect(() => {
-    if (formOpen) {
-      setWasFormOpen(true);
-    } else if (wasFormOpen) {
-      getAppointments();
+    if (!formOpen) {
       setTimeout(() => dispatch(clearEventData()), 100);
-      setWasFormOpen(false);
     }
-  }, [formOpen, wasFormOpen]);
+  }, [formOpen, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load appointments");
+    }
+  }, [error]);
 
   const calendarRef = useRef<FullCalendar | null>(null); // Direct reference to FullCalendar instance
   // Get current view from Redux store (controlled by Sidebar)
@@ -70,7 +60,7 @@ export default function Calendar() {
       appointments?.map((apt: Appointment) => ({
         id: apt.id,
         title: `${apt.type} Appointment`,
-        start: apt.start,
+        start: apt.start, // FullCalendar accepts Unix timestamps directly
         end: apt.end,
         backgroundColor: apt.color,
         extendedProps: {
@@ -85,31 +75,69 @@ export default function Calendar() {
 
   // Memoize event handlers to prevent FullCalendar re-renders
   const handleDateSelect = useCallback((selectInfo: any) => {
+    const selectedDate =
+      selectInfo.start.getFullYear() +
+      "-" +
+      String(selectInfo.start.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(selectInfo.start.getDate()).padStart(2, "0");
+    const now = new Date();
+    const minutes = Math.round(now.getMinutes() / 5) * 5;
+    const roundedTime = `${now.getHours().toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
+
     dispatch(clearEventData());
     dispatch(
       openForm({
-        start: `${selectInfo.startStr}T09:00:00`,
-        end: `${selectInfo.endStr}T09:30:00`,
+        start: `${selectedDate}T${roundedTime}:00`,
+        end: `${selectedDate}T${(now.getHours() + (minutes + 30 >= 60 ? 1 : 0))
+          .toString()
+          .padStart(2, "0")}:${((minutes + 30) % 60)
+          .toString()
+          .padStart(2, "0")}:00`,
       })
     );
   }, []);
 
-  const handleEventClick = useCallback((clickInfo: any) => {
-    const event = clickInfo.event;
-    dispatch(
-      openForm({
-        id: event.id,
-        title: event.title,
-        type: event.extendedProps.type,
-        contact: event.extendedProps.contact,
-        staff: event.extendedProps.staff,
-        services: event.extendedProps.service,
-        start: event.startStr,
-        end: event.endStr,
-        color: event.backgroundColor,
-      })
-    );
-  }, []);
+  const handleEventClick = useCallback(
+    (clickInfo: any) => {
+      const event = clickInfo.event;
+      const startDate = new Date(event.start);
+      const endDate = new Date(event.end);
+      const startStr = `${startDate.getFullYear()}-${String(
+        startDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(startDate.getDate()).padStart(
+        2,
+        "0"
+      )}T${String(startDate.getHours()).padStart(2, "0")}:${String(
+        startDate.getMinutes()
+      ).padStart(2, "0")}:00`;
+      const endStr = `${endDate.getFullYear()}-${String(
+        endDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(endDate.getDate()).padStart(
+        2,
+        "0"
+      )}T${String(endDate.getHours()).padStart(2, "0")}:${String(
+        endDate.getMinutes()
+      ).padStart(2, "0")}:00`;
+      console.log(startStr, endStr);
+      dispatch(
+        openForm({
+          id: event.id,
+          title: event.title,
+          type: event.extendedProps.type,
+          contact: event.extendedProps.contact,
+          staff: event.extendedProps.staff,
+          services: event.extendedProps.service,
+          start: startStr,
+          end: endStr,
+          color: event.backgroundColor,
+        })
+      );
+    },
+    [appointments]
+  );
 
   // Memoize custom buttons to prevent re-creation
   const customButtons = useMemo(
@@ -119,13 +147,13 @@ export default function Calendar() {
         click: () => dispatch(openForm({})),
       },
       linkbutton: {
-        click: () => alert("clicked the custom button!"),
+        click: () => toast.info("Link button clicked!"),
       },
       settingbutton: {
-        click: () => alert("clicked the custom button!"),
+        click: () => toast.info("Settings button clicked!"),
       },
       calendarbutton: {
-        click: () => alert("clicked the custom button!"),
+        click: () => toast.info("Calendar button clicked!"),
       },
     }),
     []
@@ -157,6 +185,23 @@ export default function Calendar() {
       </EventBox>
     );
   }, []);
+
+  if (isLoading) {
+    return (
+      <CalendarContainer>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "400px",
+          }}
+        >
+          <div>Loading appointments...</div>
+        </div>
+      </CalendarContainer>
+    );
+  }
 
   return (
     <CalendarContainer>

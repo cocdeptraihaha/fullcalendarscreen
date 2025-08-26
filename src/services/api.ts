@@ -1,68 +1,129 @@
-// JSON Server base URL (see db.json). Run with: `npm run server` (port 4000)
-const BASE_URL = "https://json-server-io3p.onrender.com";
+// TanStack Query API functions
+const BASE_URL = "http://localhost:4000";
 
-// Data fetching helpers for json-server endpoints.
-// Keep API calls centralized to avoid scattering fetch logic across components.
-
+// Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/appointments`);
-  if (!res.ok) throw new Error("Failed to fetch appointments");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/appointments`);
+    if (!res.ok) throw new Error(`Failed to fetch appointments: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    throw error;
+  }
 };
 
 export const fetchAppointmentTypes = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/appointment_types`);
-  if (!res.ok) throw new Error("Failed to fetch appointment types");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/appointment_types`);
+    if (!res.ok) throw new Error(`Failed to fetch appointment types: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching appointment types:', error);
+    throw error;
+  }
 };
 
 export const fetchContacts = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/contacts`);
-  if (!res.ok) throw new Error("Failed to fetch contacts");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/contacts`);
+    if (!res.ok) throw new Error(`Failed to fetch contacts: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    throw error;
+  }
 };
 
 export const fetchStaff = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/staff`);
-  if (!res.ok) throw new Error("Failed to fetch staff");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/staff`);
+    if (!res.ok) throw new Error(`Failed to fetch staff: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching staff:', error);
+    throw error;
+  }
 };
 
 export const fetchServices = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/services`);
-  if (!res.ok) throw new Error("Failed to fetch services");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/services`);
+    if (!res.ok) throw new Error(`Failed to fetch services: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching services:', error);
+    throw error;
+  }
 };
 
-// CRUD operations for appointments
+export const fetchStaffServices = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(`${BASE_URL}/staff_services`);
+    if (!res.ok) throw new Error(`Failed to fetch staff services: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching staff services:', error);
+    throw error;
+  }
+};
+
+export const getServicesByStaffId = async (staffId: string): Promise<any[]> => {
+  try {
+    const services = await fetchServices();
+    const staffServices = await fetchStaffServices();
+    
+    const staffServiceIds = staffServices
+      .filter((ss: any) => ss.staff_id === staffId)
+      .map((ss: any) => ss.service_id);
+      
+    return services.filter((service: any) => staffServiceIds.includes(service.id));
+  } catch (error) {
+    console.error('Error fetching services by staff ID:', error);
+    throw error;
+  }
+};
+
+// Mutation functions for TanStack Query
 export const createAppointment = async (appointment: any): Promise<any> => {
-  const res = await fetch(`${BASE_URL}/appointments`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(appointment),
-  });
-  if (!res.ok) throw new Error("Failed to create appointment");
-  return res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/appointments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(appointment),
+    });
+    if (!res.ok) throw new Error(`Failed to create appointment: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error creating appointment:', error);
+    throw error;
+  }
 };
 
-export const updateAppointment = async (
-  id: string,
-  appointment: any
-): Promise<any> => {
-  // Keep ID as string to match database format
-  const appointmentWithId = { ...appointment, id };
-  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(appointmentWithId),
-  });
-  if (!res.ok) throw new Error("Failed to update appointment");
-  return res.json();
+export const updateAppointment = async (id: string, appointment: any): Promise<any> => {
+  try {
+    const appointmentWithId = { ...appointment, id };
+    const res = await fetch(`${BASE_URL}/appointments/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(appointmentWithId),
+    });
+    if (!res.ok) throw new Error(`Failed to update appointment: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    throw error;
+  }
 };
 
 export const deleteAppointment = async (id: string): Promise<void> => {
-  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) throw new Error("Failed to delete appointment");
+  try {
+    const res = await fetch(`${BASE_URL}/appointments/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) throw new Error(`Failed to delete appointment: ${res.status}`);
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    throw error;
+  }
 };

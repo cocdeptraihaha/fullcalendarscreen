@@ -18,6 +18,19 @@ import {
   DayCell,
 } from "./styled";
 
+// DateTime conversion utilities
+const dateTimeToUnix = (dateTimeStr: string): number => {
+  return new Date(dateTimeStr).getTime();
+};
+
+const unixToDateTime = (timestamp: number): string => {
+  return new Date(timestamp).toISOString().slice(0, 19);
+};
+
+const unixToDateOnly = (timestamp: number): string => {
+  return new Date(timestamp).toISOString().slice(0, 10);
+};
+
 interface DatePickerProps {
   name: string;
   placeholder?: string;
@@ -45,9 +58,9 @@ export default function DatePicker({ name }: DatePickerProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const formatDate = (date: string) => {
+  const formatDate = (date: string | number) => {
     if (!date) return "";
-    const d = new Date(date);
+    const d = typeof date === 'number' ? new Date(date) : new Date(date);
     return d.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -72,26 +85,35 @@ export default function DatePicker({ name }: DatePickerProps) {
   };
 
   const handleDateSelect = (date: Date, field: ControllerRenderProps) => {
-    console.log("Date selected:", date);
-    // Use local date string to avoid timezone issues
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     const dateStr = `${year}-${month}-${day}`;
 
     const currentValue = field.value || "";
-    const timeStr = currentValue.includes("T")
-      ? currentValue.split("T")[1]
-      : "09:00:00";
+    let timeStr = "09:00:00";
+    
+    if (typeof currentValue === 'number') {
+      // Unix timestamp - extract time part
+      const currentDateTime = unixToDateTime(currentValue);
+      timeStr = currentDateTime.includes("T") ? currentDateTime.split("T")[1] : "09:00:00";
+    } else if (typeof currentValue === 'string' && currentValue.includes("T")) {
+      // ISO string - extract time part
+      timeStr = currentValue.split("T")[1];
+    }
 
     const newValue = `${dateStr}T${timeStr}`;
-    console.log("Setting date value:", newValue);
     field.onChange(newValue);
 
     if (name === "start") {
-      const endTime = endValue?.split("T")[1] || "10:00:00";
-      const newEndValue = `${dateStr}T${endTime}`;
-      console.log("Setting end date:", newEndValue);
+      let endTimeStr = "10:00:00";
+      if (typeof endValue === 'number') {
+        const endDateTime = unixToDateTime(endValue);
+        endTimeStr = endDateTime.includes("T") ? endDateTime.split("T")[1] : "10:00:00";
+      } else if (typeof endValue === 'string' && endValue?.includes("T")) {
+        endTimeStr = endValue.split("T")[1];
+      }
+      const newEndValue = `${dateStr}T${endTimeStr}`;
       setValue("end", newEndValue);
     }
 
@@ -106,7 +128,8 @@ export default function DatePicker({ name }: DatePickerProps) {
       control={control}
       name={name}
       render={({ field }) => {
-        const selectedDate = field.value ? new Date(field.value) : null;
+        const fieldValue = typeof field.value === 'number' ? unixToDateTime(field.value) : field.value;
+        const selectedDate = fieldValue ? new Date(fieldValue) : null;
         const days = getDaysInMonth(currentMonth);
 
         return (

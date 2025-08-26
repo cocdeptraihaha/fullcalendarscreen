@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   AddButton,
   CancelButton,
@@ -56,8 +56,10 @@ const ServiceForm: FC<ServiceFormProps> = ({
   onSearchChange,
   renderToggleContent,
 }) => {
-  const filteredServices = services.filter((service) =>
-    service.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredServices = useMemo(() => 
+    services.filter((service) =>
+      service.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ), [services, searchTerm]
   );
 
   return (

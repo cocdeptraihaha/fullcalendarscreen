@@ -30,11 +30,22 @@ const addMinutes = (timeStr: string, minutes: number) => {
 };
 
 const getToday = () => new Date().toISOString().split("T")[0];
+const parseDateTime = (dateTime: string, fieldName?: string) => {
+  if (!dateTime) return { date: getToday(), time: "" };
 
-const parseDateTime = (dateTime: string) => {
-  if (!dateTime?.includes("T")) return { date: getToday(), time: "" };
-  const [date, timeWithSeconds] = dateTime.split("T");
-  const time = timeWithSeconds?.substring(0, 5) || "";
+  let dateTimeStr: string;
+  dateTimeStr = dateTime;
+  if (!dateTimeStr.includes("T")) return { date: getToday(), time: "" };
+  const [date, timeWithSeconds] = dateTimeStr.split("T");
+  let time = timeWithSeconds?.substring(0, 5) || "";
+
+  // Validate time is within 8-20h range, default to 08:00 if outside
+  if (time) {
+    const [hour] = time.split(":").map(Number);
+    if (hour < 8 || hour >= 20) {
+      time = fieldName === "end" ? "08:30" : "08:00";
+    }
+  }
   return { date, time };
 };
 
@@ -46,6 +57,7 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
   const { control, setValue } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Generate time options (8AM - 8PM, 5min intervals)
   const timeOptions = useMemo(() => {
@@ -74,12 +86,24 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Scroll to selected time when dropdown opens
+  useEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      const selectedOption = dropdownRef.current.querySelector(
+        '[data-selected="true"]'
+      );
+      if (selectedOption) {
+        selectedOption.scrollIntoView({ block: "center", behavior: "instant" });
+      }
+    }
+  }, [isOpen]);
+
   return (
     <Controller
       control={control}
       name={name}
       render={({ field }) => {
-        const { date, time } = parseDateTime(field.value);
+        const { date, time } = parseDateTime(field.value, name);
         const displayTime = time
           ? (() => {
               const [hour, minute] = time.split(":").map(Number);
@@ -108,11 +132,12 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
               {displayTime || "Select time"}
             </TimeInput>
             {isOpen && (
-              <TimeDropdown>
+              <TimeDropdown ref={dropdownRef}>
                 {timeOptions.map((timeObj) => (
                   <TimeOption
                     key={timeObj.value}
                     isSelected={timeObj.value === time}
+                    data-selected={timeObj.value === time}
                     onClick={() => handleTimeSelect(timeObj)}
                   >
                     {timeObj.display}

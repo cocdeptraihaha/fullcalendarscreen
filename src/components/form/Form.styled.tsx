@@ -71,17 +71,6 @@ export const ModalBody = styled.div`
   grid-template-rows: repeat(5, 1fr);
   gap: 8px;
 `;
-export const VideoButton = styled.button`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 6px;
-  height: 40px;
-  background-color: #184561;
-  gap: 10px;
-  color: #fff;
-`;
 
 export const FormFotter = styled.div`
   position: absolute;
@@ -131,4 +120,10 @@ export const AddButton = styled.button`
   height: 40px;
   width: 100px;
   color: rgba(255, 255, 255, 1);
+`;
+
+export const ErrorMessage = styled.div`
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
 `;
