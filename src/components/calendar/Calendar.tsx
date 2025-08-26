@@ -1,6 +1,6 @@
 // FullCalendar wrapper component: syncs view with Redux, renders events from API,
 // and exposes hooks for date selection and event clicks.
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -29,41 +29,25 @@ export default function Calendar() {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const formOpen = useSelector((state: RootState) => state.form.open);
-
-  // Add useEffect hook to fetch appointments when component mounts
-  useEffect(() => {
-    const getAppointments = async () => {
-      try {
-        const data = await fetchAppointments();
-        setAppointments(data);
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      }
-    };
-
-    getAppointments();
-  }, []);
-
-  // Refresh appointments after form operations
-  const refreshAppointments = async () => {
+  const getAppointments = useCallback(async () => {
     try {
       const data = await fetchAppointments();
       setAppointments(data);
     } catch (error) {
-      console.error("Error refreshing appointments:", error);
+      console.error("Error fetching appointments:", error);
     }
-  };
+  }, []);
+  useEffect(() => {
+    getAppointments();
+  }, []);
 
-  // Refresh data when form closes (after CRUD operations)
   const [wasFormOpen, setWasFormOpen] = useState(false);
 
   useEffect(() => {
     if (formOpen) {
       setWasFormOpen(true);
     } else if (wasFormOpen) {
-      // Only refresh when form was open and now closed (after CRUD operation)
-      refreshAppointments();
-      // Clear event data after refresh
+      getAppointments();
       setTimeout(() => dispatch(clearEventData()), 100);
       setWasFormOpen(false);
     }
@@ -80,24 +64,27 @@ export default function Calendar() {
     }
   }, [view]);
 
-  // Transform server appointments into FullCalendar EventInput format
-  // FullCalendar expects specific properties, so we map our data structure
-  const events = appointments?.map((apt: Appointment) => ({
-    id: apt.id,
-    title: `${apt.type} Appointment`, // Display title on calendar
-    start: apt.start, // ISO date string for start time
-    end: apt.end, // ISO date string for end time
-    backgroundColor: apt.color, // Visual color coding
-    extendedProps: {
-      // Custom data accessible in event handlers
-      contact: apt.contact,
-      type: apt.type,
-      staff: apt.staff,
-      service: apt.services,
-    },
-  }));
+  // Memoize events transformation to prevent unnecessary re-renders
+  const events = useMemo(
+    () =>
+      appointments?.map((apt: Appointment) => ({
+        id: apt.id,
+        title: `${apt.type} Appointment`,
+        start: apt.start,
+        end: apt.end,
+        backgroundColor: apt.color,
+        extendedProps: {
+          contact: apt.contact,
+          type: apt.type,
+          staff: apt.staff,
+          service: apt.services,
+        },
+      })),
+    [appointments]
+  );
 
-  function handleDateSelect(selectInfo: any) {
+  // Memoize event handlers to prevent FullCalendar re-renders
+  const handleDateSelect = useCallback((selectInfo: any) => {
     dispatch(clearEventData());
     dispatch(
       openForm({
@@ -105,60 +92,82 @@ export default function Calendar() {
         end: `${selectInfo.endStr}T09:30:00`,
       })
     );
-  }
+  }, []);
 
-  function handleEventClick(clickInfo: any) {
+  const handleEventClick = useCallback((clickInfo: any) => {
     const event = clickInfo.event;
-
-    // Extract event data and open form for editing
-    // This populates the form with existing appointment data
     dispatch(
       openForm({
-        id: event.id, // Keep as string
+        id: event.id,
         title: event.title,
-        type: event.extendedProps.type, // Custom data from extendedProps
+        type: event.extendedProps.type,
         contact: event.extendedProps.contact,
         staff: event.extendedProps.staff,
         services: event.extendedProps.service,
-        start: event.startStr, // ISO string format
+        start: event.startStr,
         end: event.endStr,
         color: event.backgroundColor,
       })
     );
-  }
+  }, []);
+
+  // Memoize custom buttons to prevent re-creation
+  const customButtons = useMemo(
+    () => ({
+      newappointment: {
+        text: "New Appointment",
+        click: () => dispatch(openForm({})),
+      },
+      linkbutton: {
+        click: () => alert("clicked the custom button!"),
+      },
+      settingbutton: {
+        click: () => alert("clicked the custom button!"),
+      },
+      calendarbutton: {
+        click: () => alert("clicked the custom button!"),
+      },
+    }),
+    []
+  );
+
+  // Memoize plugins array
+  const plugins = useMemo(
+    () => [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
+    []
+  );
+
+  // Memoize event content renderer
+  const renderEventContent = useCallback((eventInfo: any) => {
+    const { contact, staff, service } = eventInfo.event.extendedProps;
+    return (
+      <EventBox color={eventInfo.event.backgroundColor}>
+        <div className="event-header">
+          <span>
+            <div>{eventInfo.event.title}</div>
+          </span>
+          <span className="time">{eventInfo.timeText}</span>
+          <br></br>
+        </div>
+        <div>{contact}</div>
+        <div>{staff}</div>
+        {service.map((s: string, index: number) => (
+          <div key={index}>{s}</div>
+        ))}
+      </EventBox>
+    );
+  }, []);
 
   return (
     <CalendarContainer>
       <Form />
       <FullCalendar
-        ref={calendarRef} // Reference for imperative API access
+        ref={calendarRef}
         height="auto"
         timeZone="local"
         expandRows={true}
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]} // FullCalendar core plugins
-        customButtons={{
-          newappointment: {
-            text: "New Appointment",
-            click: function () {
-              dispatch(openForm({}));
-            },
-          },
-          linkbutton: {
-            click: function () {
-              alert("clicked the custom button!");
-            },
-          },
-          settingbutton: {
-            click: function () {
-              alert("clicked the custom button!");
-            },
-          },
-          calendarbutton: {
-            click: function () {
-              alert("clicked the custom button!");
-            },
-          },
-        }}
+        plugins={plugins}
+        customButtons={customButtons}
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -182,38 +191,11 @@ export default function Calendar() {
         selectable={true}
         selectMirror={true}
         allDaySlot={false}
-        events={events} // Dynamic events that auto-update when appointments change
+        events={events}
         select={handleDateSelect}
-        eventContent={renderEventContent} // Custom renderer: show contact, staff, service
+        eventContent={renderEventContent}
         eventClick={handleEventClick}
-
-        // called after events are initialized/added/changed/removed
-        /* you can update a remote database when these fire:
-      eventAdd={function(){}}
-      eventChange={function(){}}
-      eventRemove={function(){}}
-      */
       />
     </CalendarContainer>
-  );
-}
-
-function renderEventContent(eventInfo: any) {
-  const { contact, staff, service } = eventInfo.event.extendedProps;
-  return (
-    <EventBox color={eventInfo.event.backgroundColor}>
-      <div className="event-header">
-        <span>
-          <div>{eventInfo.event.title}</div>
-        </span>
-        <span className="time">{eventInfo.timeText}</span>
-        <br></br>
-      </div>
-      <div>{contact}</div>
-      <div>{staff}</div>
-      {service.map((s: string) => (
-        <div>{s} </div>
-      ))}
-    </EventBox>
   );
 }
