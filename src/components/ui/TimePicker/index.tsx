@@ -30,7 +30,7 @@ const addMinutes = (timeStr: string, minutes: number) => {
 };
 
 const getToday = () => new Date().toISOString().split("T")[0];
-const parseDateTime = (dateTime: string, fieldName?: string) => {
+const parseDateTime = (dateTime: string) => {
   if (!dateTime) return { date: getToday(), time: "" };
 
   let dateTimeStr: string;
@@ -39,13 +39,6 @@ const parseDateTime = (dateTime: string, fieldName?: string) => {
   const [date, timeWithSeconds] = dateTimeStr.split("T");
   let time = timeWithSeconds?.substring(0, 5) || "";
 
-  // Validate time is within 8-20h range, default to 08:00 if outside
-  if (time) {
-    const [hour] = time.split(":").map(Number);
-    if (hour < 8 || hour >= 20) {
-      time = fieldName === "end" ? "08:30" : "08:00";
-    }
-  }
   return { date, time };
 };
 
@@ -103,7 +96,7 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
       control={control}
       name={name}
       render={({ field }) => {
-        const { date, time } = parseDateTime(field.value, name);
+        const { date, time } = parseDateTime(field.value);
         const displayTime = time
           ? (() => {
               const [hour, minute] = time.split(":").map(Number);

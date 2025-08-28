@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { useDebounce } from "../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
@@ -156,21 +157,20 @@ export default function Settings() {
     );
   };
 
-  const debouncedUpdateColor = useCallback(
-    (() => {
-      let timeoutId: number;
-      return (id: string, label: string, color: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = window.setTimeout(() => {
-          updateMutation.mutate({
-            id,
-            data: { label, color },
-          });
-        }, 300);
-      };
-    })(),
-    [updateMutation]
-  );
+  const [colorUpdates, setColorUpdates] = useState<{[key: string]: {label: string, color: string}}>({});
+  const debouncedColorUpdates = useDebounce(colorUpdates, 300);
+
+  // Handle debounced color updates
+  useEffect(() => {
+    Object.entries(debouncedColorUpdates).forEach(([id, data]) => {
+      updateMutation.mutate({ id, data });
+    });
+    setColorUpdates({});
+  }, [debouncedColorUpdates, updateMutation]);
+
+  const handleColorChange = useCallback((id: string, label: string, color: string) => {
+    setColorUpdates(prev => ({ ...prev, [id]: { label, color } }));
+  }, []);
 
   if (!open) return null;
 
@@ -223,7 +223,7 @@ export default function Settings() {
                         type="color"
                         value={type.color}
                         onChange={(e) => {
-                          debouncedUpdateColor(
+                          handleColorChange(
                             type.id,
                             type.label,
                             e.target.value

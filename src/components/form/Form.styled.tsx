@@ -36,7 +36,7 @@ export const TitleInput = styled.input`
   border: none;
   background: transparent;
   flex: 1;
-  padding: 8px 0;
+  padding: 8px 5px;
   outline: none;
 
   &::placeholder {

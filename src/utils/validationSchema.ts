@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 export const appointmentSchema = yup.object({
   id: yup.string().default(""),
-  title: yup.string().required("Title is required"),
+  title: yup.string().trim().required("Title is required"),
   type_id: yup.string().required("Appointment type is required"),
   contact_id: yup.string().required("Contact is required"),
   staff_id: yup.string().required("Staff is required"),

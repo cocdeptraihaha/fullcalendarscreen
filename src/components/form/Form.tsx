@@ -295,12 +295,10 @@ function Form() {
                   type="text"
                   placeholder="Add Title"
                   style={{
-                    borderColor: errors.title ? "#e74c3c" : "#ddd",
+                    borderRadius: "6px",
+                    border: errors.title ? "1px solid #e74c3c" : "none",
                   }}
                 />
-                {errors.title && (
-                  <ErrorMessage>{errors.title.message}</ErrorMessage>
-                )}
                 <CloseBtn onClick={() => handleClose()}>
                   <X color="#184561" />
                 </CloseBtn>

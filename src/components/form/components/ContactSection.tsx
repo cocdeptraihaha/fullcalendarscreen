@@ -9,6 +9,7 @@ import {
   useSearchContacts,
 } from "../../../hooks/useGlobalData";
 import { useCallback, useState } from "react";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 export default function ContactSection() {
   const mainForm = useFormContext();
@@ -18,12 +19,13 @@ export default function ContactSection() {
     formState: { errors },
   } = mainForm;
   const [contactSearchTerm, setContactSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(contactSearchTerm, 300);
 
   const { data: contacts = [], isLoading: contactsLoading } =
     useGlobalContacts();
   const { data: appointmentTypes = [], isLoading: typesLoading } =
     useGlobalAppointmentTypes(); // Only get active types for form
-  const { data: searchResults = [] } = useSearchContacts(contactSearchTerm);
+  const { data: searchResults = [] } = useSearchContacts(debouncedSearchTerm);
 
   // Memoize contact change handler
   const handleContactChange = useCallback((val: any, field: any) => {
@@ -52,7 +54,7 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            const displayContacts = contactSearchTerm
+            const displayContacts = debouncedSearchTerm
               ? searchResults.slice(0, 5)
               : contacts.slice(0, 5);
             const selectedContact = contacts.find((c) => c.id === field.value);

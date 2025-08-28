@@ -45,18 +45,22 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
     staffMethods.reset({ staff_id: currentStaffId });
   }, [currentStaffId, staffMethods]);
 
-  // Track appointment changes and reset hasReset flag
+  // Track appointment changes, reset flags, and sync services
   useEffect(() => {
+    // Track appointment changes
     if (appointmentId !== currentAppointmentId) {
       setCurrentAppointmentId(appointmentId);
       setHasReset(false);
     } else if (appointmentId === "" && currentAppointmentId !== "") {
       setHasReset(false);
     }
-  }, [appointmentId, currentAppointmentId]);
 
-  // Sync selected services and handle reset logic
-  useEffect(() => {
+    // Clear services for new form
+    if (!appointmentId || appointmentId === "") {
+      setSelectedServices([]);
+      return;
+    }
+
     // Sync services from form
     if (currentServiceIds.length > 0) {
       setSelectedServices(currentServiceIds);
@@ -79,12 +83,12 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       setHasReset(true);
     }
   }, [
+    appointmentId,
+    currentAppointmentId,
     currentServiceIds,
     currentStaffId,
     initialStaffId,
     hasReset,
-    appointmentId,
-    currentAppointmentId,
     mainForm,
   ]);
 
@@ -177,9 +181,9 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
 
   return (
     <InputContainer>
-      {(!errors.services && <InputLabel>Service</InputLabel>) ||
-        (errors.services && (
-          <ErrorMessage>{(errors.services as any)?.message}</ErrorMessage>
+      {(!errors.service_ids && <InputLabel>Service</InputLabel>) ||
+        (errors.service_ids && (
+          <ErrorMessage>{(errors.service_ids as any)?.message}</ErrorMessage>
         ))}
       <ServiceForm
         open={open}
