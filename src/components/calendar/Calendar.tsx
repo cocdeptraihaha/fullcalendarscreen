@@ -43,7 +43,7 @@ export default function Calendar() {
   const { data: staff = [] } = useGlobalStaff();
   const { data: services = [] } = useGlobalServices();
   const { data: contacts = [] } = useGlobalContacts();
-  const { data: appointmentTypes = [] } = useAllAppointmentTypes(); // Lấy tất cả types để hiển thị màu
+  const { data: appointmentTypes = [] } = useAllAppointmentTypes(); // Get all types to display colors
 
   useEffect(() => {
     if (!formOpen) {

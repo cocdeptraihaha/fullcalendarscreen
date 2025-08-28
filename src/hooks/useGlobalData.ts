@@ -28,13 +28,13 @@ export const useGlobalContacts = () => useQuery({
 
 export const useGlobalAppointmentTypes = () => useQuery({
   queryKey: ['appointmentTypes'],
-  queryFn: fetchActiveAppointmentTypes, // Chỉ lấy active types
+  queryFn: fetchActiveAppointmentTypes, // Only get active types
   staleTime: Infinity,
 });
 
 export const useAllAppointmentTypes = () => useQuery({
   queryKey: ['appointmentTypes', 'all'],
-  queryFn: fetchAppointmentTypes, // Lấy tất cả (cho settings)
+  queryFn: fetchAppointmentTypes, // Get all types (for settings)
   staleTime: Infinity,
 });
 

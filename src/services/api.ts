@@ -176,12 +176,12 @@ export const updateAppointmentType = async (
 
 export const deleteAppointmentType = async (id: string): Promise<void> => {
   try {
-    // Lấy dữ liệu hiện tại trước
+    // Get current data first
     const getRes = await fetch(`${BASE_URL}/appointment_types/${id}`);
     if (!getRes.ok) throw new Error(`Failed to fetch appointment type: ${getRes.status}`);
     const currentType = await getRes.json();
     
-    // Cập nhật với deleted_at, giữ nguyên các thuộc tính khác
+    // Update with deleted_at, keep all other properties
     const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
