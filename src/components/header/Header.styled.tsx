@@ -9,6 +9,7 @@ export const Container = styled.div`
   display: flex;
   top: 0;
   width: 100%;
+  min-width: 1200px;
   height: 45px;
   z-index: 1001;
 `;

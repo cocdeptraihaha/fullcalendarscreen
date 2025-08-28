@@ -127,3 +127,24 @@ export const ErrorMessage = styled.div`
   font-size: 12px;
   margin-top: 4px;
 `;
+
+export const ToastButton = styled.button<{ variant?: "danger" | "secondary" }>`
+  padding: 5px 10px;
+  background-color: ${(props) =>
+    props.variant === "danger" ? "#fff" : "#184561"};
+  color: ${(props) => (props.variant === "danger" ? "#ff0000ff" : "#fff")};
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  border: ${(props) =>
+    props.variant === "danger" ? "1px solid #ff0000ff" : "1px solid #184561"};
+  &:hover {
+    opacity: 0.9;
+  }
+`;
+
+export const ToastContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+`;

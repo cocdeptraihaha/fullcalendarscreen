@@ -6,7 +6,7 @@ import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import { createGlobalStyle } from "styled-components";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +15,7 @@ const GlobalStyle = createGlobalStyle`
     display:block;
     margin: 0;
     font-family: sans-serif;
+    toastify-toast-padding:3px;
   }
 `;
 

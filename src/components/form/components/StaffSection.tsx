@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import Dropdown from "../../ui/dropdown";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import { useStaff } from "../../../hooks/useFormData";
+import { useGlobalStaff, useSearchStaff } from "../../../hooks/useGlobalData";
 
 // Define Staff's datatype
 interface Staff {
@@ -15,46 +15,49 @@ interface Staff {
 
 const StaffSection: React.FC = () => {
   const { control, formState: { errors } } = useFormContext();
-  const { data: staffList = [] } = useStaff();
+  const [staffSearchTerm, setStaffSearchTerm] = useState('');
+  
+  const { data: staffList = [] } = useGlobalStaff();
+  const { data: searchResults = [] } = useSearchStaff(staffSearchTerm);
 
   return (
     <InputContainer>
-      {(!errors.staff && <InputLabel>Staff</InputLabel>) ||
-        (errors.staff && (
-          <ErrorMessage>{(errors.staff as any)?.message}</ErrorMessage>
+      {(!errors.staff_id && <InputLabel>Staff</InputLabel>) ||
+        (errors.staff_id && (
+          <ErrorMessage>{(errors.staff_id as any)?.message}</ErrorMessage>
         ))}
       <Controller
         control={control}
-        name="staff"
-        render={({ field }) => (
-          <Dropdown
-            hasSearch={2}
-            Items={staffList}
-            value={field.value}
-            onChange={(val: any) => {
-              // Find selected staff by ID and store name in form
-              const selectedStaff = staffList.find((s) => s.id === val);
-              field.onChange(selectedStaff?.name); // Store name, not ID
-            }}
-            renderTitle={() => (
-              <>
-                {field.value ? (
-                  <>
-                    <StyledDropdownAvatar
-                      src={
-                        staffList.find((s) => s.name === field.value)?.avatar // Find avatar by name
-                      }
-                      alt="avatar"
-                    />
-                    {field.value}
-                  </>
-                ) : (
-                  "Search Staff"
-                )}
-              </>
-            )}
-          />
-        )}
+        name="staff_id"
+        render={({ field }) => {
+          const displayStaff = staffSearchTerm ? searchResults.slice(0, 5) : staffList.slice(0, 5);
+          const selectedStaff = staffList.find(s => s.id === field.value);
+          
+          return (
+            <Dropdown
+              hasSearch={2}
+              Items={displayStaff}
+              value={field.value}
+              onChange={(val: any) => field.onChange(val)} // Store ID directly
+              onSearch={setStaffSearchTerm}
+              renderTitle={() => (
+                <>
+                  {selectedStaff ? (
+                    <>
+                      <StyledDropdownAvatar
+                        src={selectedStaff.avatar}
+                        alt="avatar"
+                      />
+                      {selectedStaff.name}
+                    </>
+                  ) : (
+                    "Search Staff"
+                  )}
+                </>
+              )}
+            />
+          );
+        }}
       />
     </InputContainer>
   );

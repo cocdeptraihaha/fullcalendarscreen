@@ -56,10 +56,12 @@ const ServiceForm: FC<ServiceFormProps> = ({
   onSearchChange,
   renderToggleContent,
 }) => {
-  const filteredServices = useMemo(() => 
-    services.filter((service) =>
-      service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    ), [services, searchTerm]
+  const filteredServices = useMemo(
+    () =>
+      services.filter((service) =>
+        service.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [services, searchTerm]
   );
 
   return (
@@ -123,7 +125,6 @@ const ServiceForm: FC<ServiceFormProps> = ({
                   <Checkbox
                     type="checkbox"
                     checked={selectedServices.includes(service.id)}
-                    readOnly
                   />
                   {service.name}
                 </Service>

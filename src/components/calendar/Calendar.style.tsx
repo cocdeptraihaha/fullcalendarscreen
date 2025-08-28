@@ -4,9 +4,8 @@ import Setting from "../../assets/settings.svg";
 import Calendar from "../../assets/calendar.svg";
 export const CalendarContainer = styled.div`
   margin: 50px 0 0 70px;
+  min-width: 1200px;
   font-size: 14px;
-  /* FullCalendar theming via CSS variables. Adjust button colors,
-    today highlight, and default event look-and-feel here. */
   --fc-button-bg-color: #fff;
   --fc-button-text-color: #184561;
   --fc-button-hover-bg-color: #f5f5f5;
@@ -88,19 +87,18 @@ export const CalendarContainer = styled.div`
 export const EventBox = styled.div<{ color?: string }>`
   background-color: ${({ color }) => color || "#f5f5f5"};
   white-space: normal;
-  word-wrap: break-word;
   overflow-wrap: break-word;
   display: flex;
   flex-direction: column;
   gap: 3px;
   padding: 5px;
   span {
-    word-wrap: break-word;
+    display: flex;
+    overflow-wrap: break-word;
     white-space: normal;
   }
   .event-header {
-    display: flex;
     font-weight: bold;
-    width: 70%;
+    width: 60%;
   }
 `;

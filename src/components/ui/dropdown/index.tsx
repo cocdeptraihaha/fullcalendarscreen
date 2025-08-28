@@ -17,6 +17,7 @@ interface DropdownProps {
   Items?: any[];
   renderTitle: () => React.ReactNode; // custom render function for dropdown title
   onChange?: (value: any) => void;
+  onSearch?: (term: string) => void; // callback for search
   value?: any | any[];
 }
 
@@ -25,6 +26,7 @@ const Dropdown: FC<DropdownProps> = ({
   renderTitle,
   Items = [],
   onChange,
+  onSearch,
 }) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,7 +76,10 @@ const Dropdown: FC<DropdownProps> = ({
               type="text"
               placeholder="Search..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                onSearch?.(e.target.value);
+              }}
               onClick={(e) =>
                 e.stopPropagation()
               } /* prevent dropdown close on input click */
@@ -93,7 +98,10 @@ const Dropdown: FC<DropdownProps> = ({
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  onSearch?.(e.target.value);
+                }}
                 onClick={(e) =>
                   e.stopPropagation()
                 } /* prevent dropdown close */

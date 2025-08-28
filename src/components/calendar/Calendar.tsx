@@ -10,26 +10,40 @@ import { CalendarContainer, EventBox } from "../calendar/Calendar.style";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { openForm, clearEventData } from "../../store/formSlice";
+import { openSettings } from "../../store/settingsSlice";
 import { useAppointments } from "../../hooks/useAppointments";
+import {
+  useGlobalStaff,
+  useGlobalServices,
+  useGlobalContacts,
+  useGlobalAppointmentTypes,
+} from "../../hooks/useGlobalData";
 import Form from "../form/Form";
+import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
+import { getName, getNames, getColor } from "../../utils/dataHelpers";
 
 interface Appointment {
   id: string;
   title: string;
-  contact: string;
-  services: string[];
+  contact_id: string;
+  service_ids: string[];
   start: string | number;
   end: string | number;
   color: string;
-  type: string;
-  staff: string;
+  type_id: string;
+  staff_id: string;
 }
 
 export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
+  const { visibleContacts } = useSelector((state: RootState) => state.settings);
   const { data: appointments = [], isLoading, error } = useAppointments();
+  const { data: staff = [] } = useGlobalStaff();
+  const { data: services = [] } = useGlobalServices();
+  const { data: contacts = [] } = useGlobalContacts();
+  const { data: appointmentTypes = [] } = useGlobalAppointmentTypes();
 
   useEffect(() => {
     if (!formOpen) {
@@ -55,23 +69,29 @@ export default function Calendar() {
   }, [view]);
 
   // Memoize events transformation to prevent unnecessary re-renders
-  const events = useMemo(
-    () =>
-      appointments?.map((apt: Appointment) => ({
-        id: apt.id,
-        title: `${apt.type} Appointment`,
-        start: apt.start, // FullCalendar accepts Unix timestamps directly
-        end: apt.end,
-        backgroundColor: apt.color,
-        extendedProps: {
-          contact: apt.contact,
-          type: apt.type,
-          staff: apt.staff,
-          service: apt.services,
-        },
-      })),
-    [appointments]
-  );
+  const events = useMemo(() => {
+    const filteredAppointments =
+      appointments?.filter((apt: Appointment) => {
+        // If no contacts selected, show all
+        if (visibleContacts.length === 0) return true;
+        // Otherwise only show appointments for selected contacts
+        return visibleContacts.includes(apt.contact_id);
+      }) || [];
+
+    return filteredAppointments.map((apt: Appointment) => ({
+      id: apt.id,
+      title: apt.title,
+      start: apt.start,
+      end: apt.end,
+      backgroundColor: getColor(apt.type_id, appointmentTypes),
+      extendedProps: {
+        contact_id: apt.contact_id,
+        type_id: apt.type_id,
+        staff_id: apt.staff_id,
+        service_ids: apt.service_ids,
+      },
+    }));
+  }, [appointments, appointmentTypes, visibleContacts]);
 
   // Memoize event handlers to prevent FullCalendar re-renders
   const handleDateSelect = useCallback((selectInfo: any) => {
@@ -121,15 +141,14 @@ export default function Calendar() {
       )}T${String(endDate.getHours()).padStart(2, "0")}:${String(
         endDate.getMinutes()
       ).padStart(2, "0")}:00`;
-      console.log(startStr, endStr);
       dispatch(
         openForm({
           id: event.id,
           title: event.title,
-          type: event.extendedProps.type,
-          contact: event.extendedProps.contact,
-          staff: event.extendedProps.staff,
-          services: event.extendedProps.service,
+          type_id: event.extendedProps.type_id,
+          contact_id: event.extendedProps.contact_id,
+          staff_id: event.extendedProps.staff_id,
+          service_ids: event.extendedProps.service_ids,
           start: startStr,
           end: endStr,
           color: event.backgroundColor,
@@ -150,7 +169,7 @@ export default function Calendar() {
         click: () => toast.info("Link button clicked!"),
       },
       settingbutton: {
-        click: () => toast.info("Settings button clicked!"),
+        click: () => dispatch(openSettings()),
       },
       calendarbutton: {
         click: () => toast.info("Calendar button clicked!"),
@@ -166,25 +185,30 @@ export default function Calendar() {
   );
 
   // Memoize event content renderer
-  const renderEventContent = useCallback((eventInfo: any) => {
-    const { contact, staff, service } = eventInfo.event.extendedProps;
-    return (
-      <EventBox color={eventInfo.event.backgroundColor}>
-        <div className="event-header">
-          <span>
-            <div>{eventInfo.event.title}</div>
-          </span>
-          <span className="time">{eventInfo.timeText}</span>
-          <br></br>
-        </div>
-        <div>{contact}</div>
-        <div>{staff}</div>
-        {service.map((s: string, index: number) => (
-          <div key={index}>{s}</div>
-        ))}
-      </EventBox>
-    );
-  }, []);
+  const renderEventContent = useCallback(
+    (eventInfo: any) => {
+      const { contact_id, staff_id, service_ids } =
+        eventInfo.event.extendedProps;
+      const serviceNames = getNames(service_ids || [], services);
+
+      return (
+        <EventBox color={eventInfo.event.backgroundColor}>
+          <div className="event-header">
+            <span className="time">{eventInfo.timeText}</span>
+            <span>
+              <div>{eventInfo.event.title}</div>
+            </span>
+          </div>
+          <div>{getName(contact_id, contacts)}</div>
+          <div>{getName(staff_id, staff)}</div>
+          {serviceNames.map((s: string, index: number) => (
+            <div key={index}>{s}</div>
+          ))}
+        </EventBox>
+      );
+    },
+    [contacts, staff, services]
+  );
 
   if (isLoading) {
     return (
@@ -206,6 +230,7 @@ export default function Calendar() {
   return (
     <CalendarContainer>
       <Form />
+      <Settings />
       <FullCalendar
         ref={calendarRef}
         height="auto"

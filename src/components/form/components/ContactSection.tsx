@@ -3,35 +3,37 @@ import { InputContainer, InputLabel, ContactContainer } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import { useContacts, useAppointmentTypes } from "../../../hooks/useFormData";
-import { useCallback } from "react";
+import { useGlobalContacts, useGlobalAppointmentTypes, useSearchContacts } from "../../../hooks/useGlobalData";
+import { useCallback, useState } from "react";
 
 export default function ContactSection() {
+  const mainForm = useFormContext();
   const {
     control,
     setValue,
     formState: { errors },
-  } = useFormContext();
-  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
-  const { data: appointmentTypes = [], isLoading: typesLoading } =
-    useAppointmentTypes();
+  } = mainForm;
+  const [contactSearchTerm, setContactSearchTerm] = useState('');
+  
+  const { data: contacts = [], isLoading: contactsLoading } = useGlobalContacts();
+  const { data: appointmentTypes = [], isLoading: typesLoading } = useGlobalAppointmentTypes();
+  const { data: searchResults = [], isLoading: isSearching } = useSearchContacts(contactSearchTerm);
 
   // Memoize contact change handler
   const handleContactChange = useCallback(
     (val: any, field: any) => {
-      const selectedContact = contacts.find((c) => c.id === val);
-      field.onChange(selectedContact?.name);
+      field.onChange(val); // Store ID directly
     },
-    [contacts]
+    []
   );
 
   // Memoize appointment type change handler
   const handleTypeChange = useCallback(
     (val: any, field: any) => {
       const selectedType = appointmentTypes.find((t) => t.id === val);
-      field.onChange(selectedType?.label);
+      field.onChange(val); // Store ID directly
       setValue("color", selectedType?.color);
-      setValue("title", `${selectedType?.label} Appointment`);
+      setValue("title", `${selectedType?.label} Appointment`); // Luôn cập nhật title
     },
     [appointmentTypes, setValue]
   );
@@ -39,67 +41,69 @@ export default function ContactSection() {
   return (
     <ContactContainer>
       <InputContainer>
-        {(!errors.contact && <InputLabel>Search Contact</InputLabel>) ||
-          (errors.contact && (
-            <ErrorMessage>{(errors.contact as any)?.message}</ErrorMessage>
+        {(!errors.contact_id && <InputLabel>Search Contact</InputLabel>) ||
+          (errors.contact_id && (
+            <ErrorMessage>{(errors.contact_id as any)?.message}</ErrorMessage>
           ))}
         <Controller
           control={control}
-          name="contact"
-          render={({ field }) => (
-            <Dropdown
-              hasSearch={1}
-              Items={contacts}
-              value={field.value}
-              onChange={(val: any) => handleContactChange(val, field)}
-              renderTitle={() => (
-                <>
-                  {contactsLoading ? (
-                    "Loading contacts..."
-                  ) : field.value ? (
-                    <>
-                      <StyledDropdownAvatar
-                        src={
-                          contacts.find((c) => c.name === field.value)?.avatar
-                        }
-                        alt="avatar"
-                      />
-                      {field.value}
-                    </>
-                  ) : (
-                    "Search Contact"
-                  )}
-                </>
-              )}
-            />
-          )}
+          name="contact_id"
+          render={({ field }) => {
+            const displayContacts = contactSearchTerm ? searchResults.slice(0, 5) : contacts.slice(0, 5);
+            const selectedContact = contacts.find(c => c.id === field.value);
+            
+            return (
+              <Dropdown
+                hasSearch={1}
+                Items={displayContacts}
+                value={field.value}
+                onChange={(val: any) => handleContactChange(val, field)}
+                onSearch={setContactSearchTerm}
+                renderTitle={() => (
+                  <>
+                    {contactsLoading ? (
+                      "Loading contacts..."
+                    ) : selectedContact ? (
+                      <>
+                        <StyledDropdownAvatar
+                          src={selectedContact.avatar}
+                          alt="avatar"
+                        />
+                        {selectedContact.name}
+                      </>
+                    ) : (
+                      "Search Contact"
+                    )}
+                  </>
+                )}
+              />
+            );
+          }}
         />
       </InputContainer>
 
       <InputContainer>
-        {(!errors.type && <InputLabel>Appointment Type</InputLabel>) ||
-          (errors.type && (
-            <ErrorMessage>{(errors.type as any)?.message}</ErrorMessage>
+        {(!errors.type_id && <InputLabel>Appointment Type</InputLabel>) ||
+          (errors.type_id && (
+            <ErrorMessage>{(errors.type_id as any)?.message}</ErrorMessage>
           ))}
 
         <Controller
           control={control}
-          name="type"
+          name="type_id"
           render={({ field }) => {
-            // Find current type by label to get ID for dropdown value
-            const currentType = appointmentTypes.find(
-              (t) => t.label === field.value
-            );
+            const selectedType = appointmentTypes.find(t => t.id === field.value);
+            
             return (
               <Dropdown
-                Items={appointmentTypes}
-                value={currentType?.id || ""}
+                Items={appointmentTypes} // Hiển thị tất cả appointment types
+                value={field.value}
                 onChange={(val: any) => handleTypeChange(val, field)}
                 renderTitle={() => (
                   <>
                     {typesLoading
                       ? "Loading types..."
-                      : field.value || "Appointment Type"}
+                      : selectedType?.label || "Appointment Type"}
                   </>
                 )}
               />

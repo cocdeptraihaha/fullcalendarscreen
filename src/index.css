@@ -1,0 +1,9 @@
+body {
+  margin: 0;
+  min-width: 800px;
+  overflow-x: auto;
+}
+
+#root {
+  min-width: 800px;
+}

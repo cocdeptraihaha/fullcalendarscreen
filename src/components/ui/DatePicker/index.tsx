@@ -147,6 +147,7 @@ export default function DatePicker({ name }: DatePickerProps) {
               <CalendarDropdown>
                 <CalendarHeader>
                   <CalendarNav
+                    type="button"
                     onClick={() =>
                       setCurrentMonth(
                         new Date(
@@ -167,6 +168,7 @@ export default function DatePicker({ name }: DatePickerProps) {
                   </span>
 
                   <CalendarNav
+                    type="button"
                     onClick={() =>
                       setCurrentMonth(
                         new Date(

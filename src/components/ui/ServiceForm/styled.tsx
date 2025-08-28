@@ -191,8 +191,12 @@ export const ServiceTag = styled.span`
 `;
 
 export const TagRemoveBtn = styled.span`
+  display: flex;
   cursor: pointer;
+  width: 16px;
   font-weight: bold;
+  justify-content: center;
+  allign-item: center;
   font-size: 14px;
   &:hover {
     background-color: rgba(255, 255, 255, 0.2);

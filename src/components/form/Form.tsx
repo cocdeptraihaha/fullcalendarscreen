@@ -16,6 +16,8 @@ import {
   CancelButton,
   DeleteButton,
   ErrorMessage,
+  ToastButton,
+  ToastContainer,
 } from "./Form.styled";
 import ContactSection from "./components/ContactSection";
 import StaffSection from "./components/StaffSection";
@@ -35,10 +37,10 @@ import {
 type FormFields = {
   id: string;
   title: string;
-  type: string;
-  contact: string;
-  staff: string;
-  services: string[];
+  type_id: string;
+  contact_id: string;
+  staff_id: string;
+  service_ids: string[];
   start: string;
   end: string;
   color: string;
@@ -67,25 +69,26 @@ const addMinutesToDateTime = (dateTime: string, minutes: number) => {
 };
 
 function Form() {
+  const [originalVal, setOriginalVal] = useState<FormFields | null>(null);
+  const [initialStaffId, setInitialStaffId] = useState<string>("");
   // Memoize default values để tránh tạo object mới mỗi render
   const defaultVal: FormFields = useMemo(() => {
     const currentDateTime = getCurrentDateTime();
-    console.log(currentDateTime);
-    console.log(addMinutesToDateTime(currentDateTime, 30));
-
     return {
       id: "",
       title: "",
-      type: "",
-      contact: "",
-      staff: "",
-      services: [],
+      type_id: "",
+      contact_id: "",
+      staff_id: "",
+      service_ids: [],
       start: currentDateTime,
       end: addMinutesToDateTime(currentDateTime, 30),
       color: "",
     };
   }, []);
   const [loading, setLoading] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const { open, eventData } = useSelector((state: RootState) => state.form);
   const dispatch = useDispatch();
 
@@ -97,11 +100,6 @@ function Form() {
     createMutation.isPending ||
     updateMutation.isPending ||
     deleteMutation.isPending;
-
-  const handleClose = useCallback(() => {
-    dispatch(clearEventData());
-    dispatch(closeForm());
-  }, [dispatch]);
 
   // Initialize react-hook-form with validation
   const methods = useForm<FormFields>({
@@ -116,25 +114,93 @@ function Form() {
     formState: { errors },
   } = methods;
 
+  const handleClose = useCallback(() => {
+    if (isConfirmOpen) return; // Ngăn spam toast
+
+    // So sánh dữ liệu hiện tại với ban đầu
+    const hasChanges = originalVal && JSON.stringify(watch()) !== JSON.stringify(originalVal);
+    
+    // Nếu không có thay đổi, đóng trực tiếp
+    if (!hasChanges) {
+      dispatch(clearEventData());
+      dispatch(closeForm());
+      return;
+    }
+
+    setIsConfirmOpen(true);
+    toast.dismiss(); // Đóng tất cả toast hiện tại
+
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Are you sure you want to close without saving?</p>
+          <ToastContainer>
+            <ToastButton
+              variant="danger"
+              onClick={() => {
+                dispatch(clearEventData());
+                dispatch(closeForm());
+                setIsConfirmOpen(false);
+                closeToast?.();
+              }}
+            >
+              Yes, Close
+            </ToastButton>
+            <ToastButton
+              onClick={() => {
+                setIsConfirmOpen(false);
+                closeToast?.();
+              }}
+            >
+              Cancel
+            </ToastButton>
+          </ToastContainer>
+        </div>
+      ),
+      {
+        position: "top-center",
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        toastId: "confirm-close",
+        onClose: () => setIsConfirmOpen(false), // Reset state khi nhấp X
+      }
+    );
+  }, [dispatch, isConfirmOpen, originalVal, watch]);
+
+  // Watch all form values
+  const currentValues = watch();
+
   // Watch the ID field to determine edit mode dynamically
   const currentId = watch("id");
   const isEditMode = Boolean(currentId);
 
   useEffect(() => {
     if (open) {
+      let formValues;
       if (eventData && eventData.id) {
-        reset(eventData);
+        formValues = {
+          ...eventData,
+          type_id: eventData.type_id || "",
+          contact_id: eventData.contact_id || "",
+          staff_id: eventData.staff_id || "",
+          service_ids: eventData.service_ids || [],
+        };
       } else if (eventData && eventData.start && !eventData.id) {
-        reset({
+        formValues = {
           ...defaultVal,
           start: eventData.start,
           end: eventData.end,
-        });
+        };
       } else {
-        reset({ ...defaultVal });
+        formValues = { ...defaultVal };
       }
+      
+      reset(formValues);
+      setOriginalVal(formValues); // Lưu giá trị ban đầu
+      setInitialStaffId(formValues.staff_id); // Lưu staff ID ban đầu
     }
-  }, [open, eventData]);
+  }, [open, eventData, defaultVal, reset]);
 
   const onSubmit = handleSubmit(async (data: FormFields) => {
     setLoading(true);
@@ -168,14 +234,18 @@ function Form() {
   });
 
   const handleDelete = useCallback(async () => {
-    if (!eventData?.id) return;
+    if (!eventData?.id || isDeleteConfirmOpen) return;
+
+    setIsDeleteConfirmOpen(true);
+    toast.dismiss();
 
     toast(
       ({ closeToast }) => (
         <div>
           <p>Are you sure you want to delete this appointment?</p>
-          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-            <button
+          <ToastContainer>
+            <ToastButton
+              variant="danger"
               onClick={async () => {
                 setLoading(true);
                 try {
@@ -186,32 +256,22 @@ function Form() {
                   toast.error("Error deleting appointment");
                 } finally {
                   setLoading(false);
+                  setIsDeleteConfirmOpen(false);
                 }
                 closeToast?.();
               }}
-              style={{
-                padding: "5px 10px",
-                backgroundColor: "#dc3545",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-              }}
             >
               Delete
-            </button>
-            <button
-              onClick={closeToast}
-              style={{
-                padding: "5px 10px",
-                backgroundColor: "#6c757d",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
+            </ToastButton>
+            <ToastButton
+              onClick={() => {
+                setIsDeleteConfirmOpen(false);
+                closeToast?.();
               }}
             >
               Cancel
-            </button>
-          </div>
+            </ToastButton>
+          </ToastContainer>
         </div>
       ),
       {
@@ -219,16 +279,18 @@ function Form() {
         autoClose: false,
         closeOnClick: false,
         draggable: false,
+        toastId: "confirm-delete",
+        onClose: () => setIsDeleteConfirmOpen(false), // Reset state khi nhấp X
       }
     );
-  }, [eventData?.id, deleteMutation, dispatch]);
+  }, [eventData?.id, deleteMutation, dispatch, isDeleteConfirmOpen]);
 
   return (
     // FormProvider makes form methods available to all child components
     <FormProvider {...methods}>
       {open && ( // Only render modal when form is open
-        <FormContainer>
-          <FormModal>
+        <FormContainer onClick={handleClose}>
+          <FormModal onClick={(e) => e.stopPropagation()}>
             <form onSubmit={onSubmit}>
               <ModalHeader>
                 <TitleInput
@@ -249,7 +311,7 @@ function Form() {
               <ModalBody>
                 <ContactSection />
                 <StaffSection />
-                <ServiceSection />
+                <ServiceSection initialStaffId={initialStaffId} />
                 <DateTimeSection />
               </ModalBody>
               <FormFotter>

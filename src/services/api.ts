@@ -8,7 +8,7 @@ export const fetchAppointments = async (): Promise<any[]> => {
     if (!res.ok) throw new Error(`Failed to fetch appointments: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching appointments:', error);
+    console.error("Error fetching appointments:", error);
     throw error;
   }
 };
@@ -16,10 +16,11 @@ export const fetchAppointments = async (): Promise<any[]> => {
 export const fetchAppointmentTypes = async (): Promise<any[]> => {
   try {
     const res = await fetch(`${BASE_URL}/appointment_types`);
-    if (!res.ok) throw new Error(`Failed to fetch appointment types: ${res.status}`);
+    if (!res.ok)
+      throw new Error(`Failed to fetch appointment types: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching appointment types:', error);
+    console.error("Error fetching appointment types:", error);
     throw error;
   }
 };
@@ -30,7 +31,7 @@ export const fetchContacts = async (): Promise<any[]> => {
     if (!res.ok) throw new Error(`Failed to fetch contacts: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching contacts:', error);
+    console.error("Error fetching contacts:", error);
     throw error;
   }
 };
@@ -41,7 +42,7 @@ export const fetchStaff = async (): Promise<any[]> => {
     if (!res.ok) throw new Error(`Failed to fetch staff: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching staff:', error);
+    console.error("Error fetching staff:", error);
     throw error;
   }
 };
@@ -52,7 +53,7 @@ export const fetchServices = async (): Promise<any[]> => {
     if (!res.ok) throw new Error(`Failed to fetch services: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching services:', error);
+    console.error("Error fetching services:", error);
     throw error;
   }
 };
@@ -60,10 +61,11 @@ export const fetchServices = async (): Promise<any[]> => {
 export const fetchStaffServices = async (): Promise<any[]> => {
   try {
     const res = await fetch(`${BASE_URL}/staff_services`);
-    if (!res.ok) throw new Error(`Failed to fetch staff services: ${res.status}`);
+    if (!res.ok)
+      throw new Error(`Failed to fetch staff services: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error fetching staff services:', error);
+    console.error("Error fetching staff services:", error);
     throw error;
   }
 };
@@ -72,14 +74,16 @@ export const getServicesByStaffId = async (staffId: string): Promise<any[]> => {
   try {
     const services = await fetchServices();
     const staffServices = await fetchStaffServices();
-    
+
     const staffServiceIds = staffServices
       .filter((ss: any) => ss.staff_id === staffId)
       .map((ss: any) => ss.service_id);
-      
-    return services.filter((service: any) => staffServiceIds.includes(service.id));
+
+    return services.filter((service: any) =>
+      staffServiceIds.includes(service.id)
+    );
   } catch (error) {
-    console.error('Error fetching services by staff ID:', error);
+    console.error("Error fetching services by staff ID:", error);
     throw error;
   }
 };
@@ -95,12 +99,15 @@ export const createAppointment = async (appointment: any): Promise<any> => {
     if (!res.ok) throw new Error(`Failed to create appointment: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error creating appointment:', error);
+    console.error("Error creating appointment:", error);
     throw error;
   }
 };
 
-export const updateAppointment = async (id: string, appointment: any): Promise<any> => {
+export const updateAppointment = async (
+  id: string,
+  appointment: any
+): Promise<any> => {
   try {
     const appointmentWithId = { ...appointment, id };
     const res = await fetch(`${BASE_URL}/appointments/${id}`, {
@@ -111,7 +118,7 @@ export const updateAppointment = async (id: string, appointment: any): Promise<a
     if (!res.ok) throw new Error(`Failed to update appointment: ${res.status}`);
     return await res.json();
   } catch (error) {
-    console.error('Error updating appointment:', error);
+    console.error("Error updating appointment:", error);
     throw error;
   }
 };
@@ -123,7 +130,59 @@ export const deleteAppointment = async (id: string): Promise<void> => {
     });
     if (!res.ok) throw new Error(`Failed to delete appointment: ${res.status}`);
   } catch (error) {
-    console.error('Error deleting appointment:', error);
+    console.error("Error deleting appointment:", error);
+    throw error;
+  }
+};
+
+// Appointment Types API
+export const createAppointmentType = async (type: {
+  label: string;
+  color: string;
+}): Promise<any> => {
+  try {
+    const res = await fetch(`${BASE_URL}/appointment_types`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(type),
+    });
+    if (!res.ok)
+      throw new Error(`Failed to create appointment type: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error creating appointment type:", error);
+    throw error;
+  }
+};
+
+export const updateAppointmentType = async (
+  id: string,
+  type: { label: string; color: string }
+): Promise<any> => {
+  try {
+    const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...type, id }),
+    });
+    if (!res.ok)
+      throw new Error(`Failed to update appointment type: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error updating appointment type:", error);
+    throw error;
+  }
+};
+
+export const deleteAppointmentType = async (id: string): Promise<void> => {
+  try {
+    const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
+      method: "DELETE",
+    });
+    if (!res.ok)
+      throw new Error(`Failed to delete appointment type: ${res.status}`);
+  } catch (error) {
+    console.error("Error deleting appointment type:", error);
     throw error;
   }
 };
