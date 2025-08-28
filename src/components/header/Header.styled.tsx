@@ -11,7 +11,7 @@ export const Container = styled.div`
   width: 100%;
   min-width: 1200px;
   height: 45px;
-  z-index: 1001;
+  z-index: 800;
 `;
 export const NavbarContainer = styled.div`
   position: absolute;
