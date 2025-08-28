@@ -19,6 +19,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [hasReset, setHasReset] = useState(false);
+  const [currentAppointmentId, setCurrentAppointmentId] = useState<string>("");
 
   const mainForm = useFormContext();
   const {
@@ -26,6 +27,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
   } = mainForm;
   const currentStaffId = mainForm?.watch("staff_id") || "";
   const currentServiceIds = mainForm?.watch("service_ids") || [];
+  const appointmentId = mainForm?.watch("id") || "";
 
   // Staff form methods
   const staffMethods = useForm({
@@ -38,18 +40,37 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
     selectedStaffId || ""
   );
 
-  const services = selectedStaffId ? staffServices : allServices;
-
-  // Sync selected services with form values only on initial load
+  // Sync staffMethods with currentStaffId
   useEffect(() => {
+    staffMethods.reset({ staff_id: currentStaffId });
+  }, [currentStaffId, staffMethods]);
+
+  // Track appointment changes and reset hasReset flag
+  useEffect(() => {
+    if (appointmentId !== currentAppointmentId) {
+      setCurrentAppointmentId(appointmentId);
+      setHasReset(false);
+    } else if (appointmentId === "" && currentAppointmentId !== "") {
+      setHasReset(false);
+    }
+  }, [appointmentId, currentAppointmentId]);
+
+  // Sync selected services and handle reset logic
+  useEffect(() => {
+    // Sync services from form
     if (currentServiceIds.length > 0) {
       setSelectedServices(currentServiceIds);
     }
-  }, [currentServiceIds.length > 0 ? currentServiceIds.join(",") : ""]);
-
-  // Reset selected services when staff changes
-  useEffect(() => {
-    if (initialStaffId && currentStaffId && currentStaffId !== initialStaffId && !hasReset) {
+    
+    // Reset when staff changes in same event
+    if (
+      initialStaffId &&
+      currentStaffId &&
+      currentStaffId !== initialStaffId &&
+      !hasReset &&
+      appointmentId === currentAppointmentId &&
+      currentAppointmentId !== ""
+    ) {
       setSelectedServices([]);
       if (mainForm) {
         mainForm.setValue("service_ids", []);
@@ -57,20 +78,13 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       }
       setHasReset(true);
     }
-  }, [currentStaffId, initialStaffId, hasReset]);
+  }, [currentServiceIds, currentStaffId, initialStaffId, hasReset, appointmentId, currentAppointmentId, mainForm]);
 
-  // Reset selected services when staff changes in service form
-  useEffect(() => {
-    if (selectedStaffId && selectedStaffId !== currentStaffId) {
-      setSelectedServices([]);
-    }
-  }, [selectedStaffId, currentStaffId]);
+  const services = selectedStaffId ? staffServices : allServices;
 
   const handleToggle = useCallback(() => {
-    const staffIdValue = mainForm?.getValues("staff_id") || "";
-    staffMethods.reset({ staff_id: staffIdValue });
     setOpen(true);
-  }, [mainForm, staffMethods]);
+  }, []);
 
   const handleClose = useCallback((e?: MouseEvent) => {
     e?.stopPropagation();
@@ -82,6 +96,10 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       e?.stopPropagation();
 
       if (mainForm && selectedStaffId) {
+        // Đánh dấu đã reset để tránh double reset
+        if (selectedStaffId !== initialStaffId) {
+          setHasReset(true);
+        }
         mainForm.setValue("staff_id", selectedStaffId);
       }
 
@@ -92,7 +110,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
 
       setOpen(false);
     },
-    [mainForm, selectedStaffId, selectedServices]
+    [mainForm, selectedStaffId, selectedServices, initialStaffId]
   );
 
   const handleServiceToggle = useCallback(
