@@ -3,7 +3,11 @@ import { InputContainer, InputLabel, ContactContainer } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import { useGlobalContacts, useGlobalAppointmentTypes, useSearchContacts } from "../../../hooks/useGlobalData";
+import {
+  useGlobalContacts,
+  useGlobalAppointmentTypes,
+  useSearchContacts,
+} from "../../../hooks/useGlobalData";
 import { useCallback, useState } from "react";
 
 export default function ContactSection() {
@@ -13,19 +17,18 @@ export default function ContactSection() {
     setValue,
     formState: { errors },
   } = mainForm;
-  const [contactSearchTerm, setContactSearchTerm] = useState('');
-  
-  const { data: contacts = [], isLoading: contactsLoading } = useGlobalContacts();
-  const { data: appointmentTypes = [], isLoading: typesLoading } = useGlobalAppointmentTypes();
-  const { data: searchResults = [], isLoading: isSearching } = useSearchContacts(contactSearchTerm);
+  const [contactSearchTerm, setContactSearchTerm] = useState("");
+
+  const { data: contacts = [], isLoading: contactsLoading } =
+    useGlobalContacts();
+  const { data: appointmentTypes = [], isLoading: typesLoading } =
+    useGlobalAppointmentTypes();
+  const { data: searchResults = [] } = useSearchContacts(contactSearchTerm);
 
   // Memoize contact change handler
-  const handleContactChange = useCallback(
-    (val: any, field: any) => {
-      field.onChange(val); // Store ID directly
-    },
-    []
-  );
+  const handleContactChange = useCallback((val: any, field: any) => {
+    field.onChange(val); // Store ID directly
+  }, []);
 
   // Memoize appointment type change handler
   const handleTypeChange = useCallback(
@@ -49,9 +52,11 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            const displayContacts = contactSearchTerm ? searchResults.slice(0, 5) : contacts.slice(0, 5);
-            const selectedContact = contacts.find(c => c.id === field.value);
-            
+            const displayContacts = contactSearchTerm
+              ? searchResults.slice(0, 5)
+              : contacts.slice(0, 5);
+            const selectedContact = contacts.find((c) => c.id === field.value);
+
             return (
               <Dropdown
                 hasSearch={1}
@@ -92,8 +97,10 @@ export default function ContactSection() {
           control={control}
           name="type_id"
           render={({ field }) => {
-            const selectedType = appointmentTypes.find(t => t.id === field.value);
-            
+            const selectedType = appointmentTypes.find(
+              (t) => t.id === field.value
+            );
+
             return (
               <Dropdown
                 Items={appointmentTypes} // Hiển thị tất cả appointment types

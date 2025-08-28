@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
   closeSettings,
   toggleContactVisibility,
+  loadSettings,
 } from "../../store/settingsSlice";
 import {
   useGlobalContacts,
@@ -14,6 +15,7 @@ import {
   useUpdateAppointmentType,
   useDeleteAppointmentType,
 } from "../../hooks/useAppointmentTypes";
+import { useSettings, useUpdateSettings } from "../../hooks/useSettings";
 import { X, Plus, Check, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import {
@@ -43,10 +45,11 @@ import { ToastButton, ToastContainer } from "../form/Form.styled";
 
 export default function Settings() {
   const dispatch = useDispatch();
-  const { open } = useSelector((state: RootState) => state.settings);
-  const { visibleContacts } = useSelector((state: RootState) => state.settings);
+  const { open, visibleContacts, isLoaded } = useSelector((state: RootState) => state.settings);
   const { data: contacts = [] } = useGlobalContacts();
   const { data: appointmentTypes = [] } = useGlobalAppointmentTypes();
+  const { data: settings } = useSettings();
+  const updateSettingsMutation = useUpdateSettings();
 
   const createMutation = useCreateAppointmentType();
   const updateMutation = useUpdateAppointmentType();
@@ -63,8 +66,24 @@ export default function Settings() {
     { id: "types", label: "Appointment types" },
   ];
 
+  // Load settings from server on mount
+  useEffect(() => {
+    if (settings && !isLoaded) {
+      dispatch(loadSettings(settings));
+    }
+  }, [settings, isLoaded, dispatch]);
+
   const handleContactToggle = (contactId: string) => {
     dispatch(toggleContactVisibility(contactId));
+    
+    // Save to server
+    const newVisibleContacts = visibleContacts.includes(contactId)
+      ? visibleContacts.filter(id => id !== contactId)
+      : [...visibleContacts, contactId];
+    
+    updateSettingsMutation.mutate({
+      visibleContacts: newVisibleContacts
+    });
   };
 
   const isContactVisible = (contactId: string) => {

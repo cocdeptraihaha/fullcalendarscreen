@@ -216,8 +216,8 @@
     },
     {
       "id": "36",
-      "title": "HIhi Appointment",
-      "type_id": "97b0",
+      "title": "Date Appointment",
+      "type_id": "43fd",
       "contact_id": "1",
       "staff_id": "2",
       "service_ids": [
@@ -225,7 +225,7 @@
       ],
       "start": 1754099100000,
       "end": 1754100900000,
-      "color": "#386380"
+      "color": "#fec3f3"
     },
     {
       "id": "37",
@@ -249,9 +249,9 @@
       "color": "#2ecc71"
     },
     {
-      "id": "2",
       "label": "Follow-up",
-      "color": "#f39c12"
+      "color": "#b09973",
+      "id": "2"
     },
     {
       "id": "3",
@@ -387,6 +387,16 @@
       "name": "I am Not Sure"
     }
   ],
+  "settings": {
+    "visibleContacts": [
+      "3",
+      "4",
+      "1",
+      "2",
+      "5",
+      "6"
+    ]
+  },
   "staff_services": [
     {
       "id": "1",

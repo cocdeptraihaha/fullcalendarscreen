@@ -186,3 +186,30 @@ export const deleteAppointmentType = async (id: string): Promise<void> => {
     throw error;
   }
 };
+
+// Settings API
+export const fetchSettings = async (): Promise<any> => {
+  try {
+    const res = await fetch(`${BASE_URL}/settings`);
+    if (!res.ok) throw new Error(`Failed to fetch settings: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching settings:", error);
+    throw error;
+  }
+};
+
+export const updateSettings = async (settings: any): Promise<any> => {
+  try {
+    const res = await fetch(`${BASE_URL}/settings`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(settings),
+    });
+    if (!res.ok) throw new Error(`Failed to update settings: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error updating settings:", error);
+    throw error;
+  }
+};

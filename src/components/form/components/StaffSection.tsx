@@ -7,16 +7,14 @@ import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useGlobalStaff, useSearchStaff } from "../../../hooks/useGlobalData";
 
 // Define Staff's datatype
-interface Staff {
-  id: string;
-  name: string;
-  avatar: string;
-}
 
 const StaffSection: React.FC = () => {
-  const { control, formState: { errors } } = useFormContext();
-  const [staffSearchTerm, setStaffSearchTerm] = useState('');
-  
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+  const [staffSearchTerm, setStaffSearchTerm] = useState("");
+
   const { data: staffList = [] } = useGlobalStaff();
   const { data: searchResults = [] } = useSearchStaff(staffSearchTerm);
 
@@ -30,9 +28,11 @@ const StaffSection: React.FC = () => {
         control={control}
         name="staff_id"
         render={({ field }) => {
-          const displayStaff = staffSearchTerm ? searchResults.slice(0, 5) : staffList.slice(0, 5);
-          const selectedStaff = staffList.find(s => s.id === field.value);
-          
+          const displayStaff = staffSearchTerm
+            ? searchResults.slice(0, 5)
+            : staffList.slice(0, 5);
+          const selectedStaff = staffList.find((s) => s.id === field.value);
+
           return (
             <Dropdown
               hasSearch={2}

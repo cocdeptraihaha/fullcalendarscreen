@@ -118,8 +118,9 @@ function Form() {
     if (isConfirmOpen) return; // Ngăn spam toast
 
     // So sánh dữ liệu hiện tại với ban đầu
-    const hasChanges = originalVal && JSON.stringify(watch()) !== JSON.stringify(originalVal);
-    
+    const hasChanges =
+      originalVal && JSON.stringify(watch()) !== JSON.stringify(originalVal);
+
     // Nếu không có thay đổi, đóng trực tiếp
     if (!hasChanges) {
       dispatch(clearEventData());
@@ -168,10 +169,6 @@ function Form() {
     );
   }, [dispatch, isConfirmOpen, originalVal, watch]);
 
-  // Watch all form values
-  const currentValues = watch();
-
-  // Watch the ID field to determine edit mode dynamically
   const currentId = watch("id");
   const isEditMode = Boolean(currentId);
 
@@ -195,7 +192,7 @@ function Form() {
       } else {
         formValues = { ...defaultVal };
       }
-      
+
       reset(formValues);
       setOriginalVal(formValues); // Lưu giá trị ban đầu
       setInitialStaffId(formValues.staff_id); // Lưu staff ID ban đầu
