@@ -8,7 +8,7 @@ import {
 } from "../../store/settingsSlice";
 import {
   useGlobalContacts,
-  useGlobalAppointmentTypes,
+  useAllAppointmentTypes,
 } from "../../hooks/useGlobalData";
 import {
   useCreateAppointmentType,
@@ -47,7 +47,7 @@ export default function Settings() {
   const dispatch = useDispatch();
   const { open, visibleContacts, isLoaded } = useSelector((state: RootState) => state.settings);
   const { data: contacts = [] } = useGlobalContacts();
-  const { data: appointmentTypes = [] } = useGlobalAppointmentTypes();
+  const { data: appointmentTypes = [] } = useAllAppointmentTypes();
   const { data: settings } = useSettings();
   const updateSettingsMutation = useUpdateSettings();
 
@@ -216,7 +216,7 @@ export default function Settings() {
 
               {activeSection === "types" && (
                 <Section>
-                  {appointmentTypes.map((type: any) => (
+                  {appointmentTypes.filter((type: any) => !type.deleted_at).map((type: any) => (
                     <TypeItem key={type.id}>
                       <TypeLabel>{type.label}</TypeLabel>
                       <ColorPicker

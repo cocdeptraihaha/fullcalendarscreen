@@ -172,21 +172,6 @@
       "color": "#f39c12"
     },
     {
-      "id": "32",
-      "title": "Follow-up Appointment",
-      "type_id": "2",
-      "contact_id": "2",
-      "staff_id": "3",
-      "service_ids": [
-        "1",
-        "2",
-        "3"
-      ],
-      "start": 1754729100000,
-      "end": 1754730900000,
-      "color": "#f39c12"
-    },
-    {
       "id": "33",
       "title": "Follow-up Appointment",
       "type_id": "2",
@@ -246,32 +231,38 @@
     {
       "id": "1",
       "label": "Consultation",
-      "color": "#2ecc71"
+      "color": "#2ecc71",
+      "deleted_at": null
     },
     {
       "label": "Follow-up",
       "color": "#b09973",
-      "id": "2"
+      "id": "2",
+      "deleted_at": null
     },
     {
       "id": "3",
       "label": "Procedure",
-      "color": "#e91e63"
+      "color": "#e91e63",
+      "deleted_at": null
     },
     {
       "id": "4",
       "label": "NEW Weight Loss Consultation",
-      "color": "#1abc9c"
+      "color": "#1abc9c",
+      "deleted_at": null
     },
     {
       "id": "5",
       "label": "Follow-Up Weight Loss Consultation",
-      "color": "#95a5a6"
+      "color": "#95a5a6",
+      "deleted_at": null
     },
     {
       "id": "43fd",
       "label": "Date",
-      "color": "#fec3f3"
+      "color": "#fec3f3",
+      "deleted_at": "2025-08-28T09:33:14.454Z"
     }
   ],
   "contacts": [

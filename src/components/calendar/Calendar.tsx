@@ -16,7 +16,7 @@ import {
   useGlobalStaff,
   useGlobalServices,
   useGlobalContacts,
-  useGlobalAppointmentTypes,
+  useAllAppointmentTypes,
 } from "../../hooks/useGlobalData";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
@@ -43,7 +43,7 @@ export default function Calendar() {
   const { data: staff = [] } = useGlobalStaff();
   const { data: services = [] } = useGlobalServices();
   const { data: contacts = [] } = useGlobalContacts();
-  const { data: appointmentTypes = [] } = useGlobalAppointmentTypes();
+  const { data: appointmentTypes = [] } = useAllAppointmentTypes(); // Lấy tất cả types để hiển thị màu
 
   useEffect(() => {
     if (!formOpen) {

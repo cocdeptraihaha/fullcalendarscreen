@@ -22,7 +22,7 @@ export default function ContactSection() {
   const { data: contacts = [], isLoading: contactsLoading } =
     useGlobalContacts();
   const { data: appointmentTypes = [], isLoading: typesLoading } =
-    useGlobalAppointmentTypes();
+    useGlobalAppointmentTypes(); // Chỉ lấy active types cho form
   const { data: searchResults = [] } = useSearchContacts(contactSearchTerm);
 
   // Memoize contact change handler

@@ -3,7 +3,8 @@ import {
   fetchStaff, 
   fetchServices, 
   fetchContacts, 
-  fetchAppointmentTypes 
+  fetchAppointmentTypes,
+  fetchActiveAppointmentTypes
 } from '../services/api';
 
 // Global cache - fetch once, use everywhere
@@ -27,7 +28,13 @@ export const useGlobalContacts = () => useQuery({
 
 export const useGlobalAppointmentTypes = () => useQuery({
   queryKey: ['appointmentTypes'],
-  queryFn: fetchAppointmentTypes,
+  queryFn: fetchActiveAppointmentTypes, // Chỉ lấy active types
+  staleTime: Infinity,
+});
+
+export const useAllAppointmentTypes = () => useQuery({
+  queryKey: ['appointmentTypes', 'all'],
+  queryFn: fetchAppointmentTypes, // Lấy tất cả (cho settings)
   staleTime: Infinity,
 });
 

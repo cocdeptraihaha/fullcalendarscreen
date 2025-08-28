@@ -1,5 +1,5 @@
 // TanStack Query API functions
-const BASE_URL = "https://json-server-io3p.onrender.com";
+const BASE_URL = "http://localhost:4000";
 
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
@@ -176,13 +176,37 @@ export const updateAppointmentType = async (
 
 export const deleteAppointmentType = async (id: string): Promise<void> => {
   try {
+    // Lấy dữ liệu hiện tại trước
+    const getRes = await fetch(`${BASE_URL}/appointment_types/${id}`);
+    if (!getRes.ok) throw new Error(`Failed to fetch appointment type: ${getRes.status}`);
+    const currentType = await getRes.json();
+    
+    // Cập nhật với deleted_at, giữ nguyên các thuộc tính khác
     const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
-      method: "DELETE",
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        ...currentType, 
+        deleted_at: new Date().toISOString() 
+      }),
     });
     if (!res.ok)
       throw new Error(`Failed to delete appointment type: ${res.status}`);
   } catch (error) {
     console.error("Error deleting appointment type:", error);
+    throw error;
+  }
+};
+
+export const fetchActiveAppointmentTypes = async (): Promise<any[]> => {
+  try {
+    const res = await fetch(`${BASE_URL}/appointment_types`);
+    if (!res.ok)
+      throw new Error(`Failed to fetch appointment types: ${res.status}`);
+    const types = await res.json();
+    return types.filter((type: any) => !type.deleted_at);
+  } catch (error) {
+    console.error("Error fetching active appointment types:", error);
     throw error;
   }
 };

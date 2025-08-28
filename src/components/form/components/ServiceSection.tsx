@@ -61,7 +61,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
     if (currentServiceIds.length > 0) {
       setSelectedServices(currentServiceIds);
     }
-    
+
     // Reset when staff changes in same event
     if (
       initialStaffId &&
@@ -78,7 +78,15 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       }
       setHasReset(true);
     }
-  }, [currentServiceIds, currentStaffId, initialStaffId, hasReset, appointmentId, currentAppointmentId, mainForm]);
+  }, [
+    currentServiceIds,
+    currentStaffId,
+    initialStaffId,
+    hasReset,
+    appointmentId,
+    currentAppointmentId,
+    mainForm,
+  ]);
 
   const services = selectedStaffId ? staffServices : allServices;
 
