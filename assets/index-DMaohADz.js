@@ -57,7 +57,7 @@ Error generating stack: `+o.message+`
   width: 100%;
   min-width: 1200px;
   height: 45px;
-  z-index: 1001;
+  z-index: 800;
 `,r2=J.div`
   position: absolute;
   width: 30%;
