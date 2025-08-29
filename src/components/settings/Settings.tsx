@@ -104,6 +104,8 @@ export default function Settings() {
   };
 
   const handleCreateType = async () => {
+    toast.dismiss();
+    
     if (!newTypeName.trim()) {
       toast.error("Please enter a type name");
       return;
