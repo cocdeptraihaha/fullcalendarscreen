@@ -18,6 +18,8 @@ import {
   useGlobalContacts,
   useAllAppointmentTypes,
 } from "../../hooks/useGlobalData";
+import { useSettings } from "../../hooks/useSettings";
+import { useSettingsFilter } from "../../hooks/useSettingsFilter";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
@@ -38,12 +40,14 @@ interface Appointment {
 export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
-  const { visibleContacts } = useSelector((state: RootState) => state.settings);
+  const { isLoaded } = useSelector((state: RootState) => state.settings);
+  const { filterAppointments } = useSettingsFilter();
   const { data: appointments = [], isLoading, error } = useAppointments();
   const { data: staff = [] } = useGlobalStaff();
   const { data: services = [] } = useGlobalServices();
   const { data: contacts = [] } = useGlobalContacts();
-  const { data: appointmentTypes = [] } = useAllAppointmentTypes(); // Get all types to display colors
+  const { data: appointmentTypes = [] } = useAllAppointmentTypes();
+  const { data: settings, isLoading: settingsLoading } = useSettings();
 
   useEffect(() => {
     if (!formOpen) {
@@ -70,15 +74,7 @@ export default function Calendar() {
 
   // Memoize events transformation to prevent unnecessary re-renders
   const events = useMemo(() => {
-    const filteredAppointments =
-      appointments?.filter((apt: Appointment) => {
-        // If all contacts selected, show all
-        if (visibleContacts.length === contacts.length) return true;
-        // If no contacts selected, show none
-        if (visibleContacts.length === 0) return false;
-        // Otherwise only show appointments for selected contacts
-        return visibleContacts.includes(apt.contact_id);
-      }) || [];
+    const filteredAppointments = filterAppointments(appointments || []);
 
     return filteredAppointments.map((apt: Appointment) => ({
       id: apt.id,
@@ -93,7 +89,7 @@ export default function Calendar() {
         service_ids: apt.service_ids,
       },
     }));
-  }, [appointments, appointmentTypes, visibleContacts]);
+  }, [appointments, appointmentTypes, filterAppointments]);
 
   // Memoize event handlers to prevent FullCalendar re-renders
   const handleDateSelect = useCallback((selectInfo: any) => {
@@ -212,7 +208,7 @@ export default function Calendar() {
     [contacts, staff, services]
   );
 
-  if (isLoading) {
+  if (isLoading || settingsLoading) {
     return (
       <CalendarContainer>
         <div
@@ -223,7 +219,7 @@ export default function Calendar() {
             height: "400px",
           }}
         >
-          <div>Loading appointments...</div>
+          <div>Loading...</div>
         </div>
       </CalendarContainer>
     );

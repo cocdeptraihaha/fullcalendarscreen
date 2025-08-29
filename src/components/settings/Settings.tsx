@@ -61,7 +61,7 @@ export default function Settings() {
   const [newTypeColor, setNewTypeColor] = useState("#3498db");
 
   const [activeSection, setActiveSection] = useState("contacts");
-  const [contactUpdates, setContactUpdates] = useState<string[]>([]);
+  const [contactUpdates, setContactUpdates] = useState<string[] | null>(null);
   const [colorUpdates, setColorUpdates] = useState<{[key: string]: {label: string, color: string}}>({});
   
   const debouncedContactUpdates = useDebounce(contactUpdates, 500);
@@ -167,7 +167,7 @@ export default function Settings() {
   // Handle debounced contact updates
   useEffect(() => {
     const contactKey = JSON.stringify(debouncedContactUpdates);
-    if (debouncedContactUpdates.length >= 0 && contactProcessedRef.current !== contactKey) {
+    if (debouncedContactUpdates !== null && contactProcessedRef.current !== contactKey) {
       contactProcessedRef.current = contactKey;
       updateSettingsMutation.mutate({
         visibleContacts: debouncedContactUpdates
@@ -234,14 +234,7 @@ export default function Settings() {
                       checked={visibleContacts.length === contacts.length}
                       onChange={() => {
                         if (visibleContacts.length === contacts.length) {
-                          // Uncheck all - set to empty array
-                          setContactUpdates([]);
-                          // Update Redux for each contact
-                          contacts.forEach((contact: any) => {
-                            if (visibleContacts.includes(contact.id)) {
-                              dispatch(toggleContactVisibility(contact.id));
-                            }
-                          });
+                          // Uncheck Show All - do nothing, just visual change
                         } else {
                           // Check all - set to all contact IDs
                           const allContactIds = contacts.map((contact: any) => contact.id);

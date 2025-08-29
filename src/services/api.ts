@@ -1,5 +1,5 @@
 // TanStack Query API functions
-const BASE_URL = "https://json-server-io3p.onrender.com";
+const BASE_URL = "http://localhost:4000";
 
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
@@ -58,29 +58,18 @@ export const fetchServices = async (): Promise<any[]> => {
   }
 };
 
-export const fetchStaffServices = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(`${BASE_URL}/staff_services`);
-    if (!res.ok)
-      throw new Error(`Failed to fetch staff services: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("Error fetching staff services:", error);
-    throw error;
-  }
-};
-
 export const getServicesByStaffId = async (staffId: string): Promise<any[]> => {
   try {
     const services = await fetchServices();
-    const staffServices = await fetchStaffServices();
+    const staff = await fetchStaff();
 
-    const staffServiceIds = staffServices
-      .filter((ss: any) => ss.staff_id === staffId)
-      .map((ss: any) => ss.service_id);
+    const selectedStaff = staff.find((s: any) => s.id === staffId);
+    if (!selectedStaff || !selectedStaff.service_ids) {
+      return [];
+    }
 
     return services.filter((service: any) =>
-      staffServiceIds.includes(service.id)
+      selectedStaff.service_ids.includes(service.id)
     );
   } catch (error) {
     console.error("Error fetching services by staff ID:", error);

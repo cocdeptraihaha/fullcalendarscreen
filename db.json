@@ -286,47 +286,89 @@
     {
       "id": "1",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Pilotpractice Support"
+      "name": "Pilotpractice Support",
+      "service_ids": [
+        "8"
+      ]
     },
     {
       "id": "2",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Dr. Reza Keshavarzi"
+      "name": "Dr. Reza Keshavarzi",
+      "service_ids": [
+        "1",
+        "2",
+        "3",
+        "8"
+      ]
     },
     {
       "id": "3",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Lucia Teran"
+      "name": "Lucia Teran",
+      "service_ids": [
+        "1",
+        "2",
+        "3",
+        "6"
+      ]
     },
     {
       "id": "4",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Rose Huber"
+      "name": "Rose Huber",
+      "service_ids": [
+        "1",
+        "6"
+      ]
     },
     {
       "id": "5",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Lily Colas"
+      "name": "Lily Colas",
+      "service_ids": [
+        "2",
+        "3"
+      ]
     },
     {
       "id": "6",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Dr. Pat Pazmiño"
+      "name": "Dr. Pat Pazmiño",
+      "service_ids": [
+        "4",
+        "5",
+        "1"
+      ]
     },
     {
       "id": "7",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Dr. Sarah Johnson"
+      "name": "Dr. Sarah Johnson",
+      "service_ids": [
+        "2",
+        "5",
+        "7",
+        "1"
+      ]
     },
     {
       "id": "8",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Dr. Michael Chen"
+      "name": "Dr. Michael Chen",
+      "service_ids": [
+        "7",
+        "5"
+      ]
     },
     {
       "id": "9",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
-      "name": "Dr. Lisa Anderson"
+      "name": "Dr. Lisa Anderson",
+      "service_ids": [
+        "6",
+        "4"
+      ]
     }
   ],
   "services": [
@@ -365,134 +407,12 @@
   ],
   "settings": {
     "visibleContacts": [
-      "3",
       "4",
-      "1",
-      "2",
       "5",
-      "6"
+      "6",
+      "3",
+      "2",
+      "1"
     ]
-  },
-  "staff_services": [
-    {
-      "id": "1",
-      "staff_id": "1",
-      "service_id": "8"
-    },
-    {
-      "id": "2",
-      "staff_id": "2",
-      "service_id": "1"
-    },
-    {
-      "id": "3",
-      "staff_id": "2",
-      "service_id": "2"
-    },
-    {
-      "id": "4",
-      "staff_id": "2",
-      "service_id": "3"
-    },
-    {
-      "id": "5",
-      "staff_id": "3",
-      "service_id": "1"
-    },
-    {
-      "id": "6",
-      "staff_id": "3",
-      "service_id": "2"
-    },
-    {
-      "id": "7",
-      "staff_id": "3",
-      "service_id": "3"
-    },
-    {
-      "id": "8",
-      "staff_id": "7",
-      "service_id": "2"
-    },
-    {
-      "id": "9",
-      "staff_id": "7",
-      "service_id": "5"
-    },
-    {
-      "id": "10",
-      "staff_id": "7",
-      "service_id": "7"
-    },
-    {
-      "id": "11",
-      "staff_id": "8",
-      "service_id": "7"
-    },
-    {
-      "id": "12",
-      "staff_id": "6",
-      "service_id": "4"
-    },
-    {
-      "id": "13",
-      "staff_id": "6",
-      "service_id": "5"
-    },
-    {
-      "id": "14",
-      "staff_id": "9",
-      "service_id": "6"
-    },
-    {
-      "id": "15",
-      "staff_id": "4",
-      "service_id": "1"
-    },
-    {
-      "id": "16",
-      "staff_id": "4",
-      "service_id": "6"
-    },
-    {
-      "id": "17",
-      "staff_id": "5",
-      "service_id": "2"
-    },
-    {
-      "id": "18",
-      "staff_id": "5",
-      "service_id": "3"
-    },
-    {
-      "id": "19",
-      "staff_id": "8",
-      "service_id": "5"
-    },
-    {
-      "id": "20",
-      "staff_id": "9",
-      "service_id": "4"
-    },
-    {
-      "id": "21",
-      "staff_id": "6",
-      "service_id": "1"
-    },
-    {
-      "id": "22",
-      "staff_id": "3",
-      "service_id": "6"
-    },
-    {
-      "id": "23",
-      "staff_id": "7",
-      "service_id": "1"
-    },
-    {
-      "id": "24",
-      "staff_id": "2",
-      "service_id": "8"
-    }
-  ]
+  }
 }
