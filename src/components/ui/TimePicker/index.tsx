@@ -55,7 +55,7 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
   // Generate time options (8AM - 8PM, 5min intervals)
   const timeOptions = useMemo(() => {
     const options = [];
-    for (let hour = 8; hour < 20; hour++) {
+    for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 5) {
         const timeStr = formatTime(hour, minute);
         const display = formatTimeDisplay(hour, minute);
