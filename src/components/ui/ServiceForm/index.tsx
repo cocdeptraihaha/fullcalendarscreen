@@ -34,7 +34,6 @@ interface ServiceFormProps {
   services: ServiceItem[];
   selectedServices: string[];
   searchTerm: string;
-  staffMethods: any;
   onToggle: () => void;
   onClose: (e?: React.MouseEvent) => void;
   onAdd: (e?: React.MouseEvent) => void;
@@ -48,7 +47,6 @@ const ServiceForm: FC<ServiceFormProps> = ({
   services,
   selectedServices,
   searchTerm,
-  staffMethods,
   onToggle,
   onClose,
   onAdd,
@@ -80,11 +78,9 @@ const ServiceForm: FC<ServiceFormProps> = ({
           </ServiceModalHeader>
 
           <StaffContainer>
-            <FormProvider {...staffMethods}>
-              <StaffSection />
-            </FormProvider>
+            <StaffSection />
           </StaffContainer>
-
+          
           <ServiceSectionTitle>Services interested in</ServiceSectionTitle>
           <ServiceSectionSubtitle>
             Choose the service that the user is interested in

@@ -69,8 +69,8 @@ const addMinutesToDateTime = (dateTime: string, minutes: number) => {
 
 function Form() {
   const [originalVal, setOriginalVal] = useState<FormFields | null>(null);
-  const [initialStaffId, setInitialStaffId] = useState<string>("");
-  // Memoize default values để tránh tạo object mới mỗi render
+
+  // Memoize default values to avoid creating new object on each render
   const defaultVal: FormFields = useMemo(() => {
     const currentDateTime = getCurrentDateTime();
     return {
@@ -114,13 +114,13 @@ function Form() {
   } = methods;
 
   const handleClose = useCallback(() => {
-    if (isConfirmOpen) return; // Ngăn spam toast
+    if (isConfirmOpen) return; // Prevent toast spam
 
-    // So sánh dữ liệu hiện tại với ban đầu
+    // Compare current data with initial data
     const hasChanges =
       originalVal && JSON.stringify(watch()) !== JSON.stringify(originalVal);
 
-    // Nếu không có thay đổi, đóng trực tiếp
+    // If no changes, close directly
     if (!hasChanges) {
       dispatch(clearEventData());
       dispatch(closeForm());
@@ -128,7 +128,7 @@ function Form() {
     }
 
     setIsConfirmOpen(true);
-    toast.dismiss(); // Đóng tất cả toast hiện tại
+    toast.dismiss(); // Close all current toasts
 
     toast(
       ({ closeToast }) => (
@@ -163,7 +163,7 @@ function Form() {
         closeOnClick: false,
         draggable: false,
         toastId: "confirm-close",
-        onClose: () => setIsConfirmOpen(false), // Reset state khi nhấp X
+        onClose: () => setIsConfirmOpen(false), // Reset state when clicking X
       }
     );
   }, [dispatch, isConfirmOpen, originalVal, watch]);
@@ -193,8 +193,8 @@ function Form() {
       }
 
       reset(formValues);
-      setOriginalVal(formValues); // Lưu giá trị ban đầu
-      setInitialStaffId(formValues.staff_id); // Lưu staff ID ban đầu
+      setOriginalVal(formValues); // Save initial values
+
     }
   }, [open, eventData, defaultVal, reset]);
 
@@ -276,7 +276,7 @@ function Form() {
         closeOnClick: false,
         draggable: false,
         toastId: "confirm-delete",
-        onClose: () => setIsDeleteConfirmOpen(false), // Reset state khi nhấp X
+        onClose: () => setIsDeleteConfirmOpen(false), // Reset state when clicking X
       }
     );
   }, [eventData?.id, deleteMutation, dispatch, isDeleteConfirmOpen]);
@@ -305,7 +305,7 @@ function Form() {
               <ModalBody>
                 <ContactSection />
                 <StaffSection />
-                <ServiceSection initialStaffId={initialStaffId} />
+                <ServiceSection />
                 <DateTimeSection />
               </ModalBody>
               <FormFotter>

@@ -38,7 +38,7 @@ export default function ContactSection() {
       const selectedType = appointmentTypes.find((t) => t.id === val);
       field.onChange(val); // Store ID directly
       setValue("color", selectedType?.color);
-      setValue("title", `${selectedType?.label} Appointment`); // Luôn cập nhật title
+      setValue("title", `${selectedType?.label} Appointment`); // Always update title
     },
     [appointmentTypes, setValue]
   );
@@ -105,7 +105,7 @@ export default function ContactSection() {
 
             return (
               <Dropdown
-                Items={appointmentTypes} // Hiển thị tất cả appointment types
+                Items={appointmentTypes} // Display all appointment types
                 value={field.value}
                 onChange={(val: any) => handleTypeChange(val, field)}
                 renderTitle={() => (

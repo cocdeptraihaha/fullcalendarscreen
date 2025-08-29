@@ -1,133 +1,38 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  MouseEvent,
-  useMemo,
-  memo,
-  useRef,
-} from "react";
+import { useState, useCallback, useEffect, MouseEvent } from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
-import { useForm, useFormContext } from "react-hook-form";
-import { useServicesByStaff, useServices } from "../../../hooks/useFormData";
+import { useFormContext } from "react-hook-form";
+import { useServices, useServicesByStaff } from "../../../hooks/useFormData";
 import ServiceForm from "../../ui/ServiceForm";
 import {
   TagsContainer,
   ServiceTag,
   TagRemoveBtn,
 } from "../../ui/ServiceForm/styled";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
 
-interface ServiceSectionProps {
-  initialStaffId: string;
-}
-
-const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
+const ServiceSection = () => {
   const [open, setOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [lastFormOpenState, setLastFormOpenState] = useState(false);
-  const [hasReset, setHasReset] = useState(false);
   const mainForm = useFormContext();
   const {
     formState: { errors },
   } = mainForm;
-  const currentStaffId = mainForm?.watch("staff_id") || "";
-  const currentServiceIds = mainForm?.watch("service_ids") || [];
-  const appointmentId = mainForm?.watch("id") || "";
+  
+  const currentStaffId = mainForm.watch("staff_id");
 
-  // Staff form methods
-  const staffMethods = useForm({
-    defaultValues: { staff_id: currentStaffId },
-  });
-  const selectedStaffId = staffMethods.watch("staff_id");
-
-  // Redux state to track form open/close
-  const { open: formOpen } = useSelector((state: RootState) => state.form);
-
-  // TanStack Query hooks
   const { data: allServices = [], isLoading: servicesLoading } = useServices();
-  const { data: staffServices = [] } = useServicesByStaff(
-    selectedStaffId || ""
-  );
+  const { data: staffServices = [], isLoading: staffServicesLoading } = useServicesByStaff(currentStaffId);
+  
+  // Use staff services if staff is selected, otherwise use all services
+  const services = currentStaffId ? staffServices : allServices;
+  const isLoading = currentStaffId ? staffServicesLoading : servicesLoading;
 
-  // Stable refs to prevent unnecessary rerenders
-  const mainFormRef = useRef(mainForm);
-  mainFormRef.current = mainForm;
-
-  // Handle form open/close and data sync
+  // Sync with form data
   useEffect(() => {
-    // Form just opened - clean first
-    if (formOpen && !lastFormOpenState) {
-      setSelectedServices([]);
-      setSearchTerm("");
-      setHasReset(false);
-      setLastFormOpenState(true);
-      return;
-    }
-
-    // Form closed - reset state
-    if (!formOpen && lastFormOpenState) {
-      setLastFormOpenState(false);
-      return;
-    }
-
-    // Form is open - sync data
-    if (formOpen && currentServiceIds.length > 0) {
-      setSelectedServices(currentServiceIds);
-    }
-
-    // Reset when staff changes (update form only) - only once
-    if (
-      formOpen &&
-      appointmentId &&
-      initialStaffId &&
-      currentStaffId !== initialStaffId &&
-      !hasReset
-    ) {
-      setSelectedServices([]);
-      setHasReset(true);
-      if (mainFormRef.current) {
-        mainFormRef.current.setValue("service_ids", []);
-        mainFormRef.current.trigger("service_ids");
-      }
-    }
-  }, [
-    formOpen,
-    lastFormOpenState,
-    currentServiceIds,
-    appointmentId,
-    initialStaffId,
-    currentStaffId,
-  ]);
-
-  // Sync staffMethods with currentStaffId
-  useEffect(() => {
-    staffMethods.reset({ staff_id: currentStaffId });
-  }, [currentStaffId, staffMethods]);
-
-  // Reset services when staff changes
-  useEffect(() => {
-    if (selectedStaffId && selectedStaffId !== currentStaffId) {
-      setSelectedServices([]);
-      if (mainFormRef.current) {
-        mainFormRef.current.setValue("service_ids", []);
-        mainFormRef.current.trigger("service_ids");
-      }
-    }
-  }, [selectedStaffId, currentStaffId]);
-
-  const services = selectedStaffId ? staffServices : allServices;
-
-  // Optimize service lookup with memoized map
-  const servicesMap = useMemo(() => {
-    return services.reduce((acc, service) => {
-      acc[service.id] = service;
-      return acc;
-    }, {} as Record<string, any>);
-  }, [services]);
+    const currentServiceIds = mainForm.watch("service_ids") || [];
+    setSelectedServices(currentServiceIds);
+  }, [mainForm.watch("service_ids")]);
 
   const handleToggle = useCallback(() => {
     setOpen(true);
@@ -141,19 +46,12 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
   const handleAdd = useCallback(
     (e?: MouseEvent) => {
       e?.stopPropagation();
-
-      if (mainForm && selectedStaffId) {
-        mainForm.setValue("staff_id", selectedStaffId);
-      }
-
-      if (mainForm) {
-        mainForm.setValue("service_ids", selectedServices);
-        mainForm.trigger("service_ids");
-      }
-
+      
+      mainForm.setValue("service_ids", selectedServices);
+      mainForm.trigger("service_ids");
       setOpen(false);
     },
-    [selectedStaffId, selectedServices, initialStaffId]
+    [selectedServices, mainForm]
   );
 
   const handleServiceToggle = useCallback((serviceId: string) => {
@@ -161,20 +59,17 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
       const newServices = prev.includes(serviceId)
         ? prev.filter((id) => id !== serviceId)
         : [...prev, serviceId];
-
-      // Update main form
-      if (mainFormRef.current) {
-        mainFormRef.current.setValue("service_ids", newServices);
-        mainFormRef.current.trigger("service_ids"); // Trigger validation and re-render
-      }
-
+      
+      mainForm.setValue("service_ids", newServices);
+      mainForm.trigger("service_ids");
+      
       return newServices;
     });
     setSearchTerm("");
-  }, []);
+  }, [mainForm]);
 
   const renderToggleContent = useCallback(() => {
-    if (servicesLoading) {
+    if (isLoading) {
       return (
         <span style={{ color: "#999", padding: "10px" }}>
           Loading services...
@@ -185,7 +80,7 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
       return (
         <TagsContainer>
           {selectedServices.map((serviceId) => {
-            const service = servicesMap[serviceId];
+            const service = services.find(s => s.id === serviceId);
             return service ? (
               <ServiceTag key={serviceId}>
                 {service.name}
@@ -206,7 +101,7 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
     return (
       <span style={{ color: "#999", padding: "10px" }}>Select services...</span>
     );
-  }, [selectedServices, servicesMap, handleServiceToggle, servicesLoading]);
+  }, [selectedServices, services, handleServiceToggle, isLoading]);
 
   return (
     <InputContainer>
@@ -220,7 +115,6 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
         services={services}
         selectedServices={selectedServices}
         searchTerm={searchTerm}
-        staffMethods={staffMethods}
         onToggle={handleToggle}
         onClose={handleClose}
         onAdd={handleAdd}
@@ -230,6 +124,6 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
       />
     </InputContainer>
   );
-});
+};
 
 export default ServiceSection;

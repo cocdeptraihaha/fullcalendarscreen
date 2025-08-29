@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import Dropdown from "../../ui/dropdown";
@@ -12,10 +12,35 @@ import { useDebounce } from "../../../hooks/useDebounce";
 const StaffSection: React.FC = () => {
   const {
     control,
+    setValue,
+    watch,
     formState: { errors },
   } = useFormContext();
   const [staffSearchTerm, setStaffSearchTerm] = useState("");
   const debouncedStaffSearchTerm = useDebounce(staffSearchTerm, 500);
+  const previousStaffId = useRef<string>("");
+  const previousAptId = useRef<string | null>(null);
+  
+  const currentStaffId = watch("staff_id");
+  const currentAptId = watch("id");
+  
+  // Reset service logic based on appointment and staff changes
+  useEffect(() => {
+    const prevApt = previousAptId.current;
+    const prevStaff = previousStaffId.current;
+    
+    if (prevApt === currentAptId && prevStaff !== currentStaffId) {
+      // Same appointment but different staff -> reset services
+      setValue("service_ids", []);
+    } else if (prevApt === null) {
+      // Opening new form -> reset services
+      setValue("service_ids", []);
+    }
+    // prevApt !== currentAptId && prevStaff !== currentStaff -> load new service data (do nothing)
+    
+    previousStaffId.current = currentStaffId;
+    previousAptId.current = currentAptId;
+  }, [currentStaffId, currentAptId, setValue]);
 
   const { data: staffList = [] } = useGlobalStaff();
   const { data: searchResults = [] } = useSearchStaff(debouncedStaffSearchTerm);
