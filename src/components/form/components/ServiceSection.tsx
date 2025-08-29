@@ -3,6 +3,8 @@ import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext } from "react-hook-form";
 import { useServices, useServicesByStaff } from "../../../hooks/useFormData";
+import { useDispatch } from "react-redux";
+import { setServiceModal } from "../../../store/formSlice";
 import ServiceForm from "../../ui/ServiceForm";
 import {
   TagsContainer,
@@ -34,14 +36,18 @@ const ServiceSection = () => {
     setSelectedServices(currentServiceIds);
   }, [mainForm.watch("service_ids")]);
 
+  const dispatch = useDispatch();
+  
   const handleToggle = useCallback(() => {
     setOpen(true);
-  }, []);
+    dispatch(setServiceModal(true));
+  }, [dispatch]);
 
   const handleClose = useCallback((e?: MouseEvent) => {
     e?.stopPropagation();
     setOpen(false);
-  }, []);
+    dispatch(setServiceModal(false));
+  }, [dispatch]);
 
   const handleAdd = useCallback(
     (e?: MouseEvent) => {
@@ -50,8 +56,9 @@ const ServiceSection = () => {
       mainForm.setValue("service_ids", selectedServices);
       mainForm.trigger("service_ids");
       setOpen(false);
+      dispatch(setServiceModal(false));
     },
-    [selectedServices, mainForm]
+    [selectedServices, mainForm, dispatch]
   );
 
   const handleServiceToggle = useCallback((serviceId: string) => {

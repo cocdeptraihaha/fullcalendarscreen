@@ -40,6 +40,7 @@ interface ServiceFormProps {
   onServiceToggle: (serviceId: string) => void;
   onSearchChange: (value: string) => void;
   renderToggleContent: () => React.ReactNode;
+  isModal?: boolean;
 }
 
 const ServiceForm: FC<ServiceFormProps> = ({
@@ -76,6 +77,7 @@ const ServiceForm: FC<ServiceFormProps> = ({
               <X color="#184561" />
             </CloseBtn>
           </ServiceModalHeader>
+
 
           <StaffContainer>
             <StaffSection />

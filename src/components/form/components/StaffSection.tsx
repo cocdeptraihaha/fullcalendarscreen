@@ -6,6 +6,8 @@ import { Controller, useFormContext } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useGlobalStaff, useSearchStaff } from "../../../hooks/useGlobalData";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 // Define Staff's datatype
 
@@ -23,9 +25,12 @@ const StaffSection: React.FC = () => {
   
   const currentStaffId = watch("staff_id");
   const currentAptId = watch("id");
+  const { isInServiceModal } = useSelector((state: RootState) => state.form);
   
   // Reset service logic based on appointment and staff changes
   useEffect(() => {
+    if (isInServiceModal) return; // Don't reset when in service modal
+    
     const prevApt = previousAptId.current;
     const prevStaff = previousStaffId.current;
     
@@ -40,7 +45,7 @@ const StaffSection: React.FC = () => {
     
     previousStaffId.current = currentStaffId;
     previousAptId.current = currentAptId;
-  }, [currentStaffId, currentAptId, setValue]);
+  }, [currentStaffId, currentAptId, setValue, isInServiceModal]);
 
   const { data: staffList = [] } = useGlobalStaff();
   const { data: searchResults = [] } = useSearchStaff(debouncedStaffSearchTerm);

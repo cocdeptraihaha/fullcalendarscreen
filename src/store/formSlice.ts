@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type FormState = {
   open: boolean;
   eventData: any | null; // store selected event data
+  isInServiceModal: boolean;
 };
 
 const initialState: FormState = {
   open: false,
   eventData: null,
+  isInServiceModal: false,
 };
 
 const formSlice = createSlice({
@@ -25,8 +27,11 @@ const formSlice = createSlice({
     clearEventData: (state) => {
       state.eventData = null;
     },
+    setServiceModal: (state, action: PayloadAction<boolean>) => {
+      state.isInServiceModal = action.payload;
+    },
   },
 });
 
-export const { openForm, closeForm, clearEventData } = formSlice.actions;
+export const { openForm, closeForm, clearEventData, setServiceModal } = formSlice.actions;
 export default formSlice.reducer;
