@@ -29,6 +29,7 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [lastFormOpenState, setLastFormOpenState] = useState(false);
+  const [hasReset, setHasReset] = useState(false);
   const mainForm = useFormContext();
   const {
     formState: { errors },
@@ -62,6 +63,7 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
     if (formOpen && !lastFormOpenState) {
       setSelectedServices([]);
       setSearchTerm("");
+      setHasReset(false);
       setLastFormOpenState(true);
       return;
     }
@@ -77,14 +79,16 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
       setSelectedServices(currentServiceIds);
     }
 
-    // Reset when staff changes (update form only)
+    // Reset when staff changes (update form only) - only once
     if (
       formOpen &&
       appointmentId &&
       initialStaffId &&
-      currentStaffId !== initialStaffId
+      currentStaffId !== initialStaffId &&
+      !hasReset
     ) {
       setSelectedServices([]);
+      setHasReset(true);
       if (mainFormRef.current) {
         mainFormRef.current.setValue("service_ids", []);
         mainFormRef.current.trigger("service_ids");
@@ -103,6 +107,17 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
   useEffect(() => {
     staffMethods.reset({ staff_id: currentStaffId });
   }, [currentStaffId, staffMethods]);
+
+  // Reset services when staff changes
+  useEffect(() => {
+    if (selectedStaffId && selectedStaffId !== currentStaffId) {
+      setSelectedServices([]);
+      if (mainFormRef.current) {
+        mainFormRef.current.setValue("service_ids", []);
+        mainFormRef.current.trigger("service_ids");
+      }
+    }
+  }, [selectedStaffId, currentStaffId]);
 
   const services = selectedStaffId ? staffServices : allServices;
 
@@ -150,6 +165,7 @@ const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
       // Update main form
       if (mainFormRef.current) {
         mainFormRef.current.setValue("service_ids", newServices);
+        mainFormRef.current.trigger("service_ids"); // Trigger validation and re-render
       }
 
       return newServices;

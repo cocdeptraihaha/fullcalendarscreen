@@ -210,6 +210,45 @@
       ],
       "start": 1755066000000,
       "end": 1755067800000
+    },
+    {
+      "id": "38",
+      "title": "Procedure Appointment",
+      "type_id": "3",
+      "contact_id": "2",
+      "staff_id": "4",
+      "service_ids": [
+        "1"
+      ],
+      "start": 1754020800000,
+      "end": 1754022600000,
+      "color": "#e91e63"
+    },
+    {
+      "id": "39",
+      "title": "Consultation Appointment",
+      "type_id": "1",
+      "contact_id": "4",
+      "staff_id": "1",
+      "service_ids": [
+        "8"
+      ],
+      "start": 1753935000000,
+      "end": 1753936800000,
+      "color": "#2ecc71"
+    },
+    {
+      "id": "40",
+      "title": "Follow-up Appointment",
+      "type_id": "2",
+      "contact_id": "2",
+      "staff_id": "5",
+      "service_ids": [
+        "2"
+      ],
+      "start": 1756440300000,
+      "end": 1756442100000,
+      "color": "#b09973"
     }
   ],
   "appointment_types": [
@@ -226,10 +265,9 @@
       "deleted_at": null
     },
     {
-      "id": "3",
       "label": "Procedure",
-      "color": "#e91e63",
-      "deleted_at": null
+      "color": "#ff1a66",
+      "id": "3"
     },
     {
       "id": "4",
@@ -238,10 +276,9 @@
       "deleted_at": null
     },
     {
-      "id": "5",
       "label": "Follow-Up Weight Loss Consultation",
-      "color": "#95a5a6",
-      "deleted_at": null
+      "color": "#173436",
+      "id": "5"
     },
     {
       "id": "43fd",
@@ -407,12 +444,12 @@
   ],
   "settings": {
     "visibleContacts": [
+      "1",
+      "2",
+      "3",
       "4",
       "5",
-      "6",
-      "3",
-      "2",
-      "1"
+      "6"
     ]
   }
 }
