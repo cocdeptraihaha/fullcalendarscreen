@@ -76,6 +76,11 @@ export default function DatePicker({ name }: DatePickerProps) {
   };
 
   const handleDateSelect = (date: Date, field: ControllerRenderProps) => {
+    // Check if clicked date is in different month - navigate and select
+    if (date.getMonth() !== currentMonth.getMonth()) {
+      setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+    }
+
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
