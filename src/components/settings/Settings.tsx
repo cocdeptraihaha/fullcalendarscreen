@@ -246,7 +246,11 @@ export default function Settings() {
                       checked={visibleContacts.length === contacts.length}
                       onChange={() => {
                         if (visibleContacts.length === contacts.length) {
-                          // Uncheck Show All - do nothing, just visual change
+                          // Uncheck Show All - hide all contacts
+                          setContactUpdates([]);
+                          visibleContacts.forEach((contactId: string) => {
+                            dispatch(toggleContactVisibility(contactId));
+                          });
                         } else {
                           // Check all - set to all contact IDs
                           const allContactIds = contacts.map((contact: any) => contact.id);
