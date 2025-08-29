@@ -17,13 +17,13 @@ const DateTimeSection = () => {
       </InputContainer>
 
       <InputContainer>
-        {(!errors.start && !errors.end && <InputLabel></InputLabel>) ||
-          ((errors.start || errors.end) && (
-            <ErrorMessage>
-              {(errors.start as any)?.message || (errors.end as any)?.message}
-            </ErrorMessage>
-          ))}
+        <InputLabel>Date & Time</InputLabel>
         <TimePicker />
+        {(errors.start || errors.end) && (
+          <ErrorMessage>
+            {(errors.start as any)?.message || (errors.end as any)?.message}
+          </ErrorMessage>
+        )}
       </InputContainer>
     </DateTimeContainer>
   );

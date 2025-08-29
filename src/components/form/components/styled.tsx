@@ -2,8 +2,7 @@ import styled from "styled-components";
 
 export const InputContainer = styled.div`
   display: grid;
-  grid-template-rows: 20px 40px;
-  gap: 5px;
+  grid-template-rows: 20px 40px 10px;
 `;
 export const InputLabel = styled.div`
   display: block;

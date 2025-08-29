@@ -46,10 +46,7 @@ export default function ContactSection() {
   return (
     <ContactContainer>
       <InputContainer>
-        {(!errors.contact_id && <InputLabel>Search Contact</InputLabel>) ||
-          (errors.contact_id && (
-            <ErrorMessage>{(errors.contact_id as any)?.message}</ErrorMessage>
-          ))}
+        <InputLabel>Search Contact</InputLabel>
         <Controller
           control={control}
           name="contact_id"
@@ -87,14 +84,13 @@ export default function ContactSection() {
             );
           }}
         />
+        {errors.contact_id && (
+          <ErrorMessage>{(errors.contact_id as any)?.message}</ErrorMessage>
+        )}
       </InputContainer>
 
       <InputContainer>
-        {(!errors.type_id && <InputLabel>Appointment Type</InputLabel>) ||
-          (errors.type_id && (
-            <ErrorMessage>{(errors.type_id as any)?.message}</ErrorMessage>
-          ))}
-
+        <InputLabel>Appointment Type</InputLabel>
         <Controller
           control={control}
           name="type_id"
@@ -119,6 +115,9 @@ export default function ContactSection() {
             );
           }}
         />
+        {errors.type_id && (
+          <ErrorMessage>{(errors.type_id as any)?.message}</ErrorMessage>
+        )}
       </InputContainer>
     </ContactContainer>
   );

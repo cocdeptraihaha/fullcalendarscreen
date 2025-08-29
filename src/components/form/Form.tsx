@@ -17,6 +17,7 @@ import {
   DeleteButton,
   ToastButton,
   ToastContainer,
+  ErrorMessage,
 } from "./Form.styled";
 import ContactSection from "./components/ContactSection";
 import StaffSection from "./components/StaffSection";
@@ -32,6 +33,7 @@ import {
   useUpdateAppointment,
   useDeleteAppointment,
 } from "../../hooks/useAppointments";
+import { InputContainer, InputLabel } from "./components/styled";
 
 type FormFields = {
   id: string;
@@ -194,7 +196,6 @@ function Form() {
 
       reset(formValues);
       setOriginalVal(formValues); // Save initial values
-
     }
   }, [open, eventData, defaultVal, reset]);
 
@@ -289,15 +290,21 @@ function Form() {
           <FormModal onClick={(e) => e.stopPropagation()}>
             <form onSubmit={onSubmit}>
               <ModalHeader>
-                <TitleInput
-                  {...register("title")}
-                  type="text"
-                  placeholder="Add Title"
-                  style={{
-                    borderRadius: "6px",
-                    border: errors.title ? "1px solid #e74c3c" : "none",
-                  }}
-                />
+                <InputContainer>
+                  <InputLabel>Title</InputLabel>
+                  <TitleInput
+                    {...register("title")}
+                    type="text"
+                    placeholder="Add Title"
+                    style={{
+                      borderRadius: "6px",
+                      border: errors.title ? "1px solid #e74c3c" : "none",
+                    }}
+                  />
+                  {errors.title && (
+                    <ErrorMessage>{(errors.title as any)?.message}</ErrorMessage>
+                  )}
+                </InputContainer>
                 <CloseBtn onClick={() => handleClose()}>
                   <X color="#184561" />
                 </CloseBtn>

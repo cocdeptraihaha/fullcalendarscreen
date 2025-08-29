@@ -22,7 +22,6 @@ import {
 } from "./styled";
 import { X } from "react-feather";
 import StaffSection from "../../form/components/StaffSection";
-import { FormProvider } from "react-hook-form";
 
 interface ServiceItem {
   id: string;
@@ -40,7 +39,6 @@ interface ServiceFormProps {
   onServiceToggle: (serviceId: string) => void;
   onSearchChange: (value: string) => void;
   renderToggleContent: () => React.ReactNode;
-  isModal?: boolean;
 }
 
 const ServiceForm: FC<ServiceFormProps> = ({
@@ -78,11 +76,10 @@ const ServiceForm: FC<ServiceFormProps> = ({
             </CloseBtn>
           </ServiceModalHeader>
 
-
           <StaffContainer>
-            <StaffSection />
+            <StaffSection isInModal={true} />
           </StaffContainer>
-          
+
           <ServiceSectionTitle>Services interested in</ServiceSectionTitle>
           <ServiceSectionSubtitle>
             Choose the service that the user is interested in

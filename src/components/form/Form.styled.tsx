@@ -23,7 +23,8 @@ export const FormModal = styled.div`
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
 `;
 export const ModalHeader = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 60px;
   justify-content: space-between;
   margin-bottom: 20px;
   gap: 16px;
@@ -69,7 +70,7 @@ export const ModalBody = styled.div`
   height: 400px;
   display: grid;
   grid-template-rows: repeat(5, 1fr);
-  gap: 8px;
+  gap: 10px;
 `;
 
 export const FormFotter = styled.div`
@@ -125,7 +126,8 @@ export const AddButton = styled.button`
 export const ErrorMessage = styled.div`
   color: #e74c3c;
   font-size: 12px;
-  margin-top: 4px;
+  margin-left: 5px;
+  margin-top: 2px;
 `;
 
 export const ToastButton = styled.button<{ variant?: "danger" | "secondary" }>`
