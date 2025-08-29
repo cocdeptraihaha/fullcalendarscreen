@@ -167,7 +167,7 @@ export default function Settings() {
   // Handle debounced contact updates
   useEffect(() => {
     const contactKey = JSON.stringify(debouncedContactUpdates);
-    if (debouncedContactUpdates.length > 0 && contactProcessedRef.current !== contactKey) {
+    if (debouncedContactUpdates.length >= 0 && contactProcessedRef.current !== contactKey) {
       contactProcessedRef.current = contactKey;
       updateSettingsMutation.mutate({
         visibleContacts: debouncedContactUpdates
@@ -234,17 +234,22 @@ export default function Settings() {
                       checked={visibleContacts.length === contacts.length}
                       onChange={() => {
                         if (visibleContacts.length === contacts.length) {
-                          // Uncheck all
+                          // Uncheck all - set to empty array
+                          setContactUpdates([]);
+                          // Update Redux for each contact
                           contacts.forEach((contact: any) => {
                             if (visibleContacts.includes(contact.id)) {
-                              handleContactToggle(contact.id);
+                              dispatch(toggleContactVisibility(contact.id));
                             }
                           });
                         } else {
-                          // Check all
+                          // Check all - set to all contact IDs
+                          const allContactIds = contacts.map((contact: any) => contact.id);
+                          setContactUpdates(allContactIds);
+                          // Update Redux for each contact
                           contacts.forEach((contact: any) => {
                             if (!visibleContacts.includes(contact.id)) {
-                              handleContactToggle(contact.id);
+                              dispatch(toggleContactVisibility(contact.id));
                             }
                           });
                         }
