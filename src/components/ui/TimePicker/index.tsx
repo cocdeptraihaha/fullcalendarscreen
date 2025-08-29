@@ -38,21 +38,20 @@ const parseDateTime = (dateTime: string) => {
   if (!dateTimeStr.includes("T")) return { date: getToday(), time: "" };
   const [date, timeWithSeconds] = dateTimeStr.split("T");
   let time = timeWithSeconds?.substring(0, 5) || "";
-
   return { date, time };
 };
 
 interface TimePickerComponentProps {
   name: "start" | "end";
+  onTimeChange: (fieldName: string, value: string) => void;
 }
 
-function TimePickerComponent({ name }: TimePickerComponentProps) {
-  const { control, setValue } = useFormContext();
+function TimePickerComponent({ name, onTimeChange }: TimePickerComponentProps) {
+  const { control } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Generate time options (8AM - 8PM, 5min intervals)
   const timeOptions = useMemo(() => {
     const options = [];
     for (let hour = 0; hour < 24; hour++) {
@@ -108,14 +107,10 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
           value: string;
           display: string;
         }) => {
-          field.onChange(`${date}T${timeObj.value}:00`);
-
-          // Auto-update end time when start time changes
-          if (name === "start") {
-            const newEndTime = addMinutes(timeObj.value, 30);
-            setValue("end", `${date}T${newEndTime}:00`);
-          }
-
+          const newValue = `${date}T${timeObj.value}:00`;
+          field.onChange(newValue);
+          onTimeChange(name, newValue);
+          
           setIsOpen(false);
         };
 
@@ -145,12 +140,16 @@ function TimePickerComponent({ name }: TimePickerComponentProps) {
   );
 }
 
-export default function TimePicker() {
+interface TimePickerProps {
+  onTimeChange: (fieldName: string, value: string) => void;
+}
+
+export default function TimePicker({ onTimeChange }: TimePickerProps) {
   return (
     <TimeContainer>
-      <TimePickerComponent name="start" />
+      <TimePickerComponent name="start" onTimeChange={onTimeChange} />
       <Minus color="#184561" size={16} />
-      <TimePickerComponent name="end" />
+      <TimePickerComponent name="end" onTimeChange={onTimeChange} />
     </TimeContainer>
   );
 }

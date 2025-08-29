@@ -24,16 +24,14 @@ const unixToDateTime = (timestamp: number): string => {
 
 interface DatePickerProps {
   name: string;
-  placeholder?: string;
+  onDateSelect: (date: Date, fieldName: string, currentValue: any) => void;
 }
 
-export default function DatePicker({ name }: DatePickerProps) {
-  const { control, setValue, watch } = useFormContext();
+export default function DatePicker({ name, onDateSelect }: DatePickerProps) {
+  const { control } = useFormContext();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const endValue = watch("end") as string;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -76,47 +74,11 @@ export default function DatePicker({ name }: DatePickerProps) {
   };
 
   const handleDateSelect = (date: Date, field: ControllerRenderProps) => {
-    // Check if clicked date is in different month - navigate and select
     if (date.getMonth() !== currentMonth.getMonth()) {
       setCurrentMonth(new Date(date.getFullYear(), date.getMonth(), 1));
     }
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const dateStr = `${year}-${month}-${day}`;
-
-    const currentValue = field.value || "";
-    let timeStr = "09:00:00";
-
-    if (typeof currentValue === "number") {
-      // Unix timestamp - extract time part
-      const currentDateTime = unixToDateTime(currentValue);
-      timeStr = currentDateTime.includes("T")
-        ? currentDateTime.split("T")[1]
-        : "09:00:00";
-    } else if (typeof currentValue === "string" && currentValue.includes("T")) {
-      // ISO string - extract time part
-      timeStr = currentValue.split("T")[1];
-    }
-
-    const newValue = `${dateStr}T${timeStr}`;
-    field.onChange(newValue);
-
-    if (name === "start") {
-      let endTimeStr = "10:00:00";
-      if (typeof endValue === "number") {
-        const endDateTime = unixToDateTime(endValue);
-        endTimeStr = endDateTime.includes("T")
-          ? endDateTime.split("T")[1]
-          : "10:00:00";
-      } else if (typeof endValue === "string" && endValue?.includes("T")) {
-        endTimeStr = endValue.split("T")[1];
-      }
-      const newEndValue = `${dateStr}T${endTimeStr}`;
-      setValue("end", newEndValue);
-    }
-
+    
+    onDateSelect(date, name, field.value);
     setIsOpen(false);
   };
 
