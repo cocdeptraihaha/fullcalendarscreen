@@ -12,19 +12,19 @@
     "deploy": "vite build && gh-pages -d dist"
   },
   "dependencies": {
-    "@fullcalendar/bootstrap5": "^6.1.19",
+
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/list": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.19",
-    "@hookform/devtools": "^4.4.0",
+
     "@hookform/resolvers": "^5.2.1",
     "@reduxjs/toolkit": "^2.8.2",
     "@tanstack/react-query": "^5.85.3",
     "gh-pages": "^6.3.0",
-    "luxon": "^3.7.1",
+
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-feather": "^2.0.10",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
-    "@types/luxon": "^3.7.1",
+
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
@@ -48,6 +48,6 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
-    "vite-plugin-svgr": "^4.3.0"
+
   }
 }
