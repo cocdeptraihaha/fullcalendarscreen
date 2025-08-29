@@ -40,14 +40,13 @@ interface Appointment {
 export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
-  const { isLoaded } = useSelector((state: RootState) => state.settings);
   const { filterAppointments } = useSettingsFilter();
   const { data: appointments = [], isLoading, error } = useAppointments();
   const { data: staff = [] } = useGlobalStaff();
   const { data: services = [] } = useGlobalServices();
   const { data: contacts = [] } = useGlobalContacts();
   const { data: appointmentTypes = [] } = useAllAppointmentTypes();
-  const { data: settings, isLoading: settingsLoading } = useSettings();
+  const { isLoading: settingsLoading } = useSettings();
 
   useEffect(() => {
     if (!formOpen) {

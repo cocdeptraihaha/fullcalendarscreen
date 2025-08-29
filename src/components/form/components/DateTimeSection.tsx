@@ -73,7 +73,7 @@ const DateTimeSection = () => {
 
       <InputContainer>
         <InputLabel>Date & Time</InputLabel>
-        <TimePicker onTimeChange={setValue} />
+        <TimePicker onTimeChange={handleTimeChange} />
         {(errors.start || errors.end) && (
           <ErrorMessage>
             {(errors.start as any)?.message || (errors.end as any)?.message}

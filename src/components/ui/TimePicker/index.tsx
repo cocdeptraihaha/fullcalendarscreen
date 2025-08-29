@@ -21,14 +21,6 @@ const formatTimeDisplay = (hour: number, minute: number) => {
     .padStart(2, "0")} ${period}`;
 };
 
-const addMinutes = (timeStr: string, minutes: number) => {
-  const [hour, minute] = timeStr.split(":").map(Number);
-  const totalMinutes = hour * 60 + minute + minutes;
-  const newHour = Math.floor(totalMinutes / 60) % 24;
-  const newMinute = totalMinutes % 60;
-  return formatTime(newHour, newMinute);
-};
-
 const getToday = () => new Date().toISOString().split("T")[0];
 const parseDateTime = (dateTime: string) => {
   if (!dateTime) return { date: getToday(), time: "" };
@@ -110,7 +102,7 @@ function TimePickerComponent({ name, onTimeChange }: TimePickerComponentProps) {
           const newValue = `${date}T${timeObj.value}:00`;
           field.onChange(newValue);
           onTimeChange(name, newValue);
-          
+
           setIsOpen(false);
         };
 

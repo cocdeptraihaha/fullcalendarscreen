@@ -53,8 +53,8 @@ const Dropdown: FC<DropdownProps> = ({
         setSearchTerm(""); // clear when closing
       }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // filter items based on searchTerm - supports both name and label properties
