@@ -4,7 +4,8 @@ import Setting from "../../assets/settings.svg";
 import Calendar from "../../assets/calendar.svg";
 export const CalendarContainer = styled.div`
   margin: 50px 0 0 70px;
-  min-width: 1200px;
+  min-width: 1440px;
+  min-height: 1000px;
   font-size: 14px;
   --fc-button-bg-color: #fff;
   --fc-button-text-color: #184561;

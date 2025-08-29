@@ -72,8 +72,10 @@ export default function Calendar() {
   const events = useMemo(() => {
     const filteredAppointments =
       appointments?.filter((apt: Appointment) => {
-        // If no contacts selected, show all
-        if (visibleContacts.length === 0) return true;
+        // If no contacts selected, show none
+        if (visibleContacts.length === 0) return false;
+        // If all contacts selected, show all
+        if (visibleContacts.length === contacts.length) return true;
         // Otherwise only show appointments for selected contacts
         return visibleContacts.includes(apt.contact_id);
       }) || [];

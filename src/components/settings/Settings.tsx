@@ -93,7 +93,7 @@ export default function Settings() {
   }, [dispatch, visibleContacts]);
 
   const isContactVisible = (contactId: string) => {
-    return visibleContacts.length === 0 || visibleContacts.includes(contactId);
+    return visibleContacts.includes(contactId);
   };
 
   const handleClose = () => {
@@ -227,6 +227,30 @@ export default function Settings() {
             <ModalBody>
               {activeSection === "contacts" && (
                 <Section>
+                  <ContactItem>
+                    <ContactName style={{ fontWeight: 'bold' }}>Show All</ContactName>
+                    <ContactCheckbox
+                      type="checkbox"
+                      checked={visibleContacts.length === contacts.length}
+                      onChange={() => {
+                        if (visibleContacts.length === contacts.length) {
+                          // Uncheck all
+                          contacts.forEach((contact: any) => {
+                            if (visibleContacts.includes(contact.id)) {
+                              handleContactToggle(contact.id);
+                            }
+                          });
+                        } else {
+                          // Check all
+                          contacts.forEach((contact: any) => {
+                            if (!visibleContacts.includes(contact.id)) {
+                              handleContactToggle(contact.id);
+                            }
+                          });
+                        }
+                      }}
+                    />
+                  </ContactItem>
                   {contacts.map((contact: any) => (
                     <ContactItem key={contact.id}>
                       <ContactName>{contact.name}</ContactName>
