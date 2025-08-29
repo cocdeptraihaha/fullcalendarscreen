@@ -33,7 +33,7 @@ export const ModalHeader = styled.div`
 export const TitleInput = styled.input`
   font-size: 24px;
   font-weight: 300;
-  color: #333;
+  color: #184561;
   border: none;
   border-radius: 6px;
   background: transparent;
