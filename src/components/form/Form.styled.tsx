@@ -35,6 +35,7 @@ export const TitleInput = styled.input`
   font-weight: 300;
   color: #333;
   border: none;
+  border-radius: 6px;
   background: transparent;
   flex: 1;
   padding: 8px 5px;

@@ -296,13 +296,11 @@ function Form() {
                     {...register("title")}
                     type="text"
                     placeholder="Add Title"
-                    style={{
-                      borderRadius: "6px",
-                      border: errors.title ? "1px solid #e74c3c" : "none",
-                    }}
                   />
                   {errors.title && (
-                    <ErrorMessage>{(errors.title as any)?.message}</ErrorMessage>
+                    <ErrorMessage>
+                      {(errors.title as any)?.message}
+                    </ErrorMessage>
                   )}
                 </InputContainer>
                 <CloseBtn onClick={() => handleClose()}>
