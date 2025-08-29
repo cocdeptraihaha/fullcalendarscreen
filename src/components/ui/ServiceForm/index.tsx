@@ -125,6 +125,11 @@ const ServiceForm: FC<ServiceFormProps> = ({
                   <Checkbox
                     type="checkbox"
                     checked={selectedServices.includes(service.id)}
+                    onChange={() => {}} // Prevent warning
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onServiceToggle(service.id);
+                    }}
                   />
                   {service.name}
                 </Service>

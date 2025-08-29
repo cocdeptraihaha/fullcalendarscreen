@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -61,6 +61,14 @@ export default function Settings() {
   const [newTypeColor, setNewTypeColor] = useState("#3498db");
 
   const [activeSection, setActiveSection] = useState("contacts");
+  const [contactUpdates, setContactUpdates] = useState<string[]>([]);
+  const [colorUpdates, setColorUpdates] = useState<{[key: string]: {label: string, color: string}}>({});
+  
+  const debouncedContactUpdates = useDebounce(contactUpdates, 500);
+  const debouncedColorUpdates = useDebounce(colorUpdates, 500);
+  
+  const colorProcessedRef = useRef<string>("");
+  const contactProcessedRef = useRef<string>("");
 
   const sections = [
     { id: "contacts", label: "General setting" },
@@ -74,16 +82,15 @@ export default function Settings() {
     }
   }, [settings, isLoaded, dispatch]);
 
-  const handleContactToggle = (contactId: string) => {
+  const handleContactToggle = useCallback((contactId: string) => {
     dispatch(toggleContactVisibility(contactId));
     
-    // Debounced save to server
     const newVisibleContacts = visibleContacts.includes(contactId)
       ? visibleContacts.filter(id => id !== contactId)
       : [...visibleContacts, contactId];
     
     setContactUpdates(newVisibleContacts);
-  };
+  }, [dispatch, visibleContacts]);
 
   const isContactVisible = (contactId: string) => {
     return visibleContacts.length === 0 || visibleContacts.includes(contactId);
@@ -155,29 +162,37 @@ export default function Settings() {
     );
   };
 
-  const [colorUpdates, setColorUpdates] = useState<{[key: string]: {label: string, color: string}}>({});
-  const debouncedColorUpdates = useDebounce(colorUpdates, 500);
-  
-  const [contactUpdates, setContactUpdates] = useState<string[]>([]);
-  const debouncedContactUpdates = useDebounce(contactUpdates, 500);
 
-  // Handle debounced color updates
-  useEffect(() => {
-    Object.entries(debouncedColorUpdates).forEach(([id, data]) => {
-      updateMutation.mutate({ id, data });
-    });
-    setColorUpdates({});
-  }, [debouncedColorUpdates, updateMutation]);
 
-  // Handle debounced contact visibility updates
+  // Handle debounced contact updates
   useEffect(() => {
-    if (debouncedContactUpdates.length > 0) {
+    const contactKey = JSON.stringify(debouncedContactUpdates);
+    if (debouncedContactUpdates.length > 0 && contactProcessedRef.current !== contactKey) {
+      contactProcessedRef.current = contactKey;
       updateSettingsMutation.mutate({
         visibleContacts: debouncedContactUpdates
       });
-      setContactUpdates([]);
     }
   }, [debouncedContactUpdates, updateSettingsMutation]);
+
+  // Handle debounced color updates - batch all changes
+  useEffect(() => {
+    const colorKey = JSON.stringify(debouncedColorUpdates);
+    if (Object.keys(debouncedColorUpdates).length > 0 && colorProcessedRef.current !== colorKey) {
+      colorProcessedRef.current = colorKey;
+      
+      // Batch all color updates into single requests
+      const promises = Object.entries(debouncedColorUpdates).map(([id, data]) => 
+        updateMutation.mutateAsync({ id, data })
+      );
+      
+      Promise.all(promises).then(() => {
+        setColorUpdates({}); // Clear after all updates complete
+      });
+    }
+  }, [debouncedColorUpdates, updateMutation]);
+
+
 
   const handleColorChange = useCallback((id: string, label: string, color: string) => {
     setColorUpdates(prev => ({ ...prev, [id]: { label, color } }));

@@ -153,7 +153,8 @@ export const Checkbox = styled.input`
   border: 1px solid #184561;
   border-radius: 4px;
   cursor: pointer;
-  vvvvvv &:checked {
+  
+  &:checked {
     background-color: #184561;
   }
 `;

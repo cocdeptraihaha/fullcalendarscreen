@@ -1,4 +1,12 @@
-import { useState, useEffect, useCallback, MouseEvent } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  MouseEvent,
+  useMemo,
+  memo,
+  useRef,
+} from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useForm, useFormContext } from "react-hook-form";
@@ -9,20 +17,18 @@ import {
   ServiceTag,
   TagRemoveBtn,
 } from "../../ui/ServiceForm/styled";
-import { useDebounce } from "../../../hooks/useDebounce";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 interface ServiceSectionProps {
   initialStaffId: string;
 }
 
-const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
+const ServiceSection = memo(({ initialStaffId }: ServiceSectionProps) => {
   const [open, setOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const [hasReset, setHasReset] = useState(false);
-  const [currentAppointmentId, setCurrentAppointmentId] = useState<string>("");
-
+  const [lastFormOpenState, setLastFormOpenState] = useState(false);
   const mainForm = useFormContext();
   const {
     formState: { errors },
@@ -36,65 +42,77 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
     defaultValues: { staff_id: currentStaffId },
   });
   const selectedStaffId = staffMethods.watch("staff_id");
+
+  // Redux state to track form open/close
+  const { open: formOpen } = useSelector((state: RootState) => state.form);
+
   // TanStack Query hooks
   const { data: allServices = [], isLoading: servicesLoading } = useServices();
   const { data: staffServices = [] } = useServicesByStaff(
     selectedStaffId || ""
   );
 
+  // Stable refs to prevent unnecessary rerenders
+  const mainFormRef = useRef(mainForm);
+  mainFormRef.current = mainForm;
+
+  // Handle form open/close and data sync
+  useEffect(() => {
+    // Form just opened - clean first
+    if (formOpen && !lastFormOpenState) {
+      setSelectedServices([]);
+      setSearchTerm("");
+      setLastFormOpenState(true);
+      return;
+    }
+
+    // Form closed - reset state
+    if (!formOpen && lastFormOpenState) {
+      setLastFormOpenState(false);
+      return;
+    }
+
+    // Form is open - sync data
+    if (formOpen && currentServiceIds.length > 0) {
+      setSelectedServices(currentServiceIds);
+    }
+
+    // Reset when staff changes (update form only)
+    if (
+      formOpen &&
+      appointmentId &&
+      initialStaffId &&
+      currentStaffId !== initialStaffId
+    ) {
+      setSelectedServices([]);
+      if (mainFormRef.current) {
+        mainFormRef.current.setValue("service_ids", []);
+        mainFormRef.current.trigger("service_ids");
+      }
+    }
+  }, [
+    formOpen,
+    lastFormOpenState,
+    currentServiceIds,
+    appointmentId,
+    initialStaffId,
+    currentStaffId,
+  ]);
+
   // Sync staffMethods with currentStaffId
   useEffect(() => {
     staffMethods.reset({ staff_id: currentStaffId });
   }, [currentStaffId, staffMethods]);
 
-  // Track appointment changes, reset flags, and sync services
-  useEffect(() => {
-    // Track appointment changes
-    if (appointmentId !== currentAppointmentId) {
-      setCurrentAppointmentId(appointmentId);
-      setHasReset(false);
-    } else if (appointmentId === "" && currentAppointmentId !== "") {
-      setHasReset(false);
-    }
-
-    // Clear services for new form
-    if (!appointmentId || appointmentId === "") {
-      setSelectedServices([]);
-      return;
-    }
-
-    // Sync services from form
-    if (currentServiceIds.length > 0) {
-      setSelectedServices(currentServiceIds);
-    }
-
-    // Reset when staff changes in same event
-    if (
-      initialStaffId &&
-      currentStaffId &&
-      currentStaffId !== initialStaffId &&
-      !hasReset &&
-      appointmentId === currentAppointmentId &&
-      currentAppointmentId !== ""
-    ) {
-      setSelectedServices([]);
-      if (mainForm) {
-        mainForm.setValue("service_ids", []);
-        mainForm.trigger("service_ids");
-      }
-      setHasReset(true);
-    }
-  }, [
-    appointmentId,
-    currentAppointmentId,
-    currentServiceIds,
-    currentStaffId,
-    initialStaffId,
-    hasReset,
-    mainForm,
-  ]);
-
   const services = selectedStaffId ? staffServices : allServices;
+
+  // Optimize service lookup with memoized map
+  const servicesMap = useMemo(() => {
+    return services.reduce((acc, service) => {
+      acc[service.id] = service;
+      return acc;
+    }, {} as Record<string, any>);
+  }, [services]);
 
   const handleToggle = useCallback(() => {
     setOpen(true);
@@ -110,10 +128,6 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       e?.stopPropagation();
 
       if (mainForm && selectedStaffId) {
-        // Đánh dấu đã reset để tránh double reset
-        if (selectedStaffId !== initialStaffId) {
-          setHasReset(true);
-        }
         mainForm.setValue("staff_id", selectedStaffId);
       }
 
@@ -124,27 +138,24 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
 
       setOpen(false);
     },
-    [mainForm, selectedStaffId, selectedServices, initialStaffId]
+    [selectedStaffId, selectedServices, initialStaffId]
   );
 
-  const handleServiceToggle = useCallback(
-    (serviceId: string) => {
-      setSelectedServices((prev) => {
-        const newServices = prev.includes(serviceId)
-          ? prev.filter((id) => id !== serviceId)
-          : [...prev, serviceId];
+  const handleServiceToggle = useCallback((serviceId: string) => {
+    setSelectedServices((prev) => {
+      const newServices = prev.includes(serviceId)
+        ? prev.filter((id) => id !== serviceId)
+        : [...prev, serviceId];
 
-        // Cập nhật form chính
-        if (mainForm) {
-          mainForm.setValue("service_ids", newServices);
-        }
+      // Update main form
+      if (mainFormRef.current) {
+        mainFormRef.current.setValue("service_ids", newServices);
+      }
 
-        return newServices;
-      });
-      setSearchTerm("");
-    },
-    [mainForm]
-  );
+      return newServices;
+    });
+    setSearchTerm("");
+  }, []);
 
   const renderToggleContent = useCallback(() => {
     if (servicesLoading) {
@@ -158,7 +169,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       return (
         <TagsContainer>
           {selectedServices.map((serviceId) => {
-            const service = services.find((s) => s.id === serviceId);
+            const service = servicesMap[serviceId];
             return service ? (
               <ServiceTag key={serviceId}>
                 {service.name}
@@ -179,19 +190,20 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
     return (
       <span style={{ color: "#999", padding: "10px" }}>Select services...</span>
     );
-  }, [selectedServices, services, handleServiceToggle, servicesLoading]);
+  }, [selectedServices, servicesMap, handleServiceToggle, servicesLoading]);
 
   return (
     <InputContainer>
-      {(!errors.service_ids && <InputLabel>Service</InputLabel>) ||
-        (errors.service_ids && (
-          <ErrorMessage>{(errors.service_ids as any)?.message}</ErrorMessage>
-        ))}
+      {errors.service_ids ? (
+        <ErrorMessage>{(errors.service_ids as any)?.message}</ErrorMessage>
+      ) : (
+        <InputLabel>Service</InputLabel>
+      )}
       <ServiceForm
         open={open}
         services={services}
         selectedServices={selectedServices}
-        searchTerm={debouncedSearchTerm}
+        searchTerm={searchTerm}
         staffMethods={staffMethods}
         onToggle={handleToggle}
         onClose={handleClose}
@@ -202,6 +214,6 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
       />
     </InputContainer>
   );
-};
+});
 
 export default ServiceSection;

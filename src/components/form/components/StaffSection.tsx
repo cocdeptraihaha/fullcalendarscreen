@@ -30,7 +30,7 @@ const StaffSection: React.FC = () => {
         control={control}
         name="staff_id"
         render={({ field }) => {
-          const displayStaff = debouncedStaffSearchTerm
+          const displayStaff = staffSearchTerm
             ? searchResults.slice(0, 5)
             : staffList.slice(0, 5);
           const selectedStaff = staffList.find((s) => s.id === field.value);

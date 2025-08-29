@@ -54,7 +54,7 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            const displayContacts = debouncedSearchTerm
+            const displayContacts = contactSearchTerm
               ? searchResults.slice(0, 5)
               : contacts.slice(0, 5);
             const selectedContact = contacts.find((c) => c.id === field.value);
