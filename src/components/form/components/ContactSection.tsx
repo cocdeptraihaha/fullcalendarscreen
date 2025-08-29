@@ -19,7 +19,7 @@ export default function ContactSection() {
     formState: { errors },
   } = mainForm;
   const [contactSearchTerm, setContactSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(contactSearchTerm, 300);
+  const debouncedSearchTerm = useDebounce(contactSearchTerm, 500);
 
   const { data: contacts = [], isLoading: contactsLoading } =
     useGlobalContacts();

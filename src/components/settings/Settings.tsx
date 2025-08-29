@@ -77,14 +77,12 @@ export default function Settings() {
   const handleContactToggle = (contactId: string) => {
     dispatch(toggleContactVisibility(contactId));
     
-    // Save to server
+    // Debounced save to server
     const newVisibleContacts = visibleContacts.includes(contactId)
       ? visibleContacts.filter(id => id !== contactId)
       : [...visibleContacts, contactId];
     
-    updateSettingsMutation.mutate({
-      visibleContacts: newVisibleContacts
-    });
+    setContactUpdates(newVisibleContacts);
   };
 
   const isContactVisible = (contactId: string) => {
@@ -158,7 +156,10 @@ export default function Settings() {
   };
 
   const [colorUpdates, setColorUpdates] = useState<{[key: string]: {label: string, color: string}}>({});
-  const debouncedColorUpdates = useDebounce(colorUpdates, 300);
+  const debouncedColorUpdates = useDebounce(colorUpdates, 500);
+  
+  const [contactUpdates, setContactUpdates] = useState<string[]>([]);
+  const debouncedContactUpdates = useDebounce(contactUpdates, 500);
 
   // Handle debounced color updates
   useEffect(() => {
@@ -167,6 +168,16 @@ export default function Settings() {
     });
     setColorUpdates({});
   }, [debouncedColorUpdates, updateMutation]);
+
+  // Handle debounced contact visibility updates
+  useEffect(() => {
+    if (debouncedContactUpdates.length > 0) {
+      updateSettingsMutation.mutate({
+        visibleContacts: debouncedContactUpdates
+      });
+      setContactUpdates([]);
+    }
+  }, [debouncedContactUpdates, updateSettingsMutation]);
 
   const handleColorChange = useCallback((id: string, label: string, color: string) => {
     setColorUpdates(prev => ({ ...prev, [id]: { label, color } }));

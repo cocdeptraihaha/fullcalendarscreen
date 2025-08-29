@@ -5,6 +5,7 @@ import Dropdown from "../../ui/dropdown";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useGlobalStaff, useSearchStaff } from "../../../hooks/useGlobalData";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 // Define Staff's datatype
 
@@ -14,9 +15,10 @@ const StaffSection: React.FC = () => {
     formState: { errors },
   } = useFormContext();
   const [staffSearchTerm, setStaffSearchTerm] = useState("");
+  const debouncedStaffSearchTerm = useDebounce(staffSearchTerm, 500);
 
   const { data: staffList = [] } = useGlobalStaff();
-  const { data: searchResults = [] } = useSearchStaff(staffSearchTerm);
+  const { data: searchResults = [] } = useSearchStaff(debouncedStaffSearchTerm);
 
   return (
     <InputContainer>
@@ -28,7 +30,7 @@ const StaffSection: React.FC = () => {
         control={control}
         name="staff_id"
         render={({ field }) => {
-          const displayStaff = staffSearchTerm
+          const displayStaff = debouncedStaffSearchTerm
             ? searchResults.slice(0, 5)
             : staffList.slice(0, 5);
           const selectedStaff = staffList.find((s) => s.id === field.value);

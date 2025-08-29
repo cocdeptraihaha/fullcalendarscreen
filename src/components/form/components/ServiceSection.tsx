@@ -9,6 +9,7 @@ import {
   ServiceTag,
   TagRemoveBtn,
 } from "../../ui/ServiceForm/styled";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 interface ServiceSectionProps {
   initialStaffId: string;
@@ -18,6 +19,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
   const [open, setOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [hasReset, setHasReset] = useState(false);
   const [currentAppointmentId, setCurrentAppointmentId] = useState<string>("");
 
@@ -189,7 +191,7 @@ const ServiceSection = ({ initialStaffId }: ServiceSectionProps) => {
         open={open}
         services={services}
         selectedServices={selectedServices}
-        searchTerm={searchTerm}
+        searchTerm={debouncedSearchTerm}
         staffMethods={staffMethods}
         onToggle={handleToggle}
         onClose={handleClose}
