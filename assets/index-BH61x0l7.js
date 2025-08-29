@@ -319,7 +319,7 @@ attempted value: ${u}
 `,YL=ee.input`
   font-size: 24px;
   font-weight: 300;
-  color: #333;
+  color: #184561;
   border: none;
   border-radius: 6px;
   background: transparent;
