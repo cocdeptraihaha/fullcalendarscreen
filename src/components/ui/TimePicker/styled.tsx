@@ -26,7 +26,7 @@ export const TimeInput = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333;
+  color: #184561;
 
   &:focus {
     outline: none;

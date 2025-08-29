@@ -17,7 +17,7 @@ export const DateInput = styled.div`
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: #333;
+  color: #184561;
 
   &:focus {
     outline: none;
