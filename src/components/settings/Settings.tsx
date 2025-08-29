@@ -109,6 +109,16 @@ export default function Settings() {
       return;
     }
 
+    // Check for duplicate name
+    const existingType = appointmentTypes.find(
+      (type: any) => !type.deleted_at && type.label.toLowerCase() === newTypeName.trim().toLowerCase()
+    );
+    
+    if (existingType) {
+      toast.error("Type name already exists");
+      return;
+    }
+
     try {
       await createMutation.mutateAsync({
         label: newTypeName.trim(),
