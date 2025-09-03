@@ -44,7 +44,6 @@ type FormFields = {
   service_ids: string[];
   start: string;
   end: string;
-  color: string;
 };
 
 // Default time utils - Luxon implementation
@@ -84,7 +83,6 @@ function Form() {
       service_ids: [],
       start: currentDateTime,
       end: addMinutesToDateTime(currentDateTime, 30),
-      color: "",
     };
   }, []);
   const [loading, setLoading] = useState(false);
@@ -202,8 +200,8 @@ function Form() {
   const onSubmit = handleSubmit(async (data: FormFields) => {
     setLoading(true);
     try {
-      // Convert datetime strings to Unix timestamps
-      const appointmentData = {
+      // Convert datetime strings to Unix timestamps and exclude color
+      const { ...appointmentData } = {
         ...data,
         start: new Date(data.start).getTime(),
         end: new Date(data.end).getTime(),

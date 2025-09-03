@@ -148,7 +148,6 @@ export default function Calendar() {
           service_ids: event.extendedProps.service_ids,
           start: startStr,
           end: endStr,
-          color: event.backgroundColor,
         })
       );
     },

@@ -37,7 +37,6 @@ export default function ContactSection() {
     (val: any, field: any) => {
       const selectedType = appointmentTypes.find((t) => t.id === val);
       field.onChange(val); // Store ID directly
-      setValue("color", selectedType?.color);
       setValue("title", `${selectedType?.label} Appointment`); // Always update title
       mainForm.trigger("title"); // Trigger validation to clear error
     },
