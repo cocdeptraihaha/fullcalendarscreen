@@ -1,5 +1,5 @@
 // TanStack Query API functions
-const BASE_URL = "https://json-server-io3p.onrender.com";
+const BASE_URL = "http://127.0.0.1:8000/api/data";
 
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {

@@ -24,5 +24,4 @@ export const appointmentSchema = yup.object({
         return new Date(value) > new Date(start);
       }
     ),
-  color: yup.string().default(""),
 });

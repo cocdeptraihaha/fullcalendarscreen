@@ -6,12 +6,9 @@
       "type_id": "2",
       "contact_id": "1",
       "staff_id": "8",
-      "service_ids": [
-        "7"
-      ],
+      "service_ids": ["7"],
       "start": 1756641600000,
-      "end": 1756643400000,
-      "color": "#f39c12"
+      "end": 1756643400000
     },
     {
       "id": "10",
@@ -19,10 +16,7 @@
       "type_id": "2",
       "contact_id": "5",
       "staff_id": "7",
-      "service_ids": [
-        "2",
-        "5"
-      ],
+      "service_ids": ["2", "5"],
       "start": 1756123800000,
       "end": 1756125600000
     },
@@ -32,10 +26,7 @@
       "type_id": "2",
       "contact_id": "1",
       "staff_id": "2",
-      "service_ids": [
-        "1",
-        "2"
-      ],
+      "service_ids": ["1", "2"],
       "start": 1756296600000,
       "end": 1756298400000
     },
@@ -45,11 +36,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "3",
-      "service_ids": [
-        "1",
-        "2",
-        "3"
-      ],
+      "service_ids": ["1", "2", "3"],
       "start": 1756728900000,
       "end": 1756730700000
     },
@@ -59,11 +46,7 @@
       "type_id": "3",
       "contact_id": "2",
       "staff_id": "7",
-      "service_ids": [
-        "1",
-        "2",
-        "5"
-      ],
+      "service_ids": ["1", "2", "5"],
       "start": 1755178500000,
       "end": 1755180300000
     },
@@ -73,11 +56,7 @@
       "type_id": "2",
       "contact_id": "1",
       "staff_id": "2",
-      "service_ids": [
-        "1",
-        "2",
-        "6"
-      ],
+      "service_ids": ["1", "2", "6"],
       "start": 1756278600000,
       "end": 1756280400000
     },
@@ -87,11 +66,7 @@
       "type_id": "4",
       "contact_id": "3",
       "staff_id": "2",
-      "service_ids": [
-        "1",
-        "2",
-        "3"
-      ],
+      "service_ids": ["1", "2", "3"],
       "start": 1756183800000,
       "end": 1756185600000
     },
@@ -101,10 +76,7 @@
       "type_id": "3",
       "contact_id": "2",
       "staff_id": "3",
-      "service_ids": [
-        "1",
-        "2"
-      ],
+      "service_ids": ["1", "2"],
       "start": 1755752400000,
       "end": 1755754200000
     },
@@ -114,10 +86,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "3",
-      "service_ids": [
-        "3",
-        "2"
-      ],
+      "service_ids": ["3", "2"],
       "start": 1755147900000,
       "end": 1755149700000
     },
@@ -127,10 +96,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "3",
-      "service_ids": [
-        "1",
-        "2"
-      ],
+      "service_ids": ["1", "2"],
       "start": 1755234300000,
       "end": 1755236100000
     },
@@ -140,10 +106,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "2",
-      "service_ids": [
-        "2",
-        "1"
-      ],
+      "service_ids": ["2", "1"],
       "start": 1755324300000,
       "end": 1755326100000
     },
@@ -153,10 +116,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "2",
-      "service_ids": [
-        "1",
-        "3"
-      ],
+      "service_ids": ["1", "3"],
       "start": 1756188900000,
       "end": 1756190700000
     },
@@ -166,9 +126,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "8",
-      "service_ids": [
-        "5"
-      ],
+      "service_ids": ["5"],
       "start": 1756457400000,
       "end": 1756459200000
     },
@@ -178,11 +136,7 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "8",
-      "service_ids": [
-        "1",
-        "2",
-        "5"
-      ],
+      "service_ids": ["1", "2", "5"],
       "start": 1756344900000,
       "end": 1756346700000
     },
@@ -192,9 +146,7 @@
       "type_id": "43fd",
       "contact_id": "1",
       "staff_id": "2",
-      "service_ids": [
-        "2"
-      ],
+      "service_ids": ["2"],
       "start": 1754099100000,
       "end": 1754100900000
     },
@@ -204,10 +156,7 @@
       "type_id": "3",
       "contact_id": "1",
       "staff_id": "2",
-      "service_ids": [
-        "1",
-        "2"
-      ],
+      "service_ids": ["1", "2"],
       "start": 1755066000000,
       "end": 1755067800000
     },
@@ -217,12 +166,9 @@
       "type_id": "3",
       "contact_id": "2",
       "staff_id": "4",
-      "service_ids": [
-        "1"
-      ],
+      "service_ids": ["1"],
       "start": 1754020800000,
-      "end": 1754022600000,
-      "color": "#e91e63"
+      "end": 1754022600000
     },
     {
       "id": "39",
@@ -230,12 +176,9 @@
       "type_id": "1",
       "contact_id": "4",
       "staff_id": "1",
-      "service_ids": [
-        "8"
-      ],
+      "service_ids": ["8"],
       "start": 1753935000000,
-      "end": 1753936800000,
-      "color": "#2ecc71"
+      "end": 1753936800000
     },
     {
       "id": "40",
@@ -243,12 +186,9 @@
       "type_id": "2",
       "contact_id": "2",
       "staff_id": "5",
-      "service_ids": [
-        "2"
-      ],
+      "service_ids": ["2"],
       "start": 1756440300000,
-      "end": 1756442100000,
-      "color": "#b09973"
+      "end": 1756442100000
     }
   ],
   "appointment_types": [
@@ -324,88 +264,55 @@
       "id": "1",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Pilotpractice Support",
-      "service_ids": [
-        "8"
-      ]
+      "service_ids": ["8"]
     },
     {
       "id": "2",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Reza Keshavarzi",
-      "service_ids": [
-        "1",
-        "2",
-        "3",
-        "8"
-      ]
+      "service_ids": ["1", "2", "3", "8"]
     },
     {
       "id": "3",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Lucia Teran",
-      "service_ids": [
-        "1",
-        "2",
-        "3",
-        "6"
-      ]
+      "service_ids": ["1", "2", "3", "6"]
     },
     {
       "id": "4",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Rose Huber",
-      "service_ids": [
-        "1",
-        "6"
-      ]
+      "service_ids": ["1", "6"]
     },
     {
       "id": "5",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Lily Colas",
-      "service_ids": [
-        "2",
-        "3"
-      ]
+      "service_ids": ["2", "3"]
     },
     {
       "id": "6",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Pat Pazmiño",
-      "service_ids": [
-        "4",
-        "5",
-        "1"
-      ]
+      "service_ids": ["4", "5", "1"]
     },
     {
       "id": "7",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Sarah Johnson",
-      "service_ids": [
-        "2",
-        "5",
-        "7",
-        "1"
-      ]
+      "service_ids": ["2", "5", "7", "1"]
     },
     {
       "id": "8",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Michael Chen",
-      "service_ids": [
-        "7",
-        "5"
-      ]
+      "service_ids": ["7", "5"]
     },
     {
       "id": "9",
       "avatar": "https://www.w3schools.com/w3images/avatar2.png",
       "name": "Dr. Lisa Anderson",
-      "service_ids": [
-        "6",
-        "4"
-      ]
+      "service_ids": ["6", "4"]
     }
   ],
   "services": [
@@ -443,13 +350,6 @@
     }
   ],
   "settings": {
-    "visibleContacts": [
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6"
-    ]
+    "visibleContacts": ["1", "2", "3", "4", "5", "6"]
   }
 }
