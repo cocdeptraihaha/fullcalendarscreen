@@ -33,15 +33,10 @@ export const fetchAppointments = async (): Promise<any[]> => {
 };
 
 export const fetchAppointmentTypes = async (): Promise<any[]> => {
-  try {
-    const res = await fetch(`${BASE_URL}/appointment_types`);
-    if (!res.ok)
-      throw new Error(`Failed to fetch appointment types: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("Error fetching appointment types:", error);
-    throw error;
-  }
+  const res = await fetch(`${BASE_URL}/appointment_types`);
+  if (!res.ok)
+    throw new Error(`Failed to fetch appointment types: ${res.status}`);
+  return await res.json(); // đã chỉ trả loại chưa bị soft delete
 };
 
 export const fetchContacts = async (): Promise<any[]> => {
@@ -93,23 +88,18 @@ export const createAppointment = async (appointment: any): Promise<any> => {
   }
 };
 
+// 3) Cập nhật appointment: không cần gửi id trong body; gửi start/end nếu dùng từ React
 export const updateAppointment = async (
   id: string,
   appointment: any
 ): Promise<any> => {
-  try {
-    const appointmentWithId = { ...appointment, id };
-    const res = await fetch(`${BASE_URL}/appointments/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(appointmentWithId),
-    });
-    if (!res.ok) throw new Error(`Failed to update appointment: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("Error updating appointment:", error);
-    throw error;
-  }
+  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(appointment), // có thể chứa start/end, backend tự map
+  });
+  if (!res.ok) throw new Error(`Failed to update appointment: ${res.status}`);
+  return await res.json();
 };
 
 export const deleteAppointment = async (id: string): Promise<void> => {
@@ -163,31 +153,14 @@ export const updateAppointmentType = async (
   }
 };
 
+// 2) Xóa type: dùng DELETE (server đã soft delete)
 export const deleteAppointmentType = async (id: string): Promise<void> => {
-  try {
-    // Get current data first
-    const getRes = await fetch(`${BASE_URL}/appointment_types/${id}`);
-    if (!getRes.ok)
-      throw new Error(`Failed to fetch appointment type: ${getRes.status}`);
-    const currentType = await getRes.json();
-
-    // Update with deleted_at, keep all other properties
-    const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...currentType,
-        deleted_at: new Date().toISOString(),
-      }),
-    });
-    if (!res.ok)
-      throw new Error(`Failed to delete appointment type: ${res.status}`);
-  } catch (error) {
-    console.error("Error deleting appointment type:", error);
-    throw error;
-  }
+  const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok)
+    throw new Error(`Failed to delete appointment type: ${res.status}`);
 };
-
 export const fetchActiveAppointmentTypes = async (): Promise<any[]> => {
   try {
     const res = await fetch(`${BASE_URL}/appointment_types`);

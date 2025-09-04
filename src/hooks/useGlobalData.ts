@@ -24,7 +24,7 @@ export const useGlobalAppointmentTypes = () =>
   useQuery({
     queryKey: ["appointmentTypes"],
     queryFn: fetchActiveAppointmentTypes, // Only get active types
-    staleTime: Infinity,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
 // Search functions - fetch from server

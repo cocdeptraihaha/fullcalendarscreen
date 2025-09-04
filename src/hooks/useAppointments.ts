@@ -33,6 +33,7 @@ export const useCreateAppointment = () => {
     mutationFn: createAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.appointments });
+      queryClient.invalidateQueries({ queryKey: ['allData'] });
     },
     onError: (error) => {
       console.error('Create appointment failed:', error);
@@ -49,6 +50,7 @@ export const useUpdateAppointment = () => {
       updateAppointment(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.appointments });
+      queryClient.invalidateQueries({ queryKey: ['allData'] });
     },
     onError: (error) => {
       console.error('Update appointment failed:', error);
@@ -64,6 +66,7 @@ export const useDeleteAppointment = () => {
     mutationFn: deleteAppointment,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.appointments });
+      queryClient.invalidateQueries({ queryKey: ['allData'] });
     },
     onError: (error) => {
       console.error('Delete appointment failed:', error);
