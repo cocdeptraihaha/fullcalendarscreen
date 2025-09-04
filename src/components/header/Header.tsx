@@ -13,7 +13,7 @@ export default function Header() {
         {menuItems.map((item) => (
           <S.NavItem
             key={item}
-            active={active === item}
+            $active={active === item}
             onClick={() => handleClick(item)}
           >
             {item}

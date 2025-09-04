@@ -12,12 +12,7 @@ import { RootState } from "../../store/store";
 import { openForm, clearEventData } from "../../store/formSlice";
 import { openSettings } from "../../store/settingsSlice";
 import { useAppointments } from "../../hooks/useAppointments";
-import {
-  useGlobalStaff,
-  useGlobalServices,
-  useGlobalContacts,
-  useAllAppointmentTypes,
-} from "../../hooks/useGlobalData";
+import { useAllData } from "../../hooks/useAllData";
 import { useSettings } from "../../hooks/useSettings";
 import { useSettingsFilter } from "../../hooks/useSettingsFilter";
 import Form from "../form/Form";
@@ -42,11 +37,13 @@ export default function Calendar() {
   const formOpen = useSelector((state: RootState) => state.form.open);
   const { filterAppointments } = useSettingsFilter();
   const { data: appointments = [], isLoading, error } = useAppointments();
-  const { data: staff = [] } = useGlobalStaff();
-  const { data: services = [] } = useGlobalServices();
-  const { data: contacts = [] } = useGlobalContacts();
-  const { data: appointmentTypes = [] } = useAllAppointmentTypes();
+  const { data: allData, isLoading: allDataLoading } = useAllData();
   const { isLoading: settingsLoading } = useSettings();
+
+  const staff = allData?.staff || [];
+  const services = allData?.services || [];
+  const contacts = allData?.contacts || [];
+  const appointmentTypes = allData?.appointment_types || [];
 
   useEffect(() => {
     if (!formOpen) {
@@ -206,7 +203,7 @@ export default function Calendar() {
     [contacts, staff, services]
   );
 
-  if (isLoading || settingsLoading) {
+  if (isLoading || settingsLoading || allDataLoading) {
     return (
       <CalendarContainer>
         <div

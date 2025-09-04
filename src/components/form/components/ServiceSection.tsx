@@ -18,12 +18,13 @@ const ServiceSection = () => {
   const {
     formState: { errors },
   } = mainForm;
-  
+
   const currentStaffId = mainForm.watch("staff_id");
 
   const { data: allServices = [], isLoading: servicesLoading } = useServices();
-  const { data: staffServices = [], isLoading: staffServicesLoading } = useServicesByStaff(currentStaffId);
-  
+  const { data: staffServices = [], isLoading: staffServicesLoading } =
+    useServicesByStaff(currentStaffId);
+
   // Use staff services if staff is selected, otherwise use all services
   const services = currentStaffId ? staffServices : allServices;
   const isLoading = currentStaffId ? staffServicesLoading : servicesLoading;
@@ -46,7 +47,7 @@ const ServiceSection = () => {
   const handleAdd = useCallback(
     (e?: MouseEvent) => {
       e?.stopPropagation();
-      
+
       mainForm.setValue("service_ids", selectedServices);
       mainForm.trigger("service_ids");
       setOpen(false);
@@ -54,19 +55,22 @@ const ServiceSection = () => {
     [selectedServices, mainForm]
   );
 
-  const handleServiceToggle = useCallback((serviceId: string) => {
-    setSelectedServices((prev) => {
-      const newServices = prev.includes(serviceId)
-        ? prev.filter((id) => id !== serviceId)
-        : [...prev, serviceId];
-      
-      mainForm.setValue("service_ids", newServices);
-      mainForm.trigger("service_ids");
-      
-      return newServices;
-    });
-    setSearchTerm("");
-  }, [mainForm]);
+  const handleServiceToggle = useCallback(
+    (serviceId: string) => {
+      setSelectedServices((prev) => {
+        const newServices = prev.includes(serviceId)
+          ? prev.filter((id) => id !== serviceId)
+          : [...prev, serviceId];
+
+        mainForm.setValue("service_ids", newServices);
+        mainForm.trigger("service_ids");
+
+        return newServices;
+      });
+      setSearchTerm("");
+    },
+    [mainForm]
+  );
 
   const renderToggleContent = useCallback(() => {
     if (isLoading) {
@@ -80,7 +84,7 @@ const ServiceSection = () => {
       return (
         <TagsContainer>
           {selectedServices.map((serviceId) => {
-            const service = services.find(s => s.id === serviceId);
+            const service = services.find((s) => s.id === serviceId);
             return service ? (
               <ServiceTag key={serviceId}>
                 {service.name}

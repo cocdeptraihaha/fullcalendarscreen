@@ -23,13 +23,13 @@ export const NavbarContainer = styled.div`
   display: flex;
 `;
 interface NavItemProps {
-  active?: boolean;
+  $active?: boolean;
 }
 export const NavItem = styled.div<NavItemProps>`
   position: relative;
-  color: ${({ active }) => (active ? "#fff" : "#c6dce0")};
-  background-color: ${({ active }) =>
-    active ? "rgba(255,255,255,0.1)" : "transparent"};
+  color: ${({ $active }) => ($active ? "#fff" : "#c6dce0")};
+  background-color: ${({ $active }) =>
+    $active ? "rgba(255,255,255,0.1)" : "transparent"};
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;

@@ -1,5 +1,24 @@
 // TanStack Query API functions
-const BASE_URL = "http://127.0.0.1:8000/api/data";
+const BASE_URL = "http://127.0.0.1:8000/api";
+
+// Fetch all data in one request
+export const fetchAllData = async (): Promise<{
+  appointments: any[];
+  appointment_types: any[];
+  contacts: any[];
+  staff: any[];
+  services: any[];
+  settings: any;
+}> => {
+  try {
+    const res = await fetch(`${BASE_URL}/data`);
+    if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching all data:", error);
+    throw error;
+  }
+};
 
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
@@ -54,25 +73,6 @@ export const fetchServices = async (): Promise<any[]> => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching services:", error);
-    throw error;
-  }
-};
-
-export const getServicesByStaffId = async (staffId: string): Promise<any[]> => {
-  try {
-    const services = await fetchServices();
-    const staff = await fetchStaff();
-
-    const selectedStaff = staff.find((s: any) => s.id === staffId);
-    if (!selectedStaff || !selectedStaff.service_ids) {
-      return [];
-    }
-
-    return services.filter((service: any) =>
-      selectedStaff.service_ids.includes(service.id)
-    );
-  } catch (error) {
-    console.error("Error fetching services by staff ID:", error);
     throw error;
   }
 };

@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { useGlobalContacts } from './useGlobalData';
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { useGlobalContacts } from "./useGlobalData";
 
 export const useSettingsFilter = () => {
   const { visibleContacts } = useSelector((state: RootState) => state.settings);

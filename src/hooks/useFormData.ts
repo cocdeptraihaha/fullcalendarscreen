@@ -1,38 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { 
-  fetchContacts, 
-  fetchStaff, 
-  fetchServices, 
-  fetchAppointmentTypes,
-  getServicesByStaffId 
-} from '../services/api';
+import { useQuery } from "@tanstack/react-query";
+import { fetchStaff, fetchServices } from "../services/api";
 
 // Query keys
 export const FORM_QUERY_KEYS = {
-  contacts: ['contacts'],
-  staff: ['staff'],
-  services: ['services'],
-  appointmentTypes: ['appointmentTypes'],
-  servicesByStaff: (staffId: string) => ['services', 'staff', staffId],
+  services: ["services"],
+  staff: ["staff"],
 } as const;
-
-// Contacts query
-export const useContacts = () => {
-  return useQuery({
-    queryKey: FORM_QUERY_KEYS.contacts,
-    queryFn: fetchContacts,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  });
-};
-
-// Staff query
-export const useStaff = () => {
-  return useQuery({
-    queryKey: FORM_QUERY_KEYS.staff,
-    queryFn: fetchStaff,
-    staleTime: 10 * 60 * 1000,
-  });
-};
 
 // Services query
 export const useServices = () => {
@@ -43,21 +16,30 @@ export const useServices = () => {
   });
 };
 
-// Appointment types query
-export const useAppointmentTypes = () => {
+// Staff query (needed for useServicesByStaff)
+const useStaff = () => {
   return useQuery({
-    queryKey: FORM_QUERY_KEYS.appointmentTypes,
-    queryFn: fetchAppointmentTypes,
+    queryKey: FORM_QUERY_KEYS.staff,
+    queryFn: fetchStaff,
     staleTime: 10 * 60 * 1000,
   });
 };
 
-// Services by staff query
+// Services by staff query - filter from local data
 export const useServicesByStaff = (staffId: string) => {
-  return useQuery({
-    queryKey: FORM_QUERY_KEYS.servicesByStaff(staffId),
-    queryFn: () => getServicesByStaffId(staffId),
-    enabled: !!staffId,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: allServices = [] } = useServices();
+  const { data: staffList = [] } = useStaff();
+
+  const selectedStaff = staffList.find((s) => s.id === staffId);
+  const filteredServices = selectedStaff?.service_ids
+    ? allServices.filter((service) =>
+        selectedStaff.service_ids.includes(service.id)
+      )
+    : [];
+
+  return {
+    data: filteredServices,
+    isLoading: false,
+    error: null,
+  };
 };
