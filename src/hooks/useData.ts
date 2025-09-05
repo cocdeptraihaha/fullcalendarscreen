@@ -5,6 +5,7 @@ import {
   fetchServices,
   fetchContacts,
   fetchSettings,
+  fetchActiveAppointmentTypes,
 } from "../services/api";
 
 // Query keys
@@ -29,7 +30,7 @@ export const useAppointments = () => {
 export const useAppointmentTypes = () => {
   return useQuery({
     queryKey: QUERY_KEYS.appointmentTypes,
-    queryFn: fetchStaff,
+    queryFn: fetchActiveAppointmentTypes,
     staleTime: 5 * 60 * 1000,
   });
 };
