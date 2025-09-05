@@ -4,8 +4,9 @@ import { ErrorMessage } from "../Form.styled";
 import Dropdown from "../../ui/dropdown";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import { useGlobalStaff, useSearchStaff } from "../../../hooks/useGlobalData";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { useStaff } from "../../../hooks/useData";
+import { useSearchStaff } from "../../../hooks/useFunction";
 
 // Define Staff's datatype
 
@@ -24,24 +25,24 @@ const StaffSection: React.FC<StaffSectionProps> = ({ isInModal = false }) => {
   const debouncedStaffSearchTerm = useDebounce(staffSearchTerm, 500);
   const previousStaffId = useRef<string>("");
   const previousAptId = useRef<string | null>(null);
-  const previousServices = useRef<{[staffId: string]: string[]}>({});
-  
+  const previousServices = useRef<{ [staffId: string]: string[] }>({});
+
   const currentStaffId = watch("staff_id");
   const currentAptId = watch("id");
   const currentServices = watch("service_ids") || [];
-  
+
   // Reset service logic based on appointment and staff changes
   useEffect(() => {
     if (isInModal) return; // Skip reset logic when in modal
-    
+
     const prevApt = previousAptId.current;
     const prevStaff = previousStaffId.current;
-    
+
     // Save current services before any changes
     if (prevStaff && currentServices.length > 0) {
       previousServices.current[prevStaff] = currentServices;
     }
-    
+
     if (prevApt === currentAptId && prevStaff !== currentStaffId) {
       // Same appointment but different staff
       if (currentStaffId && previousServices.current[currentStaffId]) {
@@ -56,12 +57,12 @@ const StaffSection: React.FC<StaffSectionProps> = ({ isInModal = false }) => {
       setValue("service_ids", []);
     }
     // prevApt !== currentAptId && prevStaff !== currentStaff -> load new service data (do nothing)
-    
+
     previousStaffId.current = currentStaffId;
     previousAptId.current = currentAptId;
   }, [currentStaffId, currentAptId, setValue, currentServices, isInModal]);
 
-  const { data: staffList = [] } = useGlobalStaff();
+  const { data: staffList = [] } = useStaff();
   const { data: searchResults = [] } = useSearchStaff(debouncedStaffSearchTerm);
 
   return (

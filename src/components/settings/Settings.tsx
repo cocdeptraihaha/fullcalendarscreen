@@ -13,7 +13,7 @@ import {
   useUpdateAppointmentType,
   useDeleteAppointmentType,
 } from "../../hooks/useAppointmentTypes";
-import { useSettings, useUpdateSettings } from "../../hooks/useSettings";
+import { useUpdateSettings } from "../../hooks/useSettings";
 import { X, Plus, Check, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import {
@@ -40,6 +40,7 @@ import {
   FooterContainer,
 } from "./Settings.styled";
 import { ToastButton, ToastContainer } from "../form/Form.styled";
+import { useSettings } from "../../hooks/useData";
 
 export default function Settings() {
   const dispatch = useDispatch();
@@ -90,7 +91,7 @@ export default function Settings() {
         dispatch(toggleContactVisibility(contactId));
 
         const newVisibleContacts = visibleContacts.includes(contactId)
-          ? visibleContacts.filter((id) => id !== contactId)
+          ? visibleContacts.filter((id: any) => id !== contactId)
           : [...visibleContacts, contactId];
 
         setContactUpdates(newVisibleContacts);
@@ -192,7 +193,7 @@ export default function Settings() {
     ) {
       contactProcessedRef.current = contactKey;
       updateSettingsMutation.mutate({
-        visibleContacts: debouncedContactUpdates,
+        visibleContacts: debouncedContactUpdates || [],
       });
     }
   }, [debouncedContactUpdates, updateSettingsMutation]);

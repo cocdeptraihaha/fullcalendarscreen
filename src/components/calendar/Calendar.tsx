@@ -11,10 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { openForm, clearEventData } from "../../store/formSlice";
 import { openSettings } from "../../store/settingsSlice";
-import { useAppointments } from "../../hooks/useAppointments";
 import { useAllData } from "../../hooks/useAllData";
-import { useSettings } from "../../hooks/useSettings";
-import { useSettingsFilter } from "../../hooks/useSettingsFilter";
+import { useSettings } from "../../hooks/useData";
+import { useSettingsFilter } from "../../hooks/useFilter";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
@@ -36,14 +35,14 @@ export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
   const { filterAppointments } = useSettingsFilter();
-  const { data: appointments = [], isLoading, error } = useAppointments();
-  const { data: allData, isLoading: allDataLoading } = useAllData();
+  const { data: allData, isLoading: allDataLoading, error } = useAllData();
   const { isLoading: settingsLoading } = useSettings();
 
   const staff = allData?.staff || [];
   const services = allData?.services || [];
   const contacts = allData?.contacts || [];
   const appointmentTypes = allData?.appointment_types || [];
+  const appointments = allData?.appointments || [];
 
   useEffect(() => {
     if (!formOpen) {
@@ -203,7 +202,7 @@ export default function Calendar() {
     [contacts, staff, services]
   );
 
-  if (isLoading || settingsLoading || allDataLoading) {
+  if (settingsLoading || allDataLoading) {
     return (
       <CalendarContainer>
         <div

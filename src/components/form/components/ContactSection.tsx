@@ -3,13 +3,10 @@ import { InputContainer, InputLabel, ContactContainer } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import {
-  useGlobalContacts,
-  useGlobalAppointmentTypes,
-  useSearchContacts,
-} from "../../../hooks/useGlobalData";
+import { useContacts, useAppointmentTypes } from "../../../hooks/useData";
 import { useCallback, useState } from "react";
 import { useDebounce } from "../../../hooks/useDebounce";
+import { useSearchContacts } from "../../../hooks/useFunction";
 
 export default function ContactSection() {
   const mainForm = useFormContext();
@@ -21,10 +18,9 @@ export default function ContactSection() {
   const [contactSearchTerm, setContactSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(contactSearchTerm, 500);
 
-  const { data: contacts = [], isLoading: contactsLoading } =
-    useGlobalContacts();
+  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
   const { data: appointmentTypes = [], isLoading: typesLoading } =
-    useGlobalAppointmentTypes(); // Only get active types for form
+    useAppointmentTypes(); // Only get active types for form
   const { data: searchResults = [] } = useSearchContacts(debouncedSearchTerm);
 
   // Memoize contact change handler

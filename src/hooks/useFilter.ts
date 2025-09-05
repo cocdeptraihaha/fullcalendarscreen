@@ -1,10 +1,10 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { useGlobalContacts } from "./useGlobalData";
+import { useContacts } from "./useData";
 
 export const useSettingsFilter = () => {
   const { visibleContacts } = useSelector((state: RootState) => state.settings);
-  const { data: contacts = [] } = useGlobalContacts();
+  const { data: contacts = [] } = useContacts();
 
   const filterAppointments = (appointments: any[]) => {
     return appointments.filter((apt: any) => {

@@ -28,17 +28,28 @@ const settingsSlice = createSlice({
     toggleContactVisibility: (state, action: PayloadAction<string>) => {
       const contactId = action.payload;
       if (state.visibleContacts.includes(contactId)) {
-        state.visibleContacts = state.visibleContacts.filter(id => id !== contactId);
+        state.visibleContacts = state.visibleContacts.filter(
+          (id) => id !== contactId
+        );
       } else {
         state.visibleContacts.push(contactId);
       }
     },
-    loadSettings: (state, action: PayloadAction<{ visibleContacts: string[] }>) => {
+    loadSettings: (
+      state,
+      action: PayloadAction<{ visibleContacts: any[] }>
+    ) => {
       state.visibleContacts = action.payload.visibleContacts;
       state.isLoaded = true;
     },
   },
 });
 
-export const { openSettings, closeSettings, setVisibleContacts, toggleContactVisibility, loadSettings } = settingsSlice.actions;
+export const {
+  openSettings,
+  closeSettings,
+  setVisibleContacts,
+  toggleContactVisibility,
+  loadSettings,
+} = settingsSlice.actions;
 export default settingsSlice.reducer;

@@ -2,13 +2,13 @@ import { useState, useCallback, useEffect, MouseEvent } from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext } from "react-hook-form";
-import { useServices, useServicesByStaff } from "../../../hooks/useFormData";
 import ServiceForm from "../../ui/ServiceForm";
 import {
   TagsContainer,
   ServiceTag,
   TagRemoveBtn,
 } from "../../ui/ServiceForm/styled";
+import { useServices, useServicesByStaff } from "../../../hooks/useData";
 
 const ServiceSection = () => {
   const [open, setOpen] = useState(false);
