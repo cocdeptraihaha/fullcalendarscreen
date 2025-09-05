@@ -1,5 +1,5 @@
 // TanStack Query API functions
-const BASE_URL = "http://127.0.0.1:8000/api";
+const BASE_URL = "https://laravel-api-409195726527.asia-southeast1.run.app/api";
 
 // Fetch all data in one request
 export const fetchAllData = async (): Promise<{
