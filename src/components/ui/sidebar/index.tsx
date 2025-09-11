@@ -1,4 +1,4 @@
-import * as S from "./Sidebar.styled";
+import * as S from "./styled";
 
 type SidebarItem = {
   label: string;

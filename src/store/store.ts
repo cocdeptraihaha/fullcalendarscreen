@@ -3,6 +3,7 @@ import calendarReducer from "./calendarSlice";
 import formReducer from "./formSlice";
 import settingsReducer from "./settingsSlice";
 import headerReducer from "./headerSlice"
+import contactsReducer from "./contactsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     form: formReducer,
     settings: settingsReducer,
     header: headerReducer,
+    contacts:contactsReducer,
   },
 });
 

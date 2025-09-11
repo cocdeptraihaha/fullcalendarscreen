@@ -18,7 +18,7 @@ import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
 import { getName, getNames, getColor } from "../../utils/dataHelpers";
-import Sidebar from "../ui/sidebar/Sidebar";
+import Sidebar from "../ui/sidebar";
 import { setView } from "../../store/calendarSlice";
 import { Calendar as IconCalendar }  from "react-feather";
 
