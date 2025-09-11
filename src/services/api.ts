@@ -187,17 +187,16 @@ export const fetchSettings = async (): Promise<any> => {
   }
 };
 
-export const updateSettings = async (settings: any): Promise<any> => {
-  try {
-    const res = await fetch(`${BASE_URL}/settings`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
-    });
-    if (!res.ok) throw new Error(`Failed to update settings: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("Error updating settings:", error);
-    throw error;
-  }
+// Staff visibility API
+export const updateStaffVisible = async (
+  id: string,
+  visible: 0 | 1
+): Promise<any> => {
+  const res = await fetch(`${BASE_URL}/staff/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ visible }),
+  });
+  if (!res.ok) throw new Error(`Failed to update visible: ${res.status}`);
+  return await res.json();
 };

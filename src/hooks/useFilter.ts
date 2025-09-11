@@ -1,21 +1,21 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { useContacts } from "./useData";
+import { useStaff } from "./useData";
 
 export const useSettingsFilter = () => {
-  const { visibleContacts } = useSelector((state: RootState) => state.settings);
-  const { data: contacts = [] } = useContacts();
+  const { visibleStaff } = useSelector((state: RootState) => state.settings);
+  const { data: staff = [] } = useStaff();
 
   const filterAppointments = (appointments: any[]) => {
     return appointments.filter((apt: any) => {
-      // If all contacts selected, show all
-      if (visibleContacts.length === contacts.length) return true;
-      // If no contacts selected, show none
-      if (visibleContacts.length === 0) return false;
-      // Otherwise only show appointments for selected contacts
-      return visibleContacts.includes(apt.contact_id);
+      // If all staff selected, show all
+      if (visibleStaff.length === staff.length) return true;
+      // If no staff selected, show none
+      if (visibleStaff.length === 0) return false;
+      // Otherwise only show appointments for selected staff
+      return visibleStaff.includes(apt.staff_id);
     });
   };
 
-  return { filterAppointments, visibleContacts };
+  return { filterAppointments, visibleStaff };
 };

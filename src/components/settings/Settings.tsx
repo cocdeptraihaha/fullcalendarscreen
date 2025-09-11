@@ -4,16 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import {
   closeSettings,
-  toggleContactVisibility,
+  toggleStaffVisibility,
   loadSettings,
 } from "../../store/settingsSlice";
-import { useAllData } from "../../hooks/useAllData";
+import { useAppointmentTypes, useStaff } from "../../hooks/useData";
 import {
   useCreateAppointmentType,
   useUpdateAppointmentType,
   useDeleteAppointmentType,
 } from "../../hooks/useAppointmentTypes";
-import { useUpdateSettings } from "../../hooks/useSettings";
+import { useUpdateStaffVisible } from "../../hooks/useSettings";
 import { X, Plus, Check, Trash2 } from "react-feather";
 import { toast } from "react-toastify";
 import {
@@ -44,14 +44,13 @@ import { useSettings } from "../../hooks/useData";
 
 export default function Settings() {
   const dispatch = useDispatch();
-  const { open, visibleContacts, isLoaded } = useSelector(
+  const { open, visibleStaff, isLoaded } = useSelector(
     (state: RootState) => state.settings
   );
-  const { data: allData } = useAllData();
-  const contacts = allData?.contacts || [];
-  const appointmentTypes = allData?.appointment_types || [];
+  const { data: staff = [] } = useStaff();
+  const { data: appointmentTypes = [] } = useAppointmentTypes();
   const { data: settings } = useSettings();
-  const updateSettingsMutation = useUpdateSettings();
+  const updateStaffVisibleMutation = useUpdateStaffVisible();
 
   const createMutation = useCreateAppointmentType();
   const updateMutation = useUpdateAppointmentType();
@@ -61,47 +60,47 @@ export default function Settings() {
   const [newTypeName, setNewTypeName] = useState("");
   const [newTypeColor, setNewTypeColor] = useState("#3498db");
 
-  const [activeSection, setActiveSection] = useState("contacts");
-  const [contactUpdates, setContactUpdates] = useState<string[] | null>(null);
+  const [activeSection, setActiveSection] = useState("staff");
+  // Collect per-staff visibility updates; will be sent after debounce
+  const [staffVisibilityUpdates, setStaffVisibilityUpdates] = useState<{
+    [id: string]: 0 | 1;
+  }>({});
   const [colorUpdates, setColorUpdates] = useState<{
     [key: string]: { label: string; color: string };
   }>({});
 
-  const debouncedContactUpdates = useDebounce(contactUpdates, 500);
+  const debouncedStaffVisibilityUpdates = useDebounce(staffVisibilityUpdates, 400);
   const debouncedColorUpdates = useDebounce(colorUpdates, 500);
 
   const colorProcessedRef = useRef<string>("");
-  const contactProcessedRef = useRef<string>("");
+  const staffProcessedRef = useRef<string>("");
 
   const sections = [
-    { id: "contacts", label: "General setting" },
+    { id: "staff", label: "Staff visibility" },
     { id: "types", label: "Appointment types" },
   ];
 
-  // Load settings from server on mount
+  // Load settings once when not loaded yet
   useEffect(() => {
-    if (settings && !isLoaded) {
+    if (!isLoaded && settings) {
       dispatch(loadSettings(settings));
     }
-  }, [settings, isLoaded, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, settings]);
 
   const handleContactToggle = useCallback(
     (contactId: string) => {
       setTimeout(() => {
-        dispatch(toggleContactVisibility(contactId));
-
-        const newVisibleContacts = visibleContacts.includes(contactId)
-          ? visibleContacts.filter((id: any) => id !== contactId)
-          : [...visibleContacts, contactId];
-
-        setContactUpdates(newVisibleContacts);
+        dispatch(toggleStaffVisibility(contactId));
+        const nextVisible: 0 | 1 = visibleStaff.includes(contactId) ? 0 : 1;
+        setStaffVisibilityUpdates((prev) => ({ ...prev, [contactId]: nextVisible }));
       }, 0);
     },
-    [dispatch, visibleContacts]
+    [dispatch, visibleStaff]
   );
 
   const isContactVisible = (contactId: string) => {
-    return visibleContacts.includes(contactId);
+    return visibleStaff.includes(contactId);
   };
 
   const handleClose = () => {
@@ -184,19 +183,24 @@ export default function Settings() {
     );
   };
 
-  // Handle debounced contact updates
+  // Debounced mutate for staff visibility updates
   useEffect(() => {
-    const contactKey = JSON.stringify(debouncedContactUpdates);
+    const staffKey = JSON.stringify(debouncedStaffVisibilityUpdates);
     if (
-      debouncedContactUpdates !== null &&
-      contactProcessedRef.current !== contactKey
+      Object.keys(debouncedStaffVisibilityUpdates).length > 0 &&
+      staffProcessedRef.current !== staffKey
     ) {
-      contactProcessedRef.current = contactKey;
-      updateSettingsMutation.mutate({
-        visibleContacts: debouncedContactUpdates || [],
+      staffProcessedRef.current = staffKey;
+      const entries = Object.entries(debouncedStaffVisibilityUpdates);
+      Promise.all(
+        entries.map(([id, visible]) =>
+          updateStaffVisibleMutation.mutateAsync({ id, visible: visible as 0 | 1 })
+        )
+      ).finally(() => {
+        setStaffVisibilityUpdates({});
       });
     }
-  }, [debouncedContactUpdates, updateSettingsMutation]);
+  }, [debouncedStaffVisibilityUpdates, updateStaffVisibleMutation]);
 
   // Handle debounced color updates - batch all changes
   useEffect(() => {
@@ -252,7 +256,7 @@ export default function Settings() {
 
           <ContentArea>
             <ModalBody>
-              {activeSection === "contacts" && (
+              {activeSection === "staff" && (
                 <Section>
                   <ContactItem>
                     <ContactName style={{ fontWeight: "bold" }}>
@@ -260,25 +264,28 @@ export default function Settings() {
                     </ContactName>
                     <ContactCheckbox
                       type="checkbox"
-                      checked={visibleContacts.length === contacts.length}
+                      checked={visibleStaff.length === staff.length}
                       onChange={() => {
                         setTimeout(() => {
-                          if (visibleContacts.length === contacts.length) {
+                          if (visibleStaff.length === staff.length) {
                             // Uncheck Show All - hide all contacts
-                            setContactUpdates([]);
-                            visibleContacts.forEach((contactId: string) => {
-                              dispatch(toggleContactVisibility(contactId));
+                            visibleStaff.forEach((contactId: string) => {
+                              dispatch(toggleStaffVisibility(contactId));
+                              setStaffVisibilityUpdates((prev) => ({
+                                ...prev,
+                                [contactId]: 0,
+                              }));
                             });
                           } else {
                             // Check all - set to all contact IDs
-                            const allContactIds = contacts.map(
-                              (contact: any) => contact.id
-                            );
-                            setContactUpdates(allContactIds);
                             // Update Redux for each contact
-                            contacts.forEach((contact: any) => {
-                              if (!visibleContacts.includes(contact.id)) {
-                                dispatch(toggleContactVisibility(contact.id));
+                            staff.forEach((member: any) => {
+                              if (!visibleStaff.includes(member.id)) {
+                                dispatch(toggleStaffVisibility(member.id));
+                                setStaffVisibilityUpdates((prev) => ({
+                                  ...prev,
+                                  [member.id]: 1,
+                                }));
                               }
                             });
                           }
@@ -286,13 +293,13 @@ export default function Settings() {
                       }}
                     />
                   </ContactItem>
-                  {contacts.map((contact: any) => (
-                    <ContactItem key={contact.id}>
-                      <ContactName>{contact.name}</ContactName>
+                  {staff.map((member: any) => (
+                    <ContactItem key={member.id}>
+                      <ContactName>{member.name}</ContactName>
                       <ContactCheckbox
                         type="checkbox"
-                        checked={isContactVisible(contact.id)}
-                        onChange={() => handleContactToggle(contact.id)}
+                        checked={isContactVisible(member.id)}
+                        onChange={() => handleContactToggle(member.id)}
                       />
                     </ContactItem>
                   ))}

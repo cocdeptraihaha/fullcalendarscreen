@@ -1,18 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateSettings } from "../services/api";
+import { useMutation } from "@tanstack/react-query";
+import { updateStaffVisible } from "../services/api";
 import { toast } from "react-toastify";
 
-export const useUpdateSettings = () => {
-  const queryClient = useQueryClient();
+export const useUpdateStaffVisible = () => {
 
   return useMutation({
-    mutationFn: updateSettings,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["settings"] });
-    },
+    mutationFn: ({ id, visible }: { id: string; visible: 0 | 1 }) =>
+      updateStaffVisible(id, visible),
     onError: (error: any) => {
-      console.error("Error updating settings:", error);
-      toast.error("Failed to save settings");
+      console.error("Error updating staff visibility:", error);
+      toast.error("Failed to update staff visibility");
     },
   });
 };

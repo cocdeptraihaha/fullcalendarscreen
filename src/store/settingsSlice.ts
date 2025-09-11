@@ -2,13 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type SettingsState = {
   open: boolean;
-  visibleContacts: string[]; // Array of contact IDs to show on calendar
+  visibleStaff: string[]; // Array of staff IDs to show on calendar
   isLoaded: boolean;
 };
 
 const initialState: SettingsState = {
   open: false,
-  visibleContacts: [], // Empty means show all
+  visibleStaff: [], // Empty means show all
   isLoaded: false,
 };
 
@@ -22,24 +22,27 @@ const settingsSlice = createSlice({
     closeSettings: (state) => {
       state.open = false;
     },
-    setVisibleContacts: (state, action: PayloadAction<string[]>) => {
-      state.visibleContacts = action.payload;
+    setVisibleStaff: (state, action: PayloadAction<string[]>) => {
+      state.visibleStaff = action.payload;
     },
-    toggleContactVisibility: (state, action: PayloadAction<string>) => {
-      const contactId = action.payload;
-      if (state.visibleContacts.includes(contactId)) {
-        state.visibleContacts = state.visibleContacts.filter(
-          (id) => id !== contactId
-        );
+    toggleStaffVisibility: (state, action: PayloadAction<string>) => {
+      const staffId = action.payload;
+      if (state.visibleStaff.includes(staffId)) {
+        state.visibleStaff = state.visibleStaff.filter((id) => id !== staffId);
       } else {
-        state.visibleContacts.push(contactId);
+        state.visibleStaff.push(staffId);
       }
     },
     loadSettings: (
       state,
-      action: PayloadAction<{ visibleContacts: any[] }>
+      action: PayloadAction<{ visibleStaffs?: any[]; visibleContacts?: any[] }>
     ) => {
-      state.visibleContacts = action.payload.visibleContacts;
+      // Accept both API shapes for backward compatibility
+      const serverVisible =
+        (action.payload.visibleStaffs as string[] | undefined) ??
+        (action.payload.visibleContacts as string[] | undefined) ??
+        [];
+      state.visibleStaff = serverVisible;
       state.isLoaded = true;
     },
   },
@@ -48,8 +51,8 @@ const settingsSlice = createSlice({
 export const {
   openSettings,
   closeSettings,
-  setVisibleContacts,
-  toggleContactVisibility,
+  setVisibleStaff,
+  toggleStaffVisibility,
   loadSettings,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

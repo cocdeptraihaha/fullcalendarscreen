@@ -11,8 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { openForm, clearEventData } from "../../store/formSlice";
 import { openSettings } from "../../store/settingsSlice";
-import { useAllData } from "../../hooks/useAllData";
-import { useSettings } from "../../hooks/useData";
+import { useSettings, useAppointments, useAppointmentTypes, useContacts, useStaff, useServices } from "../../hooks/useData";
 import { useSettingsFilter } from "../../hooks/useFilter";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
@@ -40,14 +39,14 @@ export default function Calendar() {
   const formOpen = useSelector((state: RootState) => state.form.open);
   const active = useSelector((state: RootState) => state.calendar.view);
   const { filterAppointments } = useSettingsFilter();
-  const { data: allData, isLoading: allDataLoading, error } = useAllData();
+  const { data: appointments = [], isLoading: appointmentsLoading, error } = useAppointments();
+  const { data: appointmentTypes = [], isLoading: typesLoading } = useAppointmentTypes();
+  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
+  const { data: staff = [], isLoading: staffLoading } = useStaff();
+  const { data: services = [], isLoading: servicesLoading } = useServices();
   const { isLoading: settingsLoading } = useSettings();
 
-  const staff = allData?.staff || [];
-  const services = allData?.services || [];
-  const contacts = allData?.contacts || [];
-  const appointmentTypes = allData?.appointment_types || [];
-  const appointments = allData?.appointments || [];
+  
   
   const sidebarItems = [
   { label: "Month", value: 'dayGridMonth',icon: <IconCalendar size={16} color="#184561"/> },
@@ -215,7 +214,7 @@ export default function Calendar() {
     [contacts, staff, services]
   );
 
-  if (settingsLoading || allDataLoading) {
+  if (settingsLoading || appointmentsLoading || typesLoading || contactsLoading || staffLoading || servicesLoading) {
     return (
       <CalendarContainer>
         <div
