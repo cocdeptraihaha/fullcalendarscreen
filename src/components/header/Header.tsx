@@ -1,19 +1,25 @@
-import { useState, useCallback } from "react";
 import * as S from "./Header.styled";
 import { menuItems } from "./HeaderConstants";
-
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { setSection } from "../../store/headerSlice";
+import { useCallback } from "react";
 export default function Header() {
-  const [active, setActive] = useState("Calendar");
-  const handleClick = useCallback((item: string) => {
-    setActive(item);
-  }, []);
+  const dispatch = useDispatch()
+  const activeSection =useSelector((state: RootState) => state.header.section)
+    const handleClick = useCallback(
+      (item: string) => {
+        dispatch(setSection(item));
+      },
+      [dispatch]
+    );
   return (
     <S.Container>
       <S.NavbarContainer>
         {menuItems.map((item) => (
           <S.NavItem
             key={item}
-            $active={active === item}
+            $active={activeSection === item}
             onClick={() => handleClick(item)}
           >
             {item}

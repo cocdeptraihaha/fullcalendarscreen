@@ -18,6 +18,9 @@ import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
 import { getName, getNames, getColor } from "../../utils/dataHelpers";
+import Sidebar from "../ui/sidebar/Sidebar";
+import { setView } from "../../store/calendarSlice";
+import { Calendar as IconCalendar }  from "react-feather";
 
 interface Appointment {
   id: string;
@@ -31,9 +34,11 @@ interface Appointment {
   staff_id: string;
 }
 
+
 export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
+  const active = useSelector((state: RootState) => state.calendar.view);
   const { filterAppointments } = useSettingsFilter();
   const { data: allData, isLoading: allDataLoading, error } = useAllData();
   const { isLoading: settingsLoading } = useSettings();
@@ -43,6 +48,13 @@ export default function Calendar() {
   const contacts = allData?.contacts || [];
   const appointmentTypes = allData?.appointment_types || [];
   const appointments = allData?.appointments || [];
+  
+  const sidebarItems = [
+  { label: "Month", value: 'dayGridMonth',icon: <IconCalendar size={16} color="#184561"/> },
+  { label: "Week", value: 'timeGridWeek',icon: <IconCalendar size={16} color="#184561"/>  },
+  { label: "Day", value: 'timeGridDay',icon: <IconCalendar size={16} color="#184561"/>  },
+  { label: "List", value: 'listWeek',icon: <IconCalendar size={16} color="#184561"/>  },
+];
 
   useEffect(() => {
     if (!formOpen) {
@@ -116,6 +128,7 @@ export default function Calendar() {
   const handleEventClick = useCallback(
     (clickInfo: any) => {
       const event = clickInfo.event;
+      console.log(event)
       const startDate = new Date(event.start);
       const endDate = new Date(event.end);
       const startStr = `${startDate.getFullYear()}-${String(
@@ -221,6 +234,11 @@ export default function Calendar() {
 
   return (
     <CalendarContainer>
+      <Sidebar
+      items={sidebarItems}
+      active={active}
+      onChange={(value)=> dispatch(setView(value))}
+      />
       <Form />
       <Settings />
       <FullCalendar
