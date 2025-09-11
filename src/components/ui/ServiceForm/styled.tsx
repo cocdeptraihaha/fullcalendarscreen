@@ -8,7 +8,7 @@ export const ServiceModal = styled.div`
   height:500px;
   width:550px;
   background-color: #fff;
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 24px;
   overflow-y: auto;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);

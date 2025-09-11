@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Plus from "../../assets/plus.svg";
 
 export const Container = styled.div`
   position: fixed;
@@ -81,11 +80,11 @@ export const SearchBox = styled.div`
   margin-left: auto;
   height: 27px;
   font-size: 12px;
+  gap:5px;
+  padding-left:5px;
 `;
 export const SearchIcon = styled.i`
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 14px;
-  margin: 0 5px 0 5px;
+  margin: 0 5px;
 `;
 export const SearchInput = styled.input`
   border: none;
@@ -99,10 +98,7 @@ export const SearchInput = styled.input`
 `;
 export const AddButton = styled.div`
   background-color: #fff;
-  background-image: url("${Plus}"); /* svg icon from local assets */
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: 17px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -110,4 +106,15 @@ export const AddButton = styled.div`
   justify-content: center;
   align-items: center;
   margin-left: auto;
+  cursor: pointer; 
+
+
+  &:hover {
+    background-color: #f0f0f0;    
+    transition: all 0.2s ease;  
+  }
+
+  &:active {
+    background-color: #e0e0e0;   
+  }
 `;
