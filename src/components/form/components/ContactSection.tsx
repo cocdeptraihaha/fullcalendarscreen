@@ -4,7 +4,7 @@ import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useContacts, useAppointmentTypes } from "../../../hooks/useData";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { useSearchContacts } from "../../../hooks/useFunction";
 
@@ -23,9 +23,20 @@ export default function ContactSection() {
     useAppointmentTypes(); // Only get active types for form
   const { data: searchResults = [] } = useSearchContacts(debouncedSearchTerm);
 
+  // Normalize contact shape to include a unified `name`
+  const normalizeContacts = useCallback((list: any[]) =>
+    (list || []).map((c: any) => ({
+      ...c,
+      name: c.name ?? [c.first_name, c.last_name].filter(Boolean).join(" "),
+    })), []);
+
+  const normalizedContacts = useMemo(() => normalizeContacts(contacts), [contacts, normalizeContacts]);
+  const normalizedSearchResults = useMemo(() => normalizeContacts(searchResults), [searchResults, normalizeContacts]);
+
   // Memoize contact change handler
   const handleContactChange = useCallback((val: any, field: any) => {
     field.onChange(val); // Store ID directly
+    setContactSearchTerm("");
   }, []);
 
   // Memoize appointment type change handler
@@ -47,10 +58,11 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            const displayContacts = contactSearchTerm
-              ? searchResults.slice(0, 5)
-              : contacts.slice(0, 5);
-            const selectedContact = contacts.find((c) => c.id === field.value);
+            const displayContacts = (contactSearchTerm
+              ? normalizedSearchResults
+              : normalizedContacts).slice(0, 5);
+            const selectedContact = [...normalizedContacts, ...normalizedSearchResults]
+              .find((c) => c.id === field.value);
 
             return (
               <Dropdown
@@ -65,11 +77,8 @@ export default function ContactSection() {
                       "Loading contacts..."
                     ) : selectedContact ? (
                       <>
-                        <StyledDropdownAvatar
-                          src={selectedContact.avatar}
-                          alt="avatar"
-                        />
-                        {selectedContact.name}
+                        <StyledDropdownAvatar src={selectedContact.avatar} alt="avatar" />
+                        {selectedContact.name || "Unnamed"}
                       </>
                     ) : (
                       "Search Contact"
