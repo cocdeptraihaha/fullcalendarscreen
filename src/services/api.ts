@@ -1,5 +1,5 @@
 // TanStack Query API functions
-const BASE_URL = "http://127.0.0.1:8000/api";
+const BASE_URL = "https://appointment-api-dl8s.onrender.com/api";
 
 
 // Fetch functions for TanStack Query
