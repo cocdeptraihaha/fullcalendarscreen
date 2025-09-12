@@ -5,6 +5,8 @@ import { useFormContext, Controller } from "react-hook-form";
 import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useContacts, useAppointmentTypes } from "../../../hooks/useData";
 import { useCallback, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { useSearchContacts } from "../../../hooks/useFunction";
 
@@ -18,20 +20,32 @@ export default function ContactSection() {
   const [contactSearchTerm, setContactSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(contactSearchTerm, 500);
 
+  // Access preloaded event data (full objects) from store
+  const { eventData } = useSelector((state: RootState) => state.form);
+
   const { data: contacts = [], isLoading: contactsLoading } = useContacts();
   const { data: appointmentTypes = [], isLoading: typesLoading } =
     useAppointmentTypes(); // Only get active types for form
   const { data: searchResults = [] } = useSearchContacts(debouncedSearchTerm);
 
   // Normalize contact shape to include a unified `name`
-  const normalizeContacts = useCallback((list: any[]) =>
-    (list || []).map((c: any) => ({
-      ...c,
-      name: c.name ?? [c.first_name, c.last_name].filter(Boolean).join(" "),
-    })), []);
+  const normalizeContacts = useCallback(
+    (list: any[]) =>
+      (list || []).map((c: any) => ({
+        ...c,
+        name: c.name ?? [c.first_name, c.last_name].filter(Boolean).join(" "),
+      })),
+    []
+  );
 
-  const normalizedContacts = useMemo(() => normalizeContacts(contacts), [contacts, normalizeContacts]);
-  const normalizedSearchResults = useMemo(() => normalizeContacts(searchResults), [searchResults, normalizeContacts]);
+  const normalizedContacts = useMemo(
+    () => normalizeContacts(contacts),
+    [contacts, normalizeContacts]
+  );
+  const normalizedSearchResults = useMemo(
+    () => normalizeContacts(searchResults),
+    [searchResults, normalizeContacts]
+  );
 
   // Memoize contact change handler
   const handleContactChange = useCallback((val: any, field: any) => {
@@ -58,11 +72,35 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            const displayContacts = (contactSearchTerm
+            let baseList = contactSearchTerm
               ? normalizedSearchResults
-              : normalizedContacts).slice(0, 5);
-            const selectedContact = [...normalizedContacts, ...normalizedSearchResults]
-              .find((c) => c.id === field.value);
+              : normalizedContacts;
+            // Ensure selected item is present in list for title consistency
+            const selectedFromLists = [
+              ...normalizedContacts,
+              ...normalizedSearchResults,
+            ].find((c) => c.id === field.value);
+            const selectedFromEvent = eventData?.contact
+              ? {
+                  ...eventData.contact,
+                  name:
+                    eventData.contact.name ??
+                    [eventData.contact.first_name, eventData.contact.last_name]
+                      .filter(Boolean)
+                      .join(" "),
+                }
+              : undefined;
+            const selectedContact =
+              selectedFromLists ||
+              (selectedFromEvent && selectedFromEvent.id === field.value
+                ? selectedFromEvent
+                : undefined);
+            const displayContacts = (
+              selectedContact &&
+              !baseList.some((c) => c.id === selectedContact.id)
+                ? [selectedContact, ...baseList]
+                : baseList
+            ).slice(0, 5);
 
             return (
               <Dropdown
@@ -77,7 +115,10 @@ export default function ContactSection() {
                       "Loading contacts..."
                     ) : selectedContact ? (
                       <>
-                        <StyledDropdownAvatar src={selectedContact.avatar} alt="avatar" />
+                        <StyledDropdownAvatar
+                          src={selectedContact.avatar}
+                          alt="avatar"
+                        />
                         {selectedContact.name || "Unnamed"}
                       </>
                     ) : (

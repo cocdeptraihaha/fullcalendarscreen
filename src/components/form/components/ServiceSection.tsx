@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, MouseEvent } from "react";
+import { useState, useCallback, useEffect, MouseEvent, useMemo } from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext } from "react-hook-form";
@@ -9,6 +9,8 @@ import {
   TagRemoveBtn,
 } from "../../ui/ServiceForm/styled";
 import { useServices, useServicesByStaff } from "../../../hooks/useData";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 const ServiceSection = () => {
   const [open, setOpen] = useState(false);
@@ -25,8 +27,21 @@ const ServiceSection = () => {
   const { data: staffServices = [], isLoading: staffServicesLoading } =
     useServicesByStaff(currentStaffId);
 
+  const { eventData } = useSelector((state: RootState) => state.form);
+
   // Use staff services if staff is selected, otherwise use all services
-  const services = currentStaffId ? staffServices : allServices;
+  const services = useMemo(() => {
+    const base = currentStaffId ? staffServices : allServices;
+    // Ensure services from eventData are present for title/tags rendering
+    if (eventData?.services?.length) {
+      const map = new Map(base.map((s: any) => [s.id, s]));
+      eventData.services.forEach((s: any) => {
+        if (!map.has(s.id)) map.set(s.id, s);
+      });
+      return Array.from(map.values());
+    }
+    return base;
+  }, [currentStaffId, staffServices, allServices, eventData?.services]);
   const isLoading = currentStaffId ? staffServicesLoading : servicesLoading;
 
   // Sync with form data

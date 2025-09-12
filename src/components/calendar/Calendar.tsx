@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 // Removed unused imports - data now comes from appointment API
 import Sidebar from "../ui/sidebar";
 import { setView } from "../../store/calendarSlice";
-import { Calendar as IconCalendar }  from "react-feather";
+import { Calendar as IconCalendar } from "react-feather";
 
 interface Appointment {
   id: string;
@@ -47,23 +47,40 @@ interface Appointment {
   }>;
 }
 
-
 export default function Calendar() {
   const dispatch = useDispatch();
   const formOpen = useSelector((state: RootState) => state.form.open);
   const active = useSelector((state: RootState) => state.calendar.view);
   const { filterAppointments } = useSettingsFilter();
-  const { data: appointments = [], isLoading: appointmentsLoading, error } = useAppointments();
+  const {
+    data: appointments = [],
+    isLoading: appointmentsLoading,
+    error,
+  } = useAppointments();
   const { isLoading: settingsLoading } = useSettings();
 
-  
-  
   const sidebarItems = [
-  { label: "Month", value: 'dayGridMonth',icon: <IconCalendar size={16} color="#184561"/> },
-  { label: "Week", value: 'timeGridWeek',icon: <IconCalendar size={16} color="#184561"/>  },
-  { label: "Day", value: 'timeGridDay',icon: <IconCalendar size={16} color="#184561"/>  },
-  { label: "List", value: 'listWeek',icon: <IconCalendar size={16} color="#184561"/>  },
-];
+    {
+      label: "Month",
+      value: "dayGridMonth",
+      icon: <IconCalendar size={16} color="#184561" />,
+    },
+    {
+      label: "Week",
+      value: "timeGridWeek",
+      icon: <IconCalendar size={16} color="#184561" />,
+    },
+    {
+      label: "Day",
+      value: "timeGridDay",
+      icon: <IconCalendar size={16} color="#184561" />,
+    },
+    {
+      label: "List",
+      value: "listWeek",
+      icon: <IconCalendar size={16} color="#184561" />,
+    },
+  ];
 
   useEffect(() => {
     if (!formOpen) {
@@ -97,7 +114,7 @@ export default function Calendar() {
       title: apt.title,
       start: apt.start,
       end: apt.end,
-      backgroundColor: apt.appointment_type?.color || '#3498db',
+      backgroundColor: apt.appointment_type?.color || "#3498db",
       extendedProps: {
         appointment_type: apt.appointment_type,
         contact: apt.contact,
@@ -137,7 +154,7 @@ export default function Calendar() {
   const handleEventClick = useCallback(
     (clickInfo: any) => {
       const event = clickInfo.event;
-      console.log(event)
+      console.log(event);
       const startDate = new Date(event.start);
       const endDate = new Date(event.end);
       const startStr = `${startDate.getFullYear()}-${String(
@@ -163,7 +180,13 @@ export default function Calendar() {
           type_id: event.extendedProps.appointment_type?.id,
           contact_id: event.extendedProps.contact?.id,
           staff_id: event.extendedProps.staff?.id,
-          service_ids: event.extendedProps.services?.map((s: any) => s.id) || [],
+          service_ids:
+            event.extendedProps.services?.map((s: any) => s.id) || [],
+          // pass full objects for direct consumption
+          appointment_type: event.extendedProps.appointment_type,
+          contact: event.extendedProps.contact,
+          staff: event.extendedProps.staff,
+          services: event.extendedProps.services || [],
           start: startStr,
           end: endStr,
         })
@@ -199,29 +222,25 @@ export default function Calendar() {
   );
 
   // Memoize event content renderer
-  const renderEventContent = useCallback(
-    (eventInfo: any) => {
-      const { contact, staff, services } =
-        eventInfo.event.extendedProps;
+  const renderEventContent = useCallback((eventInfo: any) => {
+    const { contact, staff, services } = eventInfo.event.extendedProps;
 
-      return (
-        <EventBox color={eventInfo.event.backgroundColor}>
-          <div className="event-header">
-            <span className="time">{eventInfo.timeText}</span>
-            <span>
-              <div>{eventInfo.event.title}</div>
-            </span>
-          </div>
-          <div>{contact?.name || 'Unknown Contact'}</div>
-          <div>{staff?.name || 'Unknown Staff'}</div>
-          {services?.map((service: any, index: number) => (
-            <div key={index}>{service.name}</div>
-          ))}
-        </EventBox>
-      );
-    },
-    []
-  );
+    return (
+      <EventBox color={eventInfo.event.backgroundColor}>
+        <div className="event-header">
+          <span className="time">{eventInfo.timeText}</span>
+          <span>
+            <div>{eventInfo.event.title}</div>
+          </span>
+        </div>
+        <div>{contact?.name || "Unknown Contact"}</div>
+        <div>{staff?.name || "Unknown Staff"}</div>
+        {services?.map((service: any, index: number) => (
+          <div key={index}>{service.name}</div>
+        ))}
+      </EventBox>
+    );
+  }, []);
 
   if (settingsLoading || appointmentsLoading) {
     return (
@@ -243,9 +262,9 @@ export default function Calendar() {
   return (
     <CalendarContainer>
       <Sidebar
-      items={sidebarItems}
-      active={active}
-      onChange={(value)=> dispatch(setView(value))}
+        items={sidebarItems}
+        active={active}
+        onChange={(value) => dispatch(setView(value))}
       />
       <Form />
       <Settings />

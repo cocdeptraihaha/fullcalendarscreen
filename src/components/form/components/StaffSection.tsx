@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { InputContainer, InputLabel } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import Dropdown from "../../ui/dropdown";
@@ -7,6 +13,8 @@ import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { useStaff } from "../../../hooks/useData";
 import { useSearchStaff } from "../../../hooks/useFunction";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 // Define Staff's datatype
 
@@ -64,6 +72,25 @@ const StaffSection: React.FC<StaffSectionProps> = ({ isInModal = false }) => {
 
   const { data: staffList = [] } = useStaff();
   const { data: searchResults = [] } = useSearchStaff(debouncedStaffSearchTerm);
+  const { eventData } = useSelector((state: RootState) => state.form);
+
+  const normalize = useCallback(
+    (list: any[]) =>
+      (list || []).map((s: any) => ({
+        ...s,
+        name: s.name ?? [s.first_name, s.last_name].filter(Boolean).join(" "),
+      })),
+    []
+  );
+
+  const normalizedStaff = useMemo(
+    () => normalize(staffList),
+    [staffList, normalize]
+  );
+  const normalizedSearch = useMemo(
+    () => normalize(searchResults),
+    [searchResults, normalize]
+  );
 
   return (
     <InputContainer>
@@ -72,10 +99,31 @@ const StaffSection: React.FC<StaffSectionProps> = ({ isInModal = false }) => {
         control={control}
         name="staff_id"
         render={({ field }) => {
-          const displayStaff = staffSearchTerm
-            ? searchResults.slice(0, 5)
-            : staffList.slice(0, 5);
-          const selectedStaff = staffList.find((s) => s.id === field.value);
+          let baseList = staffSearchTerm ? normalizedSearch : normalizedStaff;
+          const selectedFromLists = [
+            ...normalizedStaff,
+            ...normalizedSearch,
+          ].find((s) => s.id === field.value);
+          const selectedFromEvent = eventData?.staff
+            ? {
+                ...eventData.staff,
+                name:
+                  eventData.staff.name ??
+                  [eventData.staff.first_name, eventData.staff.last_name]
+                    .filter(Boolean)
+                    .join(" "),
+              }
+            : undefined;
+          const selectedStaff =
+            selectedFromLists ||
+            (selectedFromEvent && selectedFromEvent.id === field.value
+              ? selectedFromEvent
+              : undefined);
+          const displayStaff = (
+            selectedStaff && !baseList.some((s) => s.id === selectedStaff.id)
+              ? [selectedStaff, ...baseList]
+              : baseList
+          ).slice(0, 5);
 
           return (
             <Dropdown

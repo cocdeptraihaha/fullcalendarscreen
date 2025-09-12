@@ -1,7 +1,7 @@
-import React from 'react';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import { PhoneNumberContainer } from './styled';
+import React from "react";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import { PhoneNumberContainer } from "./styled";
 
 interface PhoneNumberInputProps {
   value?: string;
@@ -21,7 +21,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   defaultCountry = "",
   disabled = false,
   id,
-  name
+  name,
 }) => {
   return (
     <PhoneNumberContainer>
@@ -35,9 +35,9 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
         international
         countryCallingCodeEditable
         disabled={disabled}
-        nationalMode= {true}
+        nationalMode={true}
       />
-      </PhoneNumberContainer>
+    </PhoneNumberContainer>
   );
 };
 
