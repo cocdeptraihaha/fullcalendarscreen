@@ -63,14 +63,42 @@ export const fetchPaginatedContacts = async (page: number = 1): Promise<{
   };
 }> => {
   try {
-    console.log(`Fetching paginated contacts: page=${page}`);
     const res = await fetch(`${BASE_URL}/contacts/paginated?page=${page}`);
     if (!res.ok) throw new Error(`Failed to fetch paginated contacts: ${res.status}`);
     const data = await res.json();
-    console.log('Laravel pagination response:', data);
     return data;
   } catch (error) {
     console.error("Error fetching paginated contacts:", error);
+    throw error;
+  }
+};
+
+// Create new contact API
+export const createContact = async (contactData: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  avatar?: string;
+}): Promise<any> => {
+  try {
+    const res = await fetch(`${BASE_URL}/contacts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(contactData),
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(`Failed to create contact: ${res.status} - ${errorData.message || 'Unknown error'}`);
+    }
+    
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating contact:", error);
     throw error;
   }
 };
@@ -99,7 +127,6 @@ export const fetchServices = async (): Promise<any[]> => {
 
 // Mutation functions for TanStack Query
 export const createAppointment = async (appointment: any): Promise<any> => {
-  console.log(appointment)
   try {
     const res = await fetch(`${BASE_URL}/appointments`, {
       method: "POST",

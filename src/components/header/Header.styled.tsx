@@ -71,6 +71,7 @@ export const AvatarContainer = styled.img`
   background-size: cover;
 `;
 export const SearchBox = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   background-color: #1d4f6d; /* nền xanh */
@@ -116,5 +117,42 @@ export const AddButton = styled.div`
 
   &:active {
     background-color: #e0e0e0;   
+  }
+`;
+
+export const SearchResults = styled.ul`
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 6px 0;
+  margin: 6px 0 0 0;
+  list-style: none;
+  z-index: 1200;
+  max-height: 240px;
+  overflow-y: auto;
+`;
+
+export const SearchResultItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: #184561;
+  font-size: 13px;
+
+  &:hover {
+    background: #f2f7fb;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
   }
 `;

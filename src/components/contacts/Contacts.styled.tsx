@@ -5,7 +5,7 @@ export const ContactsContainer = styled.div`
   min-height: calc(100vh - 45px);
 `;
 
-export const AddButton = styled.div`
+export const AddButton = styled.button`
   margin: 5px;
   border-radius: 6px;
   background-color: #184561;
@@ -16,6 +16,7 @@ export const AddButton = styled.div`
   width: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
+  border: none;
   
   &:hover {
     background: rgba(24, 69, 97, 0.8);
@@ -23,7 +24,6 @@ export const AddButton = styled.div`
   }  
 `;
 
-// Table Styles
 export const TableContainer = styled.div`
   overflow: auto;
   border: 1px solid #ddd;
@@ -56,13 +56,7 @@ export const TableBody = styled.tbody`
   tr {
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.2s ease;
-    
-    &:nth-child(even) {
-      background-color: #fafafa;
-    }
-    &:nth-child(odd) {
-      background-color: transparent;
-    }
+    background-color: transparent;
     
     &:hover {
       background-color:rgb(125, 125, 125,0.3) !important;
@@ -137,7 +131,7 @@ export const PaginationContainer = styled.div`
 export const PaginationButton = styled.button<{ disabled?: boolean }>`
   padding: 8px 12px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+
   background: ${props => props.disabled ? '#f5f5f5' : 'white'};
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   display: flex;
@@ -157,19 +151,20 @@ export const PaginationButton = styled.button<{ disabled?: boolean }>`
 
 export const PageInfo = styled.div`
   padding: 8px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border: 1px solid #184561;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: #184561;
-  min-width: 60px;
   text-align: center;
   background: #f8f8f8;
 `;
 
 export const PageInfoSmall = styled.small`
+display: flex;
   font-size: 12px;
   color: #666;
+  min-width: 100px;
+  justify-content: center;
 `;
 
 // Content Styles
@@ -191,7 +186,6 @@ export const LoadingContainer = styled.div`
   color: #184561;
   font-size: 16px;
   margin: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const ErrorContainer = styled.div`
@@ -200,7 +194,6 @@ export const ErrorContainer = styled.div`
   color: #dc3545;
   font-size: 16px;
   margin: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const NoDataContainer = styled.div`

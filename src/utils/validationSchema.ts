@@ -25,3 +25,32 @@ export const appointmentSchema = yup.object({
       }
     ),
 });
+
+export const contactSchema = yup.object({
+  first_name: yup
+    .string()
+    .trim()
+    .matches(/^[^0-9]*$/, "First name cannot contain numbers")
+    .min(2, "First name must be at least 2 characters")
+    .required("First name is required"),
+  last_name: yup
+    .string()
+    .trim()
+    .matches(/^[^0-9]*$/, "Last name cannot contain numbers")
+    .min(2, "Last name must be at least 2 characters")
+    .required("Last name is required"),
+  email: yup
+    .string()
+    .trim()
+    .email("Invalid email address")
+    .required("Email is required"),
+  phone_number: yup
+    .string()
+    .trim()
+    .matches(/^\+?[1-9][0-9]{7,14}$/, {
+      message:
+        "Please enter a valid international phone number (e.g., +84123456789)",
+      excludeEmptyString: true,
+    })
+    .required("Phone number is required"),
+});

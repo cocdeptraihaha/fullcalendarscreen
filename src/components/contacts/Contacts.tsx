@@ -28,6 +28,7 @@ import { RootState } from "../../store/store";
 import { setView } from "../../store/contactsSlice";
 import { usePaginatedContacts } from "../../hooks/usePaginatedContacts";
 import { useState } from "react";
+import NewContactForm from "./NewContactForm";
 
 interface LaravelPaginationData {
   data: any[];
@@ -50,6 +51,7 @@ interface LaravelPaginationData {
 
 function Contacts() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isNewContactModalOpen, setIsNewContactModalOpen] = useState(false);
   
   const sidebarItems = [
     { label: "Filters", value: 'filters',icon: <Search size={16} color="#184561"/> },
@@ -71,8 +73,15 @@ function Contacts() {
   };
 
   const handlePageChange = (page: number) => {
-    console.log('Changing page to:', page);
     setCurrentPage(page);
+  };
+
+  const handleAddContact = () => {
+    setIsNewContactModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsNewContactModalOpen(false);
   };
 
   const renderContactsList = () => {
@@ -143,11 +152,13 @@ function Contacts() {
         </TableContainer>
         
         <PaginationContainer>
-        <PageInfo>
-            <PageInfoSmall>
+        <PageInfoSmall>
             {from}-{to} of {total}
-            </PageInfoSmall>
-          </PageInfo>
+        </PageInfoSmall>
+        <PageInfo>
+            {currentPage}
+        </PageInfo>
+          
           
           <PaginationButton
             onClick={() => handlePageChange(1)}
@@ -175,6 +186,7 @@ function Contacts() {
             onClick={() => handlePageChange(lastPage)}
             disabled={currentPage === lastPage}
           >
+
             <ChevronsRight size={16} />
           </PaginationButton>
         </PaginationContainer>
@@ -190,13 +202,18 @@ function Contacts() {
         onChange={(value) => dispatch(setView(value))}
         render={() => (
           <>
-            <AddButton><Plus size={16} color="#fff"/></AddButton>
+            <AddButton onClick={handleAddContact}><Plus size={16} color="#fff"/></AddButton>
           </>
         )}
       />
       {active === 'contacts' && renderContactsList()}
-      {active === 'filters' && <ContentContainer>...</ContentContainer>}
-      {active === 'lists' && <ContentContainer>...</ContentContainer>}
+      {active === 'filters' && <ContentContainer>Filters coming soon...</ContentContainer>}
+      {active === 'lists' && <ContentContainer>Lists coming soon...</ContentContainer>}
+      
+      <NewContactForm 
+        isOpen={isNewContactModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </ContactsContainer>
   );
 }
