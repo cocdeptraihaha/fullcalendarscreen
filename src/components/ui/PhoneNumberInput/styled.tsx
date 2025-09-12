@@ -22,5 +22,16 @@ export const PhoneNumberContainer = styled.div`
   border: none;
   outline: none;
   font-size: 14px;
+  color: #184561;
   }
+  .PhoneInputCountrySelect {
+  color: #184561;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  border-radius: 6px;
+  }
+  .PhoneInputCountrySelectArrow {
+  none;
+}
 `;

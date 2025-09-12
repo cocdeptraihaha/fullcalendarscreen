@@ -52,7 +52,7 @@ export const CloseButton = styled.button`
   transition: all 0.2s ease;
 
   &:hover {
-    background:rgb(222, 222, 222,0.3);
+    background: rgb(222, 222, 222, 0.3);
     color: #184561;
   }
 `;
@@ -85,7 +85,7 @@ export const FormGroup = styled.div`
   flex-direction: column;
   gap: 8px;
   height: 80px;
-  width: 220px  !important;
+  width: 220px !important;
 `;
 
 export const Label = styled.label`
@@ -101,6 +101,8 @@ export const Input = styled.input`
   font-size: 14px;
   transition: all 0.2s ease;
   background: white;
+  color: #184561;
+
   &:focus {
     outline: none;
     border-color: #184561;
@@ -121,11 +123,12 @@ export const TextArea = styled.textarea`
   transition: all 0.2s ease;
   background: white;
   font-family: inherit;
+  color: #184561;
 
   &:focus {
     outline: none;
     border-color: #184561;
-      }
+  }
 
   &::placeholder {
     color: #999;
@@ -185,8 +188,5 @@ export const CancelButton = styled.button`
 
 export const ErrorMessage = styled.span`
   color: #dc3545;
-  font-size: 12px;  
+  font-size: 12px;
 `;
-
-
-

@@ -1,10 +1,10 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { X } from 'react-feather';
-import { useCreateContact } from '../../hooks/useContact';
-import PhoneNumberInput from '../ui/PhoneNumberInput';
-import { contactSchema } from '../../utils/validationSchema';
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { X } from "react-feather";
+import { useCreateContact } from "../../hooks/useContact";
+import PhoneNumberInput from "../ui/PhoneNumberInput";
+import { contactSchema } from "../../utils/validationSchema";
 import {
   ModalOverlay,
   ModalContainer,
@@ -20,8 +20,8 @@ import {
   ButtonGroup,
   SubmitButton,
   CancelButton,
-  ErrorMessage
-} from './NewContactForm.styled';
+  ErrorMessage,
+} from "./NewContactForm.styled";
 
 interface NewContactFormProps {
   isOpen: boolean;
@@ -43,16 +43,16 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
     handleSubmit,
     formState: { errors },
     reset,
-    control
+    control,
   } = useForm<ContactFormData>({
-    mode: 'onSubmit',
+    mode: "onSubmit",
     resolver: yupResolver(contactSchema),
     defaultValues: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone_number: ''
-    }
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone_number: "",
+    },
   });
 
   const onSubmit = async (data: ContactFormData) => {
@@ -62,14 +62,14 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
         last_name: data.last_name,
         email: data.email,
         phone_number: data.phone_number,
-        avatar: 'https://www.w3schools.com/howto/img_avatar.png'
+        avatar: "https://www.w3schools.com/howto/img_avatar.png",
       };
 
       await createContactMutation.mutateAsync(contactData);
       reset();
       onClose();
     } catch (error) {
-      console.error('Error creating contact:', error);
+      console.error("Error creating contact:", error);
     }
   };
 
@@ -99,10 +99,12 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
                 <Input
                   id="first_name"
                   type="text"
-                  {...register('first_name')}
+                  {...register("first_name")}
                   placeholder="Enter first name"
                 />
-                {errors.first_name && <ErrorMessage>{errors.first_name.message}</ErrorMessage>}
+                {errors.first_name && (
+                  <ErrorMessage>{errors.first_name.message}</ErrorMessage>
+                )}
               </FormGroup>
 
               <FormGroup>
@@ -110,10 +112,12 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
                 <Input
                   id="last_name"
                   type="text"
-                  {...register('last_name')}
+                  {...register("last_name")}
                   placeholder="Enter last name"
                 />
-                {errors.last_name && <ErrorMessage>{errors.last_name.message}</ErrorMessage>}
+                {errors.last_name && (
+                  <ErrorMessage>{errors.last_name.message}</ErrorMessage>
+                )}
               </FormGroup>
             </FormRow>
 
@@ -124,10 +128,12 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
                 <Input
                   id="email"
                   type="text"
-                  {...register('email')}
+                  {...register("email")}
                   placeholder="Enter email address"
                 />
-                {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
+                {errors.email && (
+                  <ErrorMessage>{errors.email.message}</ErrorMessage>
+                )}
               </FormGroup>
 
               <FormGroup>
@@ -140,13 +146,15 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
                       id="phone_number"
                       name="phone_number"
                       value={field.value}
-                      onChange={(value) => field.onChange(value || '')}
+                      onChange={(value) => field.onChange(value || "")}
                       placeholder="Enter phone number"
                       defaultCountry="VN"
                     />
                   )}
                 />
-                {errors.phone_number && <ErrorMessage>{errors.phone_number.message}</ErrorMessage>}
+                {errors.phone_number && (
+                  <ErrorMessage>{errors.phone_number.message}</ErrorMessage>
+                )}
               </FormGroup>
             </FormRow>
 
@@ -154,8 +162,13 @@ const NewContactForm: React.FC<NewContactFormProps> = ({ isOpen, onClose }) => {
               <CancelButton type="button" onClick={handleClose}>
                 Cancel
               </CancelButton>
-              <SubmitButton type="submit" disabled={createContactMutation.isPending}>
-                {createContactMutation.isPending ? 'Creating...' : 'Create Contact'}
+              <SubmitButton
+                type="submit"
+                disabled={createContactMutation.isPending}
+              >
+                {createContactMutation.isPending
+                  ? "Creating..."
+                  : "Create Contact"}
               </SubmitButton>
             </ButtonGroup>
           </Form>
