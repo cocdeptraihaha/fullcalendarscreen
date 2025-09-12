@@ -90,18 +90,18 @@ export const DaysGrid = styled.div`
 `;
 
 export const DayCell = styled.button<{
-  isToday?: boolean;
-  isSelected?: boolean;
-  isOtherMonth?: boolean;
+  $isToday?: boolean;
+  $isSelected?: boolean;
+  $isOtherMonth?: boolean;
 }>`
   background: ${(props) =>
-    props.isSelected ? "#184561" : props.isToday ? "#e3f2fd" : "transparent"};
+    props.$isSelected ? "#184561" : props.$isToday ? "#e3f2fd" : "transparent"};
   color: ${(props) =>
-    props.isSelected
+    props.$isSelected
       ? "white"
-      : props.isOtherMonth
+      : props.$isOtherMonth
       ? "#ccc"
-      : props.isToday
+      : props.$isToday
       ? "#184561"
       : "#333"};
   border: none;
@@ -112,7 +112,7 @@ export const DayCell = styled.button<{
   min-height: 32px;
 
   &:hover {
-    background: ${(props) => (props.isSelected ? "#184561" : "#f0f0f0")};
+    background: ${(props) => (props.$isSelected ? "#184561" : "#f0f0f0")};
   }
 
   &:disabled {

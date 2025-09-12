@@ -136,7 +136,7 @@ function Form() {
           <p>Are you sure you want to close without saving?</p>
           <ToastContainer>
             <ToastButton
-              variant="danger"
+              $variant="danger"
               onClick={() => {
                 dispatch(clearEventData());
                 dispatch(closeForm());
@@ -240,7 +240,7 @@ function Form() {
           <p>Are you sure you want to delete this appointment?</p>
           <ToastContainer>
             <ToastButton
-              variant="danger"
+              $variant="danger"
               onClick={async () => {
                 setLoading(true);
                 try {

@@ -13,7 +13,7 @@ export const useCreateAppointmentType = () => {
     mutationFn: createAppointmentType,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointmentTypes"] });
-      queryClient.invalidateQueries({ queryKey: ["allData"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       toast.success("Appointment type created successfully!");
     },
     onError: (error: any) => {
@@ -36,7 +36,7 @@ export const useUpdateAppointmentType = () => {
     }) => updateAppointmentType(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointmentTypes"] });
-      queryClient.invalidateQueries({ queryKey: ["allData"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
     },
     onError: (error: any) => {
       toast.error("Failed to update appointment type");
@@ -52,7 +52,7 @@ export const useDeleteAppointmentType = () => {
     mutationFn: deleteAppointmentType,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["appointmentTypes"] });
-      queryClient.invalidateQueries({ queryKey: ["allData"] });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
       toast.success("Appointment type deleted successfully!");
     },
     onError: (error: any) => {

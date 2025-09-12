@@ -151,7 +151,7 @@ export default function Settings() {
           <p>Are you sure you want to delete this appointment type?</p>
           <ToastContainer>
             <ToastButton
-              variant="danger"
+              $variant="danger"
               onClick={async () => {
                 try {
                   await deleteMutation.mutateAsync(typeId);

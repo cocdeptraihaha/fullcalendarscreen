@@ -11,12 +11,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { openForm, clearEventData } from "../../store/formSlice";
 import { openSettings } from "../../store/settingsSlice";
-import { useSettings, useAppointments, useAppointmentTypes, useContacts, useStaff, useServices } from "../../hooks/useData";
+import { useSettings, useAppointments } from "../../hooks/useData";
 import { useSettingsFilter } from "../../hooks/useFilter";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
-import { getName, getNames, getColor } from "../../utils/dataHelpers";
+// Removed unused imports - data now comes from appointment API
 import Sidebar from "../ui/sidebar";
 import { setView } from "../../store/calendarSlice";
 import { Calendar as IconCalendar }  from "react-feather";
@@ -24,13 +24,27 @@ import { Calendar as IconCalendar }  from "react-feather";
 interface Appointment {
   id: string;
   title: string;
-  contact_id: string;
-  service_ids: string[];
   start: string | number;
   end: string | number;
-  color: string;
-  type_id: string;
-  staff_id: string;
+  appointment_type?: {
+    id: string;
+    label: string;
+    color: string;
+  };
+  contact?: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  staff?: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  services?: Array<{
+    id: string;
+    name: string;
+  }>;
 }
 
 
@@ -40,10 +54,6 @@ export default function Calendar() {
   const active = useSelector((state: RootState) => state.calendar.view);
   const { filterAppointments } = useSettingsFilter();
   const { data: appointments = [], isLoading: appointmentsLoading, error } = useAppointments();
-  const { data: appointmentTypes = [], isLoading: typesLoading } = useAppointmentTypes();
-  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
-  const { data: staff = [], isLoading: staffLoading } = useStaff();
-  const { data: services = [], isLoading: servicesLoading } = useServices();
   const { isLoading: settingsLoading } = useSettings();
 
   
@@ -87,15 +97,15 @@ export default function Calendar() {
       title: apt.title,
       start: apt.start,
       end: apt.end,
-      backgroundColor: getColor(apt.type_id, appointmentTypes),
+      backgroundColor: apt.appointment_type?.color || '#3498db',
       extendedProps: {
-        contact_id: apt.contact_id,
-        type_id: apt.type_id,
-        staff_id: apt.staff_id,
-        service_ids: apt.service_ids,
+        appointment_type: apt.appointment_type,
+        contact: apt.contact,
+        staff: apt.staff,
+        services: apt.services,
       },
     }));
-  }, [appointments, appointmentTypes, filterAppointments]);
+  }, [appointments, filterAppointments]);
 
   // Memoize event handlers to prevent FullCalendar re-renders
   const handleDateSelect = useCallback((selectInfo: any) => {
@@ -150,10 +160,10 @@ export default function Calendar() {
         openForm({
           id: event.id,
           title: event.title,
-          type_id: event.extendedProps.type_id,
-          contact_id: event.extendedProps.contact_id,
-          staff_id: event.extendedProps.staff_id,
-          service_ids: event.extendedProps.service_ids,
+          type_id: event.extendedProps.appointment_type?.id,
+          contact_id: event.extendedProps.contact?.id,
+          staff_id: event.extendedProps.staff?.id,
+          service_ids: event.extendedProps.services?.map((s: any) => s.id) || [],
           start: startStr,
           end: endStr,
         })
@@ -191,9 +201,8 @@ export default function Calendar() {
   // Memoize event content renderer
   const renderEventContent = useCallback(
     (eventInfo: any) => {
-      const { contact_id, staff_id, service_ids } =
+      const { contact, staff, services } =
         eventInfo.event.extendedProps;
-      const serviceNames = getNames(service_ids || [], services);
 
       return (
         <EventBox color={eventInfo.event.backgroundColor}>
@@ -203,18 +212,18 @@ export default function Calendar() {
               <div>{eventInfo.event.title}</div>
             </span>
           </div>
-          <div>{getName(contact_id, contacts)}</div>
-          <div>{getName(staff_id, staff)}</div>
-          {serviceNames.map((s: string, index: number) => (
-            <div key={index}>{s}</div>
+          <div>{contact?.name || 'Unknown Contact'}</div>
+          <div>{staff?.name || 'Unknown Staff'}</div>
+          {services?.map((service: any, index: number) => (
+            <div key={index}>{service.name}</div>
           ))}
         </EventBox>
       );
     },
-    [contacts, staff, services]
+    []
   );
 
-  if (settingsLoading || appointmentsLoading || typesLoading || contactsLoading || staffLoading || servicesLoading) {
+  if (settingsLoading || appointmentsLoading) {
     return (
       <CalendarContainer>
         <div

@@ -1,24 +1,6 @@
 // TanStack Query API functions
 const BASE_URL = "http://127.0.0.1:8000/api";
 
-// Fetch all data in one request
-export const fetchAllData = async (): Promise<{
-  appointments: any[];
-  appointment_types: any[];
-  contacts: any[];
-  staff: any[];
-  services: any[];
-  settings: any;
-}> => {
-  try {
-    const res = await fetch(`${BASE_URL}/data`);
-    if (!res.ok) throw new Error(`Failed to fetch all data: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error("Error fetching all data:", error);
-    throw error;
-  }
-};
 
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
@@ -46,6 +28,49 @@ export const fetchContacts = async (): Promise<any[]> => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching contacts:", error);
+    throw error;
+  }
+};
+
+// Search contacts with query parameter
+export const searchContacts = async (searchTerm: string): Promise<any[]> => {
+  try {
+    const res = await fetch(`${BASE_URL}/contacts?search=${encodeURIComponent(searchTerm)}`);
+    if (!res.ok) throw new Error(`Failed to search contacts: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error("Error searching contacts:", error);
+    throw error;
+  }
+};
+
+// Laravel paginated contacts API
+export const fetchPaginatedContacts = async (page: number = 1): Promise<{
+  data: any[];
+  links: {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
+  };
+  meta: {
+    current_page: number;
+    from: number;
+    last_page: number;
+    per_page: number;
+    to: number;
+    total: number;
+  };
+}> => {
+  try {
+    console.log(`Fetching paginated contacts: page=${page}`);
+    const res = await fetch(`${BASE_URL}/contacts/paginated?page=${page}`);
+    if (!res.ok) throw new Error(`Failed to fetch paginated contacts: ${res.status}`);
+    const data = await res.json();
+    console.log('Laravel pagination response:', data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching paginated contacts:", error);
     throw error;
   }
 };

@@ -22,7 +22,7 @@ const StaffSection: React.FC<StaffSectionProps> = ({ isInModal = false }) => {
     formState: { errors },
   } = useFormContext();
   const [staffSearchTerm, setStaffSearchTerm] = useState("");
-  const debouncedStaffSearchTerm = useDebounce(staffSearchTerm, 500);
+  const debouncedStaffSearchTerm = useDebounce(staffSearchTerm, 200);
   const previousStaffId = useRef<string>("");
   const previousAptId = useRef<string | null>(null);
   const previousServices = useRef<{ [staffId: string]: string[] }>({});

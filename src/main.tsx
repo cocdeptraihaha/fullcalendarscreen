@@ -11,11 +11,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 const GlobalStyle = createGlobalStyle`
+
   body {
     display:block;
     margin: 0;
     font-family: sans-serif;
     toastify-toast-padding:3px;
+    svg : {
+    color : #184561;
+    }
   }
 `;
 

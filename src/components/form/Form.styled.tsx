@@ -131,16 +131,16 @@ export const ErrorMessage = styled.div`
   margin-top: 2px;
 `;
 
-export const ToastButton = styled.button<{ variant?: "danger" | "secondary" }>`
+export const ToastButton = styled.button<{ $variant?: "danger" | "secondary" }>`
   padding: 5px 10px;
   background-color: ${(props) =>
-    props.variant === "danger" ? "#fff" : "#184561"};
-  color: ${(props) => (props.variant === "danger" ? "#ff0000ff" : "#fff")};
+    props.$variant === "danger" ? "#fff" : "#184561"};
+  color: ${(props) => (props.$variant === "danger" ? "#ff0000ff" : "#fff")};
   border: none;
   border-radius: 4px;
   cursor: pointer;
   border: ${(props) =>
-    props.variant === "danger" ? "1px solid #ff0000ff" : "1px solid #184561"};
+    props.$variant === "danger" ? "1px solid #ff0000ff" : "1px solid #184561"};
   &:hover {
     opacity: 0.9;
   }

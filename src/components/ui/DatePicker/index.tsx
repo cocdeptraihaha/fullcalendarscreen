@@ -168,9 +168,9 @@ export default function DatePicker({ name, onDateSelect }: DatePickerProps) {
                       return (
                         <DayCell
                           key={index}
-                          isToday={isToday}
-                          isSelected={isSelected}
-                          isOtherMonth={isOtherMonth}
+                          $isToday={isToday}
+                          $isSelected={isSelected}
+                          $isOtherMonth={isOtherMonth}
                           onClick={() => handleDateSelect(day, field)}
                         >
                           {day.getDate()}
