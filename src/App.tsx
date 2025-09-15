@@ -37,8 +37,6 @@ function App() {
         newestOnTop
         closeOnClick
         rtl={false}
-        draggable
-        pauseOnHover
       />
     </Router>
   );

@@ -37,23 +37,22 @@ export const NavItem = styled.div<NavItemProps>`
   font-size: 12px;
   align-items: center;
   text-decoration: none;
+  gap: 5px;
   &:hover {
     background-color: rgba(255, 255, 255, 0.15);
   }
 `;
 
 export const Badge = styled.span`
-  background-color: #ccc;
-  color: #333;
+  background-color: rgb(255, 0, 0, 0.9);
+  color: #fff;
   border-radius: 50%;
-  font-size: 10px;
+  font-size: 11px;
+  height: 20px;
+  min-width: 20px;
   display: flex;
-  margin-left: 6px;
   align-items: center;
   justify-content: center;
-  height: 20px;
-  width: 20px;
-  min-width: 20px;
 `;
 
 export const RightContainer = styled.div`

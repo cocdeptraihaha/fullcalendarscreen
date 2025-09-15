@@ -16,7 +16,6 @@ import { useSettingsFilter } from "../../hooks/useFilter";
 import Form from "../form/Form";
 import Settings from "../settings/Settings";
 import { toast } from "react-toastify";
-// Removed unused imports - data now comes from appointment API
 import Sidebar from "../ui/sidebar";
 import { setView } from "../../store/calendarSlice";
 import { Calendar as IconCalendar } from "react-feather";
@@ -293,10 +292,14 @@ export default function Calendar() {
           minute: "2-digit",
           meridiem: true,
         }}
+        views={{
+          timeGridWeek: {
+            displayEventEnd: false,
+          },
+        }}
         dayMaxEventRows={3}
         editable={false}
         selectable={true}
-        selectMirror={true}
         allDaySlot={false}
         events={events}
         select={handleDateSelect}
