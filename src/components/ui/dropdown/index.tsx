@@ -53,7 +53,7 @@ const Dropdown: FC<DropdownProps> = ({
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setOpen(false);
-        setSearchTerm(""); // clear when closing
+        setSearchTerm("");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
