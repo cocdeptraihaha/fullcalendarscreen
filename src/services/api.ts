@@ -1,13 +1,23 @@
+import axios from "axios";
+
 // TanStack Query API functions
 const BASE_URL = "https://appointment-api-dl8s.onrender.com/api";
 //const BASE_URL = "http://127.0.0.1:8000/api";
 
+// Create axios instance with base configuration
+const apiClient = axios.create({
+  baseURL: BASE_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointments`);
-    if (!res.ok) throw new Error(`Failed to fetch appointments: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.get("/appointments");
+    return response.data;
   } catch (error) {
     console.error("Error fetching appointments:", error);
     throw error;
@@ -15,17 +25,19 @@ export const fetchAppointments = async (): Promise<any[]> => {
 };
 
 export const fetchAppointmentTypes = async (): Promise<any[]> => {
-  const res = await fetch(`${BASE_URL}/appointment_types`);
-  if (!res.ok)
-    throw new Error(`Failed to fetch appointment types: ${res.status}`);
-  return await res.json(); // đã chỉ trả loại chưa bị soft delete
+  try {
+    const response = await apiClient.get("/appointment_types");
+    return response.data; // đã chỉ trả loại chưa bị soft delete
+  } catch (error) {
+    console.error("Error fetching appointment types:", error);
+    throw error;
+  }
 };
 
 export const fetchContacts = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/contacts`);
-    if (!res.ok) throw new Error(`Failed to fetch contacts: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.get("/contacts");
+    return response.data;
   } catch (error) {
     console.error("Error fetching contacts:", error);
     throw error;
@@ -35,12 +47,9 @@ export const fetchContacts = async (): Promise<any[]> => {
 // Search contacts with query parameter
 export const searchContacts = async (searchTerm: string): Promise<any[]> => {
   try {
-    const url = searchTerm.trim()
-      ? `${BASE_URL}/contacts?search=${encodeURIComponent(searchTerm)}`
-      : `${BASE_URL}/contacts`; // Get all contacts when no search term
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to search contacts: ${res.status}`);
-    return await res.json();
+    const params = searchTerm.trim() ? { search: searchTerm } : {};
+    const response = await apiClient.get("/contacts", { params });
+    return response.data;
   } catch (error) {
     console.error("Error searching contacts:", error);
     throw error;
@@ -68,11 +77,10 @@ export const fetchPaginatedContacts = async (
   };
 }> => {
   try {
-    const res = await fetch(`${BASE_URL}/contacts/paginated?page=${page}`);
-    if (!res.ok)
-      throw new Error(`Failed to fetch paginated contacts: ${res.status}`);
-    const data = await res.json();
-    return data;
+    const response = await apiClient.get("/contacts/paginated", {
+      params: { page },
+    });
+    return response.data;
   } catch (error) {
     console.error("Error fetching paginated contacts:", error);
     throw error;
@@ -88,36 +96,23 @@ export const createContact = async (contactData: {
   avatar?: string;
 }): Promise<any> => {
   try {
-    const res = await fetch(`${BASE_URL}/contacts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(contactData),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(
-        `Failed to create contact: ${res.status} - ${
-          errorData.message || "Unknown error"
-        }`
-      );
-    }
-
-    const data = await res.json();
-    return data;
-  } catch (error) {
+    const response = await apiClient.post("/contacts", contactData);
+    return response.data;
+  } catch (error: any) {
     console.error("Error creating contact:", error);
-    throw error;
+    const errorMessage = error.response?.data?.message || "Unknown error";
+    throw new Error(
+      `Failed to create contact: ${
+        error.response?.status || 500
+      } - ${errorMessage}`
+    );
   }
 };
 
 export const fetchStaff = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/staff`);
-    if (!res.ok) throw new Error(`Failed to fetch staff: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.get("/staff");
+    return response.data;
   } catch (error) {
     console.error("Error fetching staff:", error);
     throw error;
@@ -126,9 +121,8 @@ export const fetchStaff = async (): Promise<any[]> => {
 
 export const fetchServices = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/services`);
-    if (!res.ok) throw new Error(`Failed to fetch services: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.get("/services");
+    return response.data;
   } catch (error) {
     console.error("Error fetching services:", error);
     throw error;
@@ -138,13 +132,8 @@ export const fetchServices = async (): Promise<any[]> => {
 // Mutation functions for TanStack Query
 export const createAppointment = async (appointment: any): Promise<any> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(appointment),
-    });
-    if (!res.ok) throw new Error(`Failed to create appointment: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.post("/appointments", appointment);
+    return response.data;
   } catch (error) {
     console.error("Error creating appointment:", error);
     throw error;
@@ -156,21 +145,18 @@ export const updateAppointment = async (
   id: string,
   appointment: any
 ): Promise<any> => {
-  const res = await fetch(`${BASE_URL}/appointments/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(appointment), // có thể chứa start/end, backend tự map
-  });
-  if (!res.ok) throw new Error(`Failed to update appointment: ${res.status}`);
-  return await res.json();
+  try {
+    const response = await apiClient.put(`/appointments/${id}`, appointment);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    throw error;
+  }
 };
 
 export const deleteAppointment = async (id: string): Promise<void> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointments/${id}`, {
-      method: "DELETE",
-    });
-    if (!res.ok) throw new Error(`Failed to delete appointment: ${res.status}`);
+    await apiClient.delete(`/appointments/${id}`);
   } catch (error) {
     console.error("Error deleting appointment:", error);
     throw error;
@@ -183,14 +169,8 @@ export const createAppointmentType = async (type: {
   color: string;
 }): Promise<any> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointment_types`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(type),
-    });
-    if (!res.ok)
-      throw new Error(`Failed to create appointment type: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.post("/appointment_types", type);
+    return response.data;
   } catch (error) {
     console.error("Error creating appointment type:", error);
     throw error;
@@ -202,14 +182,11 @@ export const updateAppointmentType = async (
   type: { label: string; color: string }
 ): Promise<any> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...type, id }),
+    const response = await apiClient.put(`/appointment_types/${id}`, {
+      ...type,
+      id,
     });
-    if (!res.ok)
-      throw new Error(`Failed to update appointment type: ${res.status}`);
-    return await res.json();
+    return response.data;
   } catch (error) {
     console.error("Error updating appointment type:", error);
     throw error;
@@ -218,18 +195,17 @@ export const updateAppointmentType = async (
 
 // 2) Xóa type: dùng DELETE (server đã soft delete)
 export const deleteAppointmentType = async (id: string): Promise<void> => {
-  const res = await fetch(`${BASE_URL}/appointment_types/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok)
-    throw new Error(`Failed to delete appointment type: ${res.status}`);
+  try {
+    await apiClient.delete(`/appointment_types/${id}`);
+  } catch (error) {
+    console.error("Error deleting appointment type:", error);
+    throw error;
+  }
 };
 export const fetchActiveAppointmentTypes = async (): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/appointment_types`);
-    if (!res.ok)
-      throw new Error(`Failed to fetch appointment types: ${res.status}`);
-    const types = await res.json();
+    const response = await apiClient.get("/appointment_types");
+    const types = response.data;
     return types.filter((type: any) => !type.deleted_at);
   } catch (error) {
     console.error("Error fetching active appointment types:", error);
@@ -240,9 +216,8 @@ export const fetchActiveAppointmentTypes = async (): Promise<any[]> => {
 // Settings API
 export const fetchSettings = async (): Promise<any> => {
   try {
-    const res = await fetch(`${BASE_URL}/settings`);
-    if (!res.ok) throw new Error(`Failed to fetch settings: ${res.status}`);
-    return await res.json();
+    const response = await apiClient.get("/settings");
+    return response.data;
   } catch (error) {
     console.error("Error fetching settings:", error);
     throw error;
@@ -254,11 +229,11 @@ export const updateStaffVisible = async (
   id: string,
   visible: 0 | 1
 ): Promise<any> => {
-  const res = await fetch(`${BASE_URL}/staff/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ visible }),
-  });
-  if (!res.ok) throw new Error(`Failed to update visible: ${res.status}`);
-  return await res.json();
+  try {
+    const response = await apiClient.put(`/staff/${id}`, { visible });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating staff visibility:", error);
+    throw error;
+  }
 };
