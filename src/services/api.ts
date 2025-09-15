@@ -1,7 +1,6 @@
 // TanStack Query API functions
 const BASE_URL = "https://appointment-api-dl8s.onrender.com/api";
 
-
 // Fetch functions for TanStack Query
 export const fetchAppointments = async (): Promise<any[]> => {
   try {
@@ -35,7 +34,10 @@ export const fetchContacts = async (): Promise<any[]> => {
 // Search contacts with query parameter
 export const searchContacts = async (searchTerm: string): Promise<any[]> => {
   try {
-    const res = await fetch(`${BASE_URL}/contacts?search=${encodeURIComponent(searchTerm)}`);
+    const url = searchTerm.trim()
+      ? `${BASE_URL}/contacts?search=${encodeURIComponent(searchTerm)}`
+      : `${BASE_URL}/contacts`; // Get all contacts when no search term
+    const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to search contacts: ${res.status}`);
     return await res.json();
   } catch (error) {
@@ -45,7 +47,9 @@ export const searchContacts = async (searchTerm: string): Promise<any[]> => {
 };
 
 // Laravel paginated contacts API
-export const fetchPaginatedContacts = async (page: number = 1): Promise<{
+export const fetchPaginatedContacts = async (
+  page: number = 1
+): Promise<{
   data: any[];
   links: {
     first: string;
@@ -64,7 +68,8 @@ export const fetchPaginatedContacts = async (page: number = 1): Promise<{
 }> => {
   try {
     const res = await fetch(`${BASE_URL}/contacts/paginated?page=${page}`);
-    if (!res.ok) throw new Error(`Failed to fetch paginated contacts: ${res.status}`);
+    if (!res.ok)
+      throw new Error(`Failed to fetch paginated contacts: ${res.status}`);
     const data = await res.json();
     return data;
   } catch (error) {
@@ -83,18 +88,22 @@ export const createContact = async (contactData: {
 }): Promise<any> => {
   try {
     const res = await fetch(`${BASE_URL}/contacts`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(contactData),
     });
-    
+
     if (!res.ok) {
       const errorData = await res.json();
-      throw new Error(`Failed to create contact: ${res.status} - ${errorData.message || 'Unknown error'}`);
+      throw new Error(
+        `Failed to create contact: ${res.status} - ${
+          errorData.message || "Unknown error"
+        }`
+      );
     }
-    
+
     const data = await res.json();
     return data;
   } catch (error) {

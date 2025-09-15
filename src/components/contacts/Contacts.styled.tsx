@@ -11,17 +11,17 @@ export const AddButton = styled.button`
   background-color: #184561;
   display: flex;
   justify-content: center;
-  align-items: center;  
+  align-items: center;
   height: 30px;
   width: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  
+
   &:hover {
     background: rgba(24, 69, 97, 0.8);
     transform: translateY(-1px);
-  }  
+  }
 `;
 
 export const TableContainer = styled.div`
@@ -57,39 +57,15 @@ export const TableBody = styled.tbody`
     border-bottom: 1px solid #f0f0f0;
     transition: background-color 0.2s ease;
     background-color: transparent;
-    
+
     &:hover {
-      background-color:rgb(125, 125, 125,0.3) !important;
+      background-color: rgb(125, 125, 125, 0.3) !important;
     }
   }
 `;
 
 export const TableCell = styled.td`
   padding: 5px 16px;
-`;
-
-export const AvatarContainer = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #e3f2fd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #184561;
-  font-weight: 600;
-  font-size: 16px;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-export const AvatarImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const NameText = styled.div`
@@ -132,20 +108,20 @@ export const PaginationButton = styled.button<{ disabled?: boolean }>`
   padding: 8px 12px;
   border: 1px solid #ddd;
 
-  background: ${props => props.disabled ? '#f5f5f5' : 'white'};
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  background: ${(props) => (props.disabled ? "#f5f5f5" : "white")};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   display: flex;
   align-items: center;
   gap: 5px;
   font-size: 14px;
   font-weight: 500;
-  color: ${props => props.disabled ? '#999' : '#184561'};
+  color: ${(props) => (props.disabled ? "#999" : "#184561")};
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${props => props.disabled ? '#f5f5f5' : '#e3f2fd'};
-    border-color: ${props => props.disabled ? '#ddd' : '#184561'};
-    transform: ${props => props.disabled ? 'none' : 'translateY(-1px)'};
+    background: ${(props) => (props.disabled ? "#f5f5f5" : "#e3f2fd")};
+    border-color: ${(props) => (props.disabled ? "#ddd" : "#184561")};
+    transform: ${(props) => (props.disabled ? "none" : "translateY(-1px)")};
   }
 `;
 
@@ -160,7 +136,7 @@ export const PageInfo = styled.div`
 `;
 
 export const PageInfoSmall = styled.small`
-display: flex;
+  display: flex;
   font-size: 12px;
   color: #666;
   min-width: 100px;
@@ -169,7 +145,7 @@ display: flex;
 
 // Content Styles
 export const ContentContainer = styled.div`
-  padding-bottom: 50px; 
+  padding-bottom: 50px;
   min-height: calc(100vh - 45px);
 `;
 
@@ -205,4 +181,3 @@ export const NoDataContainer = styled.div`
   margin: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
-

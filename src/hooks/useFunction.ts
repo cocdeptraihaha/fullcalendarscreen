@@ -18,8 +18,7 @@ export const useSearchStaff = (searchTerm: string) =>
 export const useSearchContacts = (searchTerm: string) =>
   useQuery({
     queryKey: ["searchContacts", searchTerm],
-    queryFn: () => searchContacts(searchTerm),
-    enabled: searchTerm.length > 0,
+    queryFn: () => searchContacts(searchTerm || ""), // Always call API, even with empty string
     select: (data) => (data || []).slice(0, 5),
     placeholderData: keepPreviousData,
   });

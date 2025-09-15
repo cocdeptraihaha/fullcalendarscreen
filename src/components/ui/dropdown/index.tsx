@@ -7,9 +7,9 @@ import {
   StyledDropdownMenu,
   StyledDropdownToggle,
   StyledDropdownWrapper,
-  StyledDropdownAvatar,
 } from "./styled";
 import { ChevronDown, ChevronUp } from "react-feather";
+import Avatar from "../avatar";
 
 interface DropdownProps {
   hasSearch?: number; // 0: no search, 1: search in toggle, 2: search in menu
@@ -36,11 +36,14 @@ const Dropdown: FC<DropdownProps> = ({
     setOpen(!open);
   }, [open]);
 
-  const handleItemClick = useCallback((itemId: any) => {
-    onChange?.(itemId);
-    setOpen(false);
-    setSearchTerm("");
-  }, [onChange]);
+  const handleItemClick = useCallback(
+    (itemId: any) => {
+      onChange?.(itemId);
+      setOpen(false);
+      setSearchTerm("");
+    },
+    [onChange]
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -57,14 +60,8 @@ const Dropdown: FC<DropdownProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // filter items based on searchTerm - supports both name and label properties
-  const filteredItems = useMemo(() => 
-    Items.filter((item) =>
-      (item.name || item.label || "")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    ), [Items, searchTerm]
-  );
+  // Use Items as-is (server search results)
+  const filteredItems = useMemo(() => Items, [Items]);
 
   return (
     <StyledDropdownWrapper ref={dropdownRef}>
@@ -102,9 +99,7 @@ const Dropdown: FC<DropdownProps> = ({
                   setSearchTerm(e.target.value);
                   onSearch?.(e.target.value);
                 }}
-                onClick={(e) =>
-                  e.stopPropagation()
-                } /* prevent dropdown close */
+                onClick={(e) => e.stopPropagation()}
               />
             )}
             {!filteredItems.length && (
@@ -118,7 +113,7 @@ const Dropdown: FC<DropdownProps> = ({
                 {item.color /* color indicator for appointment types */ && (
                   <span style={{ color: item.color, fontSize: "30px" }}>•</span>
                 )}
-                {item.avatar && <StyledDropdownAvatar src={item.avatar} />}
+                <Avatar src={item.avatar} name={item.name || item.label} />
                 {/* avatar for contacts/staff */}
                 {item.name || item.label} {/* display name or label */}
               </StyledDropdownItem>

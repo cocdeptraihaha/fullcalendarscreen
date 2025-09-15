@@ -2,9 +2,9 @@ import Dropdown from "../../ui/dropdown";
 import { InputContainer, InputLabel, ContactContainer } from "./styled";
 import { ErrorMessage } from "../Form.styled";
 import { useFormContext, Controller } from "react-hook-form";
-import { StyledDropdownAvatar } from "../../ui/dropdown/styled";
-import { useContacts, useAppointmentTypes } from "../../../hooks/useData";
-import { useCallback, useMemo, useState } from "react";
+import Avatar from "../../ui/avatar";
+import { useAppointmentTypes } from "../../../hooks/useData";
+import { useCallback, useMemo, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useDebounce } from "../../../hooks/useDebounce";
@@ -18,12 +18,12 @@ export default function ContactSection() {
     formState: { errors },
   } = mainForm;
   const [contactSearchTerm, setContactSearchTerm] = useState("");
+  const selectedContactRef = useRef<any>(null);
   const debouncedSearchTerm = useDebounce(contactSearchTerm, 500);
 
   // Access preloaded event data (full objects) from store
   const { eventData } = useSelector((state: RootState) => state.form);
 
-  const { data: contacts = [], isLoading: contactsLoading } = useContacts();
   const { data: appointmentTypes = [], isLoading: typesLoading } =
     useAppointmentTypes(); // Only get active types for form
   const { data: searchResults = [] } = useSearchContacts(debouncedSearchTerm);
@@ -38,20 +38,27 @@ export default function ContactSection() {
     []
   );
 
-  const normalizedContacts = useMemo(
-    () => normalizeContacts(contacts),
-    [contacts, normalizeContacts]
-  );
   const normalizedSearchResults = useMemo(
     () => normalizeContacts(searchResults),
     [searchResults, normalizeContacts]
   );
 
   // Memoize contact change handler
-  const handleContactChange = useCallback((val: any, field: any) => {
-    field.onChange(val); // Store ID directly
-    setContactSearchTerm("");
-  }, []);
+  const handleContactChange = useCallback(
+    (val: any, field: any) => {
+      field.onChange(val); // Store ID directly
+      // Store selected contact in ref to prevent loss during rerender
+      const selectedContact = normalizedSearchResults.find((c) => c.id === val);
+      if (selectedContact) {
+        selectedContactRef.current = selectedContact;
+      }
+      // Clear search term after a short delay
+      setTimeout(() => {
+        setContactSearchTerm("");
+      }, 200);
+    },
+    [normalizedSearchResults]
+  );
 
   // Memoize appointment type change handler
   const handleTypeChange = useCallback(
@@ -72,14 +79,17 @@ export default function ContactSection() {
           control={control}
           name="contact_id"
           render={({ field }) => {
-            let baseList = contactSearchTerm
-              ? normalizedSearchResults
-              : normalizedContacts;
-            // Ensure selected item is present in list for title consistency
-            const selectedFromLists = [
-              ...normalizedContacts,
-              ...normalizedSearchResults,
-            ].find((c) => c.id === field.value);
+            // Use search results (server search)
+            const baseList = normalizedSearchResults;
+
+            // Find selected contact from various sources
+            const selectedFromLists = baseList.find(
+              (c) => c.id === field.value
+            );
+            const selectedFromRef =
+              selectedContactRef.current?.id === field.value
+                ? selectedContactRef.current
+                : null;
             const selectedFromEvent = eventData?.contact
               ? {
                   ...eventData.contact,
@@ -90,17 +100,20 @@ export default function ContactSection() {
                       .join(" "),
                 }
               : undefined;
+
             const selectedContact =
               selectedFromLists ||
+              selectedFromRef ||
               (selectedFromEvent && selectedFromEvent.id === field.value
                 ? selectedFromEvent
                 : undefined);
-            const displayContacts = (
+
+            // Always include selected contact in display list
+            const displayContacts =
               selectedContact &&
               !baseList.some((c) => c.id === selectedContact.id)
                 ? [selectedContact, ...baseList]
-                : baseList
-            ).slice(0, 5);
+                : baseList;
 
             return (
               <Dropdown
@@ -111,13 +124,12 @@ export default function ContactSection() {
                 onSearch={setContactSearchTerm}
                 renderTitle={() => (
                   <>
-                    {contactsLoading ? (
-                      "Loading contacts..."
-                    ) : selectedContact ? (
+                    {selectedContact ? (
                       <>
-                        <StyledDropdownAvatar
+                        <Avatar
                           src={selectedContact.avatar}
-                          alt="avatar"
+                          name={selectedContact.name || "Unnamed"}
+                          size={30}
                         />
                         {selectedContact.name || "Unnamed"}
                       </>

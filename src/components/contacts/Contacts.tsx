@@ -1,7 +1,16 @@
-import { AlignCenter, Plus, Search, User, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "react-feather";
+import {
+  AlignCenter,
+  Plus,
+  Search,
+  User,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "react-feather";
 import Sidebar from "../ui/sidebar";
-import { 
-  AddButton, 
+import {
+  AddButton,
   ContactsContainer,
   TableContainer,
   Table,
@@ -9,8 +18,6 @@ import {
   TableHeaderCell,
   TableBody,
   TableCell,
-  AvatarContainer,
-  AvatarImage,
   NameText,
   EmailText,
   PhoneText,
@@ -21,8 +28,9 @@ import {
   ContentContainer,
   LoadingContainer,
   ErrorContainer,
-  NoDataContainer
+  NoDataContainer,
 } from "./Contacts.styled";
+import Avatar from "../ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { setView } from "../../store/contactsSlice";
@@ -48,24 +56,35 @@ interface LaravelPaginationData {
   };
 }
 
-
 function Contacts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isNewContactModalOpen, setIsNewContactModalOpen] = useState(false);
-  
+
   const sidebarItems = [
-    { label: "Filters", value: 'filters',icon: <Search size={16} color="#184561"/> },
-    { label: "Contacts", value: 'contacts',icon: <User size={16} color="#184561"/>  },
-    { label: "Lists", value: 'lists',icon: <AlignCenter size={16} color="#184561"/>  },
+    {
+      label: "Filters",
+      value: "filters",
+      icon: <Search size={16} color="#184561" />,
+    },
+    {
+      label: "Contacts",
+      value: "contacts",
+      icon: <User size={16} color="#184561" />,
+    },
+    {
+      label: "Lists",
+      value: "lists",
+      icon: <AlignCenter size={16} color="#184561" />,
+    },
   ];
-  
+
   const active = useSelector((state: RootState) => state.contacts.view);
   const dispatch = useDispatch();
-  
-  const { 
-    data: paginatedData, 
-    isLoading, 
-    error 
+
+  const {
+    data: paginatedData,
+    isLoading,
+    error,
   } = usePaginatedContacts(currentPage) as {
     data: LaravelPaginationData | undefined;
     isLoading: boolean;
@@ -90,7 +109,11 @@ function Contacts() {
     }
 
     if (error) {
-      return <ErrorContainer>Error loading contacts: {(error as Error).message}</ErrorContainer>;
+      return (
+        <ErrorContainer>
+          Error loading contacts: {(error as Error).message}
+        </ErrorContainer>
+      );
     }
 
     if (!paginatedData?.data?.length) {
@@ -106,7 +129,6 @@ function Contacts() {
 
     return (
       <ContentContainer>
-        
         <TableContainer>
           <Table>
             <TableHeader>
@@ -117,49 +139,41 @@ function Contacts() {
                 <TableHeaderCell>Phone Number</TableHeaderCell>
               </tr>
             </TableHeader>
-            
+
             <TableBody>
               {paginatedData.data.map((contact: any) => (
                 <tr key={contact.id}>
                   <TableCell>
-                    {contact.avatar ? (
-                      <AvatarImage 
-                        src={contact.avatar} 
-                        alt={contact.name}
-                      />
-                    ) : (
-                      <AvatarContainer>
-                        {contact.name?.charAt(0)?.toUpperCase() || '?'}
-                      </AvatarContainer>
-                    )}
+                    <Avatar
+                      src={contact.avatar}
+                      name={contact.name}
+                      size={30}
+                    />
                   </TableCell>
-                  
+
                   <TableCell>
-                    <NameText>{contact.name || 'N/A'}</NameText>
+                    <NameText>{contact.name || "N/A"}</NameText>
                   </TableCell>
-                  
+
                   <TableCell>
-                    <EmailText>{contact.email || '-'}</EmailText>
+                    <EmailText>{contact.email || "-"}</EmailText>
                   </TableCell>
-                  
+
                   <TableCell>
-                    <PhoneText>{contact.phone_number || '-'}</PhoneText>
+                    <PhoneText>{contact.phone_number || "-"}</PhoneText>
                   </TableCell>
                 </tr>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-        
+
         <PaginationContainer>
-        <PageInfoSmall>
+          <PageInfoSmall>
             {from}-{to} of {total}
-        </PageInfoSmall>
-        <PageInfo>
-            {currentPage}
-        </PageInfo>
-          
-          
+          </PageInfoSmall>
+          <PageInfo>{currentPage}</PageInfo>
+
           <PaginationButton
             onClick={() => handlePageChange(1)}
             disabled={currentPage === 1}
@@ -173,8 +187,7 @@ function Contacts() {
           >
             <ChevronLeft size={16} />
           </PaginationButton>
-          
-          
+
           <PaginationButton
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={!hasNext}
@@ -186,7 +199,6 @@ function Contacts() {
             onClick={() => handlePageChange(lastPage)}
             disabled={currentPage === lastPage}
           >
-
             <ChevronsRight size={16} />
           </PaginationButton>
         </PaginationContainer>
@@ -202,20 +214,25 @@ function Contacts() {
         onChange={(value) => dispatch(setView(value))}
         render={() => (
           <>
-            <AddButton onClick={handleAddContact}><Plus size={16} color="#fff"/></AddButton>
+            <AddButton onClick={handleAddContact}>
+              <Plus size={16} color="#fff" />
+            </AddButton>
           </>
         )}
       />
-      {active === 'contacts' && renderContactsList()}
-      {active === 'filters' && <ContentContainer>Filters coming soon...</ContentContainer>}
-      {active === 'lists' && <ContentContainer>Lists coming soon...</ContentContainer>}
-      
-      <NewContactForm 
-        isOpen={isNewContactModalOpen} 
-        onClose={handleCloseModal} 
+      {active === "contacts" && renderContactsList()}
+      {active === "filters" && (
+        <ContentContainer>Filters coming soon...</ContentContainer>
+      )}
+      {active === "lists" && (
+        <ContentContainer>Lists coming soon...</ContentContainer>
+      )}
+      <NewContactForm
+        isOpen={isNewContactModalOpen}
+        onClose={handleCloseModal}
       />
     </ContactsContainer>
   );
 }
 
-export default Contacts
+export default Contacts;
