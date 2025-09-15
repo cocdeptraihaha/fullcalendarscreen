@@ -17,8 +17,8 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     font-family: sans-serif;
     toastify-toast-padding:3px;
-    svg : {
-    color : #184561;
+    .Toastify__close-button {
+      display: none;
     }
   }
 `;
