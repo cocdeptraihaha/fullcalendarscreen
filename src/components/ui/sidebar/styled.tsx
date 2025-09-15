@@ -5,7 +5,6 @@ export const SidebarContainer = styled.div`
   left: 0;
   width: 65px;
   height: 100%;
-  font-family: Roboto;
   top: 45px;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   z-index: 800;
