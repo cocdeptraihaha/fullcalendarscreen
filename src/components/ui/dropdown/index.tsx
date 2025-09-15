@@ -113,7 +113,7 @@ const Dropdown: FC<DropdownProps> = ({
                 {item.color /* color indicator for appointment types */ && (
                   <span style={{ color: item.color, fontSize: "30px" }}>•</span>
                 )}
-                <Avatar src={item.avatar} name={item.name || item.label} />
+                {!item.label && <Avatar src={item.avatar} name={item.name} />}
                 {/* avatar for contacts/staff */}
                 {item.name || item.label} {/* display name or label */}
               </StyledDropdownItem>
