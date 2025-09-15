@@ -10,7 +10,7 @@ export const Container = styled.div`
   width: 100%;
   min-width: 1200px;
   height: 45px;
-  z-index: 800;
+  z-index: 1000;
 `;
 export const NavbarContainer = styled.div`
   position: absolute;
@@ -33,9 +33,10 @@ export const NavItem = styled.div<NavItemProps>`
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
+  display: inline-flex;
   font-size: 12px;
   align-items: center;
-
+  text-decoration: none;
   &:hover {
     background-color: rgba(255, 255, 255, 0.15);
   }
@@ -46,8 +47,13 @@ export const Badge = styled.span`
   color: #333;
   border-radius: 50%;
   font-size: 10px;
-  padding: 2px 6px;
+  display: flex;
   margin-left: 6px;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  min-width: 20px;
 `;
 
 export const RightContainer = styled.div`
@@ -81,8 +87,8 @@ export const SearchBox = styled.div`
   margin-left: auto;
   height: 27px;
   font-size: 12px;
-  gap:5px;
-  padding-left:5px;
+  gap: 5px;
+  padding-left: 5px;
 `;
 export const SearchIcon = styled.i`
   margin: 0 5px;
@@ -107,16 +113,15 @@ export const AddButton = styled.div`
   justify-content: center;
   align-items: center;
   margin-left: auto;
-  cursor: pointer; 
-
+  cursor: pointer;
 
   &:hover {
-    background-color: #f0f0f0;    
-    transition: all 0.2s ease;  
+    background-color: #f0f0f0;
+    transition: all 0.2s ease;
   }
 
   &:active {
-    background-color: #e0e0e0;   
+    background-color: #e0e0e0;
   }
 `;
 
@@ -127,7 +132,7 @@ export const SearchResults = styled.ul`
   right: 0;
   background: #ffffff;
   border-radius: 6px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   padding: 6px 0;
   margin: 6px 0 0 0;
   list-style: none;

@@ -8,7 +8,7 @@ export const SidebarContainer = styled.div`
   font-family: Roboto;
   top: 45px;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 800;
 `;
 export const ContentContainer = styled.div`
   display: flex;

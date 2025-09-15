@@ -1,23 +1,38 @@
 import { menuItems } from "./HeaderConstants";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/store";
-import { setSection } from "../../store/headerSlice";
-import  { useCallback, useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Plus, Search } from "react-feather";
-import { Container, NavbarContainer, NavItem, Badge, RightContainer, AddButton, SearchBox, SearchInput, AvatarContainer, SearchResults, SearchResultItem } from "./Header.styled";
+import {
+  Container,
+  NavbarContainer,
+  NavItem,
+  Badge,
+  RightContainer,
+  AddButton,
+  SearchBox,
+  SearchInput,
+  AvatarContainer,
+  SearchResults,
+  SearchResultItem,
+} from "./Header.styled";
 import NewContactForm from "../contacts/NewContactForm";
 import { useDebounce } from "../../hooks/useDebounce";
 import { searchContacts } from "../../services/api";
 
+// Mapping từ menu items sang routes
+const menuToRoute: { [key: string]: string } = {
+  Calendar: "/calendar",
+  Inbox: "/inbox",
+  Contacts: "/contacts",
+  Forms: "/forms",
+  Billing: "/billing",
+  Marketing: "/marketing",
+  Reports: "/reports",
+};
+
 export default function Header() {
-  const dispatch = useDispatch()
-  const activeSection =useSelector((state: RootState) => state.header.section)
-  const handleClick = useCallback(
-    (item: string) => {
-      dispatch(setSection(item));
-    },
-    [dispatch]
-  );
+  const location = useLocation();
+  const activeSection = location.pathname.substring(1) || "calendar";
 
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -40,7 +55,9 @@ export default function Header() {
       }
     };
     run();
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [debouncedQuery]);
 
   const openModal = () => setIsOpen(true);
@@ -52,8 +69,9 @@ export default function Header() {
         {menuItems.map((item) => (
           <NavItem
             key={item}
-            $active={activeSection === item}
-            onClick={() => handleClick(item)}
+            as={Link}
+            to={menuToRoute[item]}
+            $active={activeSection === item.toLowerCase()}
           >
             {item}
             {item === "Inbox" && <Badge>0</Badge>}
@@ -62,7 +80,9 @@ export default function Header() {
       </NavbarContainer>
 
       <RightContainer>
-        <AddButton onClick={openModal}><Plus color="#184561" size={16}/></AddButton>
+        <AddButton onClick={openModal}>
+          <Plus color="#184561" size={16} />
+        </AddButton>
         <SearchBox>
           <Search color={"#ffffff4d"} size={14} />
           <SearchInput
@@ -77,8 +97,16 @@ export default function Header() {
             <SearchResults>
               {results.map((c) => (
                 <SearchResultItem key={c.id}>
-                  <img src={c.avatar || 'https://www.w3schools.com/howto/img_avatar.png'} alt={c.first_name} />
-                  <span>{c.first_name} {c.last_name}</span>
+                  <img
+                    src={
+                      c.avatar ||
+                      "https://www.w3schools.com/howto/img_avatar.png"
+                    }
+                    alt={c.first_name}
+                  />
+                  <span>
+                    {c.first_name} {c.last_name}
+                  </span>
                 </SearchResultItem>
               ))}
             </SearchResults>
